@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_daily_sequence.R
 \name{get_daily_sequence}
 \alias{get_daily_sequence}
-\title{Generate a daily time series}
+\title{Generate a Daily Sequences of class 'Date'}
 \usage{
 get_daily_sequence(start_date, end_date)
 }
@@ -15,9 +15,8 @@ get_daily_sequence(start_date, end_date)
 A vector of class "Date".
 }
 \description{
-Generate a daily time series
+Generate a Daily Sequences of class 'Date'
 }
-\examples{
-today <- Sys.Date()
-get_daily_sequence(today, today + 3)
+\seealso{
+\code{\link[=seq.Date]{seq.Date()}} which this function wraps.
 }

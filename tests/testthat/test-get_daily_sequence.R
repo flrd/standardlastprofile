@@ -6,3 +6,7 @@ test_that("get_daily_sequence() works", {
 test_that("get_daily_sequence() errors if start_date > end_date", {
   expect_error(get_daily_sequence("2023-11-11", "2023-11-10"))
 })
+
+test_that("get_daily_sequence() expects objects of type 'Date'", {
+  expect_error(get_daily_sequence("abc", "2023-11-11"))
+})
