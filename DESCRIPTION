@@ -13,7 +13,7 @@ Description: For electricity customers without advanced metering infrastructure,
 Version: 0.0.0.9000
 Authors@R: 
     person("Markus", "Döring", , "m4rkus.doering@gmail.com", role = c("aut", "cre"))
-License: GPL (>= 3)
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
