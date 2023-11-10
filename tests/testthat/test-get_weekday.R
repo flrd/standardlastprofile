@@ -2,19 +2,19 @@ x <- seq.Date(as.Date("2023-12-22"), as.Date("2024-01-03"), by = "day")
 
 test_that("get_weekday() works", {
   expect_equal(get_weekday(x),
-               c("workingDay",
+               c("working_day",
                  "saturday",
                  "sunday",
                  "sunday",
                  "sunday",
-                 "workingDay",
-                 "workingDay",
-                 "workingDay",
+                 "working_day",
+                 "working_day",
+                 "working_day",
                  "saturday",
                  "sunday",
                  "sunday",
-                 "workingDay",
-                 "workingDay"
+                 "working_day",
+                 "working_day"
                  )
                )
 })
