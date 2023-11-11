@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{load_profiles}}{
 
-A data frame with 7,240 rows and 60 columns:
+A data frame with 9,504 rows and 5 columns:
 \describe{
 \item{profile}{One of 11 standardized load profiles.}
 \item{period}{...}

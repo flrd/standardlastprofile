@@ -1,8 +1,8 @@
-#' Map a vector of class 'Date' to day of the week to each value in 'x'
+#' Map a vector of class 'Date' to 'working_day', 'saturday', or 'sunday'
 #'
 #' @param x A sequence of class 'Date'
 #'
-#' @return A character vector; a mapping from a vector of dates to 'working_day', 'saturday', or 'sunday'
+#' @return A character vector; a vector of dates mapped to 'working_day', 'saturday', or 'sunday'
 get_weekday <- function(x) {
 
   if(!inherits(x, "Date")) {
@@ -31,17 +31,17 @@ get_weekday <- function(x) {
     "new_years_eve" = "12-31"
   )
 
-  x_md <- format.Date(x, "%m-%d")
+  x_md <- format_md(x)
 
   if(!any(x_md %in% c(holidays, christmastide))) {
     return(weekday)
   }
 
   # set December 24th & 31st to 'saturday', iff they are not a Sunday
+  # see page 30/46 in:
   # https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
-  # page 30/46
 
-  christmastide_idx <- x_md %in% c("12-24", "12-31")
+  christmastide_idx <- x_md %in% christmastide
 
   if (any(christmastide_idx)) {
     if (all(wkday_decimal[christmastide_idx] != "7")) {
@@ -59,3 +59,5 @@ get_weekday <- function(x) {
   weekday
 
 }
+
+format_md <- function(x) format.Date(x, "%m-%d")

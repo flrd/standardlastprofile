@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_weekday.R
 \name{get_weekday}
 \alias{get_weekday}
-\title{Map a vector of class 'Date' to day of the week to each value in 'x'}
+\title{Map a vector of class 'Date' to 'working_day', 'saturday', or 'sunday'}
 \usage{
 get_weekday(x)
 }
@@ -10,8 +10,8 @@ get_weekday(x)
 \item{x}{A sequence of class 'Date'}
 }
 \value{
-A character vector
+A character vector; a vector of dates mapped to 'working_day', 'saturday', or 'sunday'
 }
 \description{
-Map a vector of class 'Date' to day of the week to each value in 'x'
+Map a vector of class 'Date' to 'working_day', 'saturday', or 'sunday'
 }
