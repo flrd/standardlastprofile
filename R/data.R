@@ -9,7 +9,7 @@
 #'- commercial: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
 #'- agriculture: 'L0', 'L1', 'L2'
 #'
-#'Call `get_profile_information()` to get description for each profile.
+#'Call `get_profile_info()` to get description for each profile.
 #'
 #'combination of
 #'
