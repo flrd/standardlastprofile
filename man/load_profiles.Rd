@@ -9,11 +9,11 @@
 
 A data frame with 9,504 rows and 5 columns:
 \describe{
-\item{profile}{One of 11 standardized load profiles.}
-\item{period}{...}
-\item{weekyday}{BDEW distinguishes between 'saturday', 'sunday', and 'week_day'; public holidays are considered 'sunday'(s).}
-\item{timestamp}{Timestemp in quarterly hour intervals from '00:15' to '00:00' in format '\%H-\%M'.}
-\item{value}{...}
+\item{profile}{One of 11 standardized load profiles for three different consumer groups: .}
+\item{period}{One of 3 different annual periods: summer, winter, transition.}
+\item{weekyday}{One of 'saturday', 'sunday', and 'working_day'. Public holidays are considered a 'sunday', .}
+\item{timestamp}{Timestemp in quarterly hour intervals from '00:15' to '00:00'.}
+\item{value}{Electricity load in Wh.}
 }
 }
 }
@@ -24,8 +24,25 @@ A data frame with 9,504 rows and 5 columns:
 load_profiles
 }
 \description{
-The use of standard load profiles (SLP) is a simplification. This data set contains
-eleven profiles for the energy type electricity; there is data for three different
-customer types, three different annual periods and three different days of the week.
+Data on standaridaized load profiles for electricity provided by the German (BDEW). This data set contains
+eleven profiles for the energy type electricity; there are 96 values for each combination of
+'profile', 'period', and 'weekday'.
+The dataset includes values for 11 standardized load profiles that cover
+three different customer groups:
+\itemize{
+\item households: 'H0'
+\item commercial: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
+\item agriculture: 'L0', 'L1', 'L2'
+}
+}
+\details{
+Call \code{get_profile_information()} to get description for each profile.
+
+combination of
+
+, three different annual
+periods and three different days of the week.
+
+summer (May 15 to September 14), winter (November 1 to March 20), and transition (March 21 to May 14, and September 15 to October 31)
 }
 \keyword{datasets}

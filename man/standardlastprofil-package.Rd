@@ -4,9 +4,17 @@
 \name{standardlastprofil-package}
 \alias{standardlastprofil}
 \alias{standardlastprofil-package}
-\title{standardlastprofil: Generate load profiles for electricity}
+\title{standardlastprofil: Generate load profiles for electricity based on data from the BDEW}
 \description{
 For electricity customers without advanced metering infrastructure, an energy supplier uses standardised load profiles (SLP). These SLPs replace the non-existent load profile of end consumers with a calculated, sufficiently accurate forecast of electricity consumption on a 15-minutes basis. This packages provides the the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The data contains standardized load profiles for three customer groups -- household, agriculture and commercial customers. A distinction is also made between weekdays, Saturdays and Sundays and between summer, winter and a transitional period.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/flrd/standardlastprofil}
+  \item Report bugs at \url{https://github.com/flrd/standardlastprofil/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Markus Döring \email{m4rkus.doering@gmail.com}
