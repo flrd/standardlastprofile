@@ -1,5 +1,5 @@
 Package: standardlastprofil
-Title: Generate load profiles for electricity
+Title: Generate load profiles for electricity based on data from the BDEW
 Description: For electricity customers without advanced metering infrastructure, 
   an energy supplier uses standardised load profiles (SLP). These SLPs replace
   the non-existent load profile of end consumers with a calculated, sufficiently 
