@@ -2,7 +2,7 @@
 #'
 #' @return A data.frame
 #'
-#' @param language One of 'english', 'german'
+#' @param language One of 'EN' (English), 'DE' (German)
 #' @export
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
@@ -10,7 +10,7 @@
 #' @examples
 #' get_load_profile_info(language = "EN")
 #' get_load_profile_info(language = "DE")
-get_load_profile_info <- function(language = c("EN", "DE")) {
+get_profile_info <- function(language = c("EN", "DE")) {
 
   language <- toupper(language)
   language <- match.arg(language)
@@ -20,6 +20,5 @@ get_load_profile_info <- function(language = c("EN", "DE")) {
   } else {
     out <- profile_description_DE
   }
-
   return(out)
 }
