@@ -66,19 +66,8 @@ get_period <- function(x) {
 }
 
 get_wkday_period <- function(x) {
-  tmp_wkday <- get_weekday(x)
-  tmp_periods <- get_period(x)
-  x_chr <- as.character(x)
-
-  out <- matrix(c(x_chr,
-                  paste_snake(tmp_wkday, tmp_periods)),
-                ncol = 2)
-
-  dimnames(out) <- list(NULL, c("input", "output"))
-  out
+  paste_snake(get_weekday(x), get_period(x))
 }
-
-
 
 paste_dash <- function(...) paste(..., sep = "-")
 paste_snake <- function(...) paste(..., sep = "_")

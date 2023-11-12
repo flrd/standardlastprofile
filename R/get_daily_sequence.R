@@ -41,7 +41,5 @@ as_date <- function(x) {
       return(NA_character_)
     }
   )
-
   return(out)
-
 }
