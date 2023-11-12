@@ -67,6 +67,11 @@ format_md <- function(x) format.Date(x, "%m-%d")
 
 # get public holidays from nager.Date API ---------------------------------
 
+#' @importFrom httr2 request
+#' @importFrom httr2 req_user_agent
+#' @importFrom httr2 req_url_path_append
+#' @importFrom httr2 req_perform
+#' @importFrom httr2 resp_body_json
 federal_holidays <- function(year) {
   if (year < 1973L || year > 2073L) {
     stop("'API supports years between 1973 and 2073.")
@@ -93,10 +98,8 @@ federal_holidays <- function(year) {
   federal_holidays <-
     vapply(
       resp_body[federal_idx],
-      FUN.VALUE = character(1),
-      FUN = function(x) {
-        x[["date"]]
-      }
+      FUN = function(x) x[["date"]],
+      FUN.VALUE = character(1)
     )
 
   federal_holidays
