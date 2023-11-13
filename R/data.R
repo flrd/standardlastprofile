@@ -1,4 +1,4 @@
-#' Representative BDEW load profiles
+#' BDEW load profiles for electricity
 #'
 #'Data on representative load profiles for electricity provided by the German Association of Energy and
 #'Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). A load profile

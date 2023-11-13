@@ -1,4 +1,10 @@
+url_bdew <- "Repr„sentative Profile VDEW.xls"
 
+# fetch public holidays in Germany from nager.Date API --------------------
+years <- seq.int(1973, 2073)
+federal_holidays_DE <- sapply(years, get_federal_holidays)
+
+names(federal_holidays_DE) <- years
 
 # abbreviations of the 11 profiles included in this package ---------------
 profiles <- c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2")
@@ -38,7 +44,7 @@ description_EN = c(
   "household",
   "commerce in general",
   "commerce working day from 8am - 6pm",
-  "Commerce with high to predominant consumption in the evening hours",
+  "commerce with high to predominant consumption in the evening hours",
   "commerce continous",
   "shop / barbershop",
   "bakery with bakehouse",
@@ -78,6 +84,7 @@ profile_description_EN <- data.frame(
 # see: https://r-pkgs.org/data.html#sec-data-sysdata
 
 usethis::use_data(
+  federal_holidays_DE,
   profile_description_DE,
   profile_description_EN,
   internal = TRUE,
