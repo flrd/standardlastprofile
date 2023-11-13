@@ -3,7 +3,7 @@
 \docType{data}
 \name{load_profiles}
 \alias{load_profiles}
-\title{Representative BDEW load profiles}
+\title{BDEW load profiles for electricity}
 \format{
 \subsection{\code{load_profiles}}{
 
