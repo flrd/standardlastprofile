@@ -115,46 +115,6 @@ get_weekday <- function(x) {
 
 }
 
-# get public holidays from nager.Date API ---------------------------------
-
-#' @importFrom httr2 request
-#' @importFrom httr2 req_user_agent
-#' @importFrom httr2 req_url_path_append
-#' @importFrom httr2 req_perform
-#' @importFrom httr2 resp_body_json
-get_federal_holidays <- function(year) {
-  if (year < 1973L || year > 2073L) {
-    stop("'API supports years between 1973 and 2073.")
-  }
-
-  year <- as.character(year)
-  base_url <- "https://date.nager.at/api/v3"
-
-  resp <- httr2::request(base_url = base_url) |>
-    httr2::req_user_agent("https://github.com/flrd/standardlastprofil") |>
-    httr2::req_url_path_append("PublicHolidays") |>
-    httr2::req_url_path_append(year) |>
-    httr2::req_url_path_append("DE") |>
-    httr2::req_perform()
-
-  resp_body <- resp |>
-    httr2::resp_body_json()
-
-  # we'll only support nationwide holidays
-  is_federal <- function(x)
-    is.null(x[["counties"]])
-
-  federal_idx <- vapply(resp_body, is_federal, logical(1))
-  federal_holidays <-
-    vapply(
-      resp_body[federal_idx],
-      FUN = function(x) x[["date"]],
-      FUN.VALUE = character(1)
-    )
-
-  federal_holidays
-}
-
 # Map date to consumption period ------------------------------------------
 
 #' Map a sequence of dates to a consumption period according to BDEW definition

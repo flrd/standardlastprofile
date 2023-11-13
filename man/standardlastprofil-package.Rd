@@ -4,9 +4,9 @@
 \name{standardlastprofil-package}
 \alias{standardlastprofil}
 \alias{standardlastprofil-package}
-\title{standardlastprofil: Generate load profiles for electricity based on data from the BDEW}
+\title{standardlastprofil: Data on Load Profiles for Electricity}
 \description{
-For electricity customers without advanced metering infrastructure, an energy supplier uses standardised load profiles (SLP). These SLPs replace the non-existent load profile of end consumers with a calculated, sufficiently accurate forecast of electricity consumption on a 15-minutes basis. This packages provides the the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The data contains standardized load profiles for three customer groups -- household, agriculture and commercial customers. A distinction is also made between weekdays, Saturdays and Sundays and between summer, winter and a transitional period.
+A load profile describes the consumption profile of an electricity consumer over a certain period of time.For electricity customers without modern meter devices, an energy utility uses standardised load profiles (SLP). These SLPs replace the non-existent load profile of end consumers with a calculated, sufficiently accurate forecast of electricity consumption on a 15-minutes basis. This packages provides data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. For each of the eleven profiles, 96 quarter-hourly values are included for three different days of the week 'working_day', 'saturday', 'sunday') and three different seasons ('summer', 'winter', 'transition'), i.e. a total of 3x3x96 observations per profile.
 }
 \seealso{
 Useful links:

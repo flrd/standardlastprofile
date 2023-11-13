@@ -10,8 +10,8 @@ get_load_profile <- function(
   wkday_period <- get_wkday_period(daily_seq)
 
   tmp <- load_profiles_lst[[profile]][, wkday_period]
-  #
-  # n_rows <- dim(tmp_values)[[1]]
+
+  n_rows <- dim(tmp)[[1]]
   #
   # date_rng <- rep(tmp_dates[["request_period"]], each = n_rows)
   # time_rng <- dimnames(tmp_values)[[1]]

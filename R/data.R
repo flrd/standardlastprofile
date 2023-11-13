@@ -2,9 +2,11 @@
 #'
 #'Data on representative load profiles for electricity provided by the German Association of Energy and
 #'Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). A load profile
-#'shows the variation in the electrical load versus time. Each profile contains 96 quarter-hour values
-#'for three different days of the week ('working_day', 'saturday', 'sunday'), three different periods
-#'of the year ('summer', 'winter', 'transition'), i.e. a total of 3x3x96 observations per profile.
+#'shows the variation in the electrical load versus time. Each of the eleven profiles contain
+#'96 quarter-hour values for three different days of the week ('working_day', 'saturday', 'sunday'),
+#'three different periods of the year ('summer', 'winter', 'transition'), i.e. a total of
+#'3x3x96 observations per profile.
+#'
 #'See 'Details' for more information.
 #'
 #' @format ## `load_profiles`

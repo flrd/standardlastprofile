@@ -82,6 +82,40 @@ fwrite(x = load_profiles,
 
 
 # fetch public holidays in Germany from nager.Date API --------------------
+get_federal_holidays <- function(year) {
+  if (year < 1973L || year > 2073L) {
+    stop("'API supports years between 1973 and 2073.")
+  }
+
+  year <- as.character(year)
+  base_url <- "https://date.nager.at/api/v3"
+
+  resp <- httr2::request(base_url = base_url) |>
+    httr2::req_user_agent("https://github.com/flrd/standardlastprofil") |>
+    httr2::req_url_path_append("PublicHolidays") |>
+    httr2::req_url_path_append(year) |>
+    httr2::req_url_path_append("DE") |>
+    httr2::req_perform()
+
+  resp_body <- resp |>
+    httr2::resp_body_json()
+
+  # we'll only support nationwide holidays
+  is_federal <- function(x)
+    is.null(x[["counties"]])
+
+  federal_idx <- vapply(resp_body, is_federal, logical(1))
+  federal_holidays <-
+    vapply(
+      resp_body[federal_idx],
+      FUN = function(x) x[["date"]],
+      FUN.VALUE = character(1)
+    )
+
+  federal_holidays
+}
+
+
 years <- seq.int(1973, 2073)
 federal_holidays_DE <- sapply(years, get_federal_holidays)
 
