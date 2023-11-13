@@ -1,9 +1,9 @@
-#' Return a Sequences of Days
+#' Return a Sequence of Days
 #'
 #' @param start_date Starting date. Required
 #' @param end_date End date. Required
 #'
-#' @return A vector of class "Date".
+#' @return A vector of class 'Date'
 #' @seealso [seq.Date()] which this function wraps.
 get_daily_sequence <- function(start_date, end_date) {
 
@@ -236,6 +236,11 @@ get_wkday_period <- function(x) {
 format_u <- function(x) format.Date(x, "%u")
 format_md <- function(x) format.Date(x, "%m-%d")
 format_Y <- function(x) format.Date(x, "%Y")
+
+make_utc <- function(x, y) {
+  paste(x, paste0(y, "Z"), sep = "T") |>
+    as.POSIXct(tz = "UTC", format = "%FT%H:%MZ")
+}
 
 # paste string helpers ----------------------------------------------------
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_daily_sequence}
 \alias{get_daily_sequence}
-\title{Return a Sequences of Days}
+\title{Return a Sequence of Days}
 \usage{
 get_daily_sequence(start_date, end_date)
 }
@@ -12,10 +12,10 @@ get_daily_sequence(start_date, end_date)
 \item{end_date}{End date. Required}
 }
 \value{
-A vector of class "Date".
+A vector of class 'Date'
 }
 \description{
-Return a Sequences of Days
+Return a Sequence of Days
 }
 \seealso{
 \code{\link[=seq.Date]{seq.Date()}} which this function wraps.
