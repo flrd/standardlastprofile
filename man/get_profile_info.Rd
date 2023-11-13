@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_profile_info.R
 \name{get_profile_info}
 \alias{get_profile_info}
-\title{Get the description of 11 standarized load profiles according to the BDEW}
+\title{Get the description load profiles according to the BDEW}
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 }
@@ -16,9 +16,9 @@ get_profile_info(language = c("EN", "DE"))
 A data.frame
 }
 \description{
-Get the description of 11 standarized load profiles according to the BDEW
+Get the description load profiles according to the BDEW
 }
 \examples{
-get_load_profile_info(language = "EN")
-get_load_profile_info(language = "DE")
+get_profile_info(language = "EN")
+get_profile_info(language = "DE")
 }

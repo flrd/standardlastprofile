@@ -9,40 +9,53 @@
 
 A data frame with 9,504 rows and 5 columns:
 \describe{
-\item{profile}{One of 11 standardized load profiles for three different consumer groups: .}
+\item{profile}{One of 11 load profiles.}
 \item{period}{One of 3 different annual periods: summer, winter, transition.}
-\item{weekyday}{One of 'saturday', 'sunday', and 'working_day'. Public holidays are considered a 'sunday', .}
+\item{weekyday}{One of 'saturday', 'sunday', and 'working_day'.}
 \item{timestamp}{Timestemp in quarterly hour intervals from '00:15' to '00:00'.}
-\item{value}{Electricity load in Wh.}
+\item{value}{Electricity load in Watt.}
 }
 }
 }
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
+
+\url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
 }
 \usage{
 load_profiles
 }
 \description{
-Data on standaridaized load profiles for electricity provided by the German (BDEW). This data set contains
-eleven profiles for the energy type electricity; there are 96 values for each combination of
-'profile', 'period', and 'weekday'.
-The dataset includes values for 11 standardized load profiles that cover
-three different customer groups:
+Data on representative load profiles for electricity provided by the German Association of Energy and
+Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). A load profile
+shows the variation in the electrical load versus time. Each profile contains 96 quarter-hour values
+for three different days of the week ('working_day', 'saturday', 'sunday'), three different periods
+of the year ('summer', 'winter', 'transition'), i.e. a total of 3x3x96 observations per profile.
+See 'Details' for more information.
+}
+\details{
+Included are eleven representative load \emph{profiles} covering three different
+customer groups:
 \itemize{
 \item households: 'H0'
 \item commercial: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
 \item agriculture: 'L0', 'L1', 'L2'
 }
+
+Call \code{\link[=get_profile_info]{get_profile_info()}} to get description for each profile.
+
+The definition of each \emph{period} follows the BDEW:
+\itemize{
+\item summer: May 15 to September 14
+\item winter: November 1 to March 20
+\item transition: March 21 to May 14, and September 15 to October 31
 }
-\details{
-Call \code{get_profile_information()} to get description for each profile.
 
-combination of
-
-, three different annual
-periods and three different days of the week.
-
-summer (May 15 to September 14), winter (November 1 to March 20), and transition (March 21 to May 14, and September 15 to October 31)
+In addition, a distinction is made between three different type of days:
+\itemize{
+\item 'working_day': Monday to Friday
+\item 'saturday': Saturdays; Dec 24th and Dec 31th are considered a 'saturday' too, if they are not a 'sunday'
+\item 'sunday': Sundays and all public holidays
+}
 }
 \keyword{datasets}
