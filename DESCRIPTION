@@ -1,15 +1,16 @@
 Package: standardlastprofil
-Title: Generate load profiles for electricity based on data from the BDEW
-Description: For electricity customers without advanced metering infrastructure, 
-  an energy supplier uses standardised load profiles (SLP). These SLPs replace
-  the non-existent load profile of end consumers with a calculated, sufficiently 
-  accurate forecast of electricity consumption on a 15-minutes basis. 
-  This packages provides the the German Association of Energy and Water Industries
-  (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
-  The data contains standardized load profiles for three customer groups -- 
-  household, agriculture and commercial customers. A distinction is also made 
-  between weekdays, Saturdays and Sundays and between summer, winter and 
-  a transitional period. 
+Title: Data on Load Profiles for Electricity
+Description: A load profile describes the consumption profile of an electricity 
+  consumer over a certain period of time.For electricity customers without modern 
+  meter devices, an energy utility uses standardised load profiles (SLP). These
+  SLPs replace the non-existent load profile of end consumers with a calculated,
+  sufficiently accurate forecast of electricity consumption on a 15-minutes basis.
+  This packages provides data from the German Association of Energy and Water 
+  Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy
+  format. For each of the eleven profiles, 96 quarter-hourly values are included
+  for three different days of the week 'working_day', 'saturday', 'sunday') and
+  three different seasons ('summer', 'winter', 'transition'), i.e. a total of
+  3x3x96 observations per profile.
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Markus", family = "Döring", email = "m4rkus.doering@gmail.com", role = c("aut", "cre"))
@@ -25,5 +26,3 @@ BugReports: https://github.com/flrd/standardlastprofil/issues
 Depends: 
     R (>= 2.10)
 LazyData: true
-Imports: 
-    httr2
