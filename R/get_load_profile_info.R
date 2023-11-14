@@ -5,12 +5,12 @@
 #' @param language One of 'EN' (English), 'DE' (German)
 #' @export
 #'
-#' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
-#'
+#' @source https://www.bdew.de/energie/standardlastprofile-strom/
 #' @examples
 #' get_profile_info(language = "EN")
 #' get_profile_info(language = "DE")
-get_profile_info <- function(language = c("EN", "DE")) {
+#'
+get_load_profile_info <- function(language = c("EN", "DE")) {
 
   language <- toupper(language)
   language <- match.arg(language)
