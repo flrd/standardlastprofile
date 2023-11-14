@@ -1,7 +1,7 @@
-Package: standardlastprofil
+Package: standardlastprofile
 Title: Data on Load Profiles for Electricity
 Description: A load profile describes the consumption profile of an electricity 
-  consumer over a certain period of time.For electricity customers without modern 
+  consumer over a certain period of time. For electricity customers without modern 
   meter devices, an energy utility uses standardised load profiles (SLP). These
   SLPs replace the non-existent load profile of end consumers with a calculated,
   sufficiently accurate forecast of electricity consumption on a 15-minutes basis.
@@ -21,8 +21,8 @@ RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: https://github.com/flrd/standardlastprofil
-BugReports: https://github.com/flrd/standardlastprofil/issues
+URL: https://github.com/flrd/standardlastprofile
+BugReports: https://github.com/flrd/standardlastprofile/issues
 Depends: 
     R (>= 2.10)
 LazyData: true
