@@ -4,7 +4,9 @@ library(data.table)
 library(httr2)
 
 # load data ---------------------------------------------------------------
-path <- system.file("extdata", "Repr„sentative Profile VDEW.xls", package = "standardlastprofil")
+# url <- "https://www.bdew.de/media/documents/Profile.zip"
+# filename: "Repr„sentative Profile VDEW.xls" but that is not portable ;(
+path <- system.file("extdata", "representative_profiles.xls", package = "standardlastprofil")
 sheets <- readxl::excel_sheets(path)
 n_sheets <- length(sheets)
 
