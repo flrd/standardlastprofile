@@ -40,7 +40,7 @@ Included are eleven representative load profiles covering three different
 customer groups:
 \itemize{
 \item households: 'H0'
-\item commerce: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
+\item commercial: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
 \item agriculture: 'L0', 'L1', 'L2'
 }
 

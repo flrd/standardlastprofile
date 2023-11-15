@@ -23,7 +23,7 @@
 #'Included are eleven representative load profiles covering three different
 #'customer groups:
 #'- households: 'H0'
-#'- commerce: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
+#'- commercial: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
 #'- agriculture: 'L0', 'L1', 'L2'
 #'
 #'Call [get_load_profile_info()] to get description for each profile.

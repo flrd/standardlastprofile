@@ -162,13 +162,13 @@ description_EN = c(
   "household",
   "commerce in general",
   "commerce working day from 8am - 6pm",
-  "commerce with high to predominant consumption in the evening hours",
+  "commerce with predominant consumption in evening hours",
   "commerce continous",
   "shop / barbershop",
   "bakery with bakehouse",
   "weekend business",
-  "agricultural businesses in general",
-  "agricultural businesses with dairy farming / part-time livestock farming",
+  "agricultural in general",
+  "agricultural with dairy farming / part-time livestock farming",
   "other agricultural businesses"
 )
 

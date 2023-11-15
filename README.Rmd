@@ -51,16 +51,20 @@ ggplot(load_profiles,
   scale_y_continuous(NULL) +
   scale_color_manual(name = NULL,
                      values = c(
-                       "winter" = "#311dfc",
-                       "summer" = "#f4ae1b",
-                       "transition" = "#d77e7b"
+                       "winter" = "#961BFA",
+                       "summer" = "#FA9529",
+                       "transition" = "#0CC792"
                        )) +
   labs(title = "Representative Load Profiles",
        subtitle = "96 x 1/4h-measurements each [in Watt], based on consumption of 1.000 kWh/a",
-       caption = "source: www.bdew.de") +
+       caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
   theme(strip.text.y.right = element_text(angle = 0)) + 
+  theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+  ) +
   theme(axis.text.x = element_blank()) +
   theme(axis.text.y = element_blank()) +
   NULL
@@ -84,19 +88,38 @@ library(standardlastprofile)
 data(package = "standardlastprofile")
 ```
 
-It contains 9.504 observations of 5 variables, you can see the first records below, see `?load_profiles` for more information.
-
-``` {r, message=FALSE}
-head(load_profiles)
-```
-
-Included are 11 load profiles for 3 customer groups:
+It contains 9.504 observations of 5 variables. There are 11 load profiles for 3 customer groups:
 
 - H0: households (German: "Haushalte")
 - G0 to G6: commerce ("Gewerbe")
 - L0 to L2: agriculture ("Landwirtschaft")
 
-Call [get_load_profile_info()] for more information on each profile and examples.
+Call `?load_profiles` for more information. 
 
-Call `get_load_profile_info()` to see a description for each profile.
+``` {r, message=FALSE}
+head(load_profiles)
+```
 
+If you have no idea what "H0" etc. stands for you are not alone, call `get_load_profile_info()` for more information on each profile and examples.
+
+The data in this package for any given profile represents a 'typical day' given a weekday, and period, e.g. a Sunday in winter versus a working day in summer. You can use the function `get_load_profile()` to generate a time series for a given profile and period. 
+
+``` {r, message=FALSE, include = FALSE}
+slp <- get_load_profile(
+  profile = "H0",
+  start_date = "2023-12-22",
+  end_date = "2024-12-31"
+  )
+# head(slp)
+```
+
+**Note** that the algorithm sets any public holiday to be a 'sunday', December 24 and 31 to be a 'saturday', if they are not a Sunday.
+
+``` {r, message=FALSE, include = FALSE}
+library(ggplot2)
+# ggplot(slp)
+```
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](https://github.com/flrd/standardlastprofile/blob/master/conduct.md). By participating in this project you agree to abide by its terms.

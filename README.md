@@ -40,8 +40,14 @@ library(standardlastprofile)
 data(package = "standardlastprofile")
 ```
 
-It contains 9.504 observations of 5 variables, you can see the first
-records below, see `?load_profiles` for more information.
+It contains 9.504 observations of 5 variables. There are 11 load
+profiles for 3 customer groups:
+
+- H0: households (German: “Haushalte”)
+- G0 to G6: commerce (“Gewerbe”)
+- L0 to L2: agriculture (“Landwirtschaft”)
+
+Call `?load_profiles` for more information.
 
 ``` r
 head(load_profiles)
@@ -54,13 +60,20 @@ head(load_profiles)
 #> 6      H0 winter saturday     01:15 55.0
 ```
 
-Included are 11 load profiles for 3 customer groups:
+If you have no idea what “H0” etc. stands for you are not alone, call
+`get_load_profile_info()` for more information on each profile and
+examples.
 
-- H0: households (German: “Haushalte”)
-- G0 to G6: commerce (“Gewerbe”)
-- L0 to L2: agriculture (“Landwirtschaft”)
+The data in this package for any given profile represents a ‘typical
+day’ given a weekday, and period, e.g. a Sunday in winter versus a
+working day in summer. You can use the function `get_load_profile()` to
+generate a time series for a given profile and period.
 
-Call \[get_load_profile_info()\] for more information on each profile
-and examples.
+**Note** that the algorithm sets any public holiday to be a ‘sunday’,
+December 24 and 31 to be a ‘saturday’, if they are not a Sunday.
 
-Call `get_load_profile_info()` to see a description for each profile.
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of
+Conduct](https://github.com/flrd/standardlastprofile/blob/master/conduct.md).
+By participating in this project you agree to abide by its terms.
