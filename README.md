@@ -11,14 +11,14 @@ consumer over a certain period of time. `standardlastprofile` provides
 data from the German Association of Energy and Water Industries (BDEW
 Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
 
-Each of the 11 load profiles represents a simplification for an
-electricity supplier to be able to create an annual consumption forecast
-for its customers (or customer groups). In practice, the standard load
-profiles are used for customers (or customer groups) who do not have
-modern metering equipment. That is, customers whose electricity
-consumption is not measured continuously.
-
 <img src="man/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;" />
+
+In practice, the standard load profiles are used for customers (or
+customer groups) who do not have a modern meter. That is, customers
+whose electricity consumption is not measured continuously. Each of the
+11 load profiles represents a simplification for an energy supplier to
+be able to create an annual consumption forecast for its customers (or
+customer groups).
 
 ## Installation
 
@@ -33,21 +33,17 @@ devtools::install_github("flrd/standardlastprofile")
 ## About the data
 
 The standardlastprofile package contains one dataset called
-`load_profiles` used in the plot above.
+`load_profiles` used for the plot above.
 
 ``` r
 library(standardlastprofile)
 data(package = "standardlastprofile")
 ```
 
-It contains 9.504 observations of 5 variables. There are 11 load
-profiles for 3 customer groups:
-
-- H0: households (German: “Haushalte”)
-- G0 to G6: commerce (“Gewerbe”)
-- L0 to L2: agriculture (“Landwirtschaft”)
-
-Call `?load_profiles` for more information.
+It contains 9.504 observations of 5 variables. Given a ‘weekday’ and a
+‘period’ the data in `load_profiles` for a given ‘profile’ represents a
+‘typical day’, e.g. a Sunday in winter versus a working day in summer.
+There are 11 load profiles for 3 customer groups:
 
 ``` r
 head(load_profiles)
@@ -60,17 +56,28 @@ head(load_profiles)
 #> 6      H0 winter saturday     01:15 55.0
 ```
 
-If you have no idea what “H0” etc. stands for you are not alone, call
-`get_load_profile_info()` for more information on each profile and
-examples.
+If you have no idea what “H0” etc. stands for, you are not alone.
 
-The data in this package for any given profile represents a ‘typical
-day’ given a weekday, and period, e.g. a Sunday in winter versus a
-working day in summer. You can use the function `get_load_profile()` to
-generate a time series for a given profile and period.
+- `H0`: households (German: “Haushalte”)
+- `G0` to `G6`: commerce (“Gewerbe”)
+- `L0` to `L2`: agriculture (“Landwirtschaft”)
 
-**Note** that the algorithm sets any public holiday to be a ‘sunday’,
-December 24 and 31 to be a ‘saturday’, if they are not a Sunday.
+Call `get_load_profile_info()` for more information and examples.
+
+You can use the function `get_load_profile()` to generate a time series
+a given profile. The algorithm sets December 24 and 31 to be a
+‘saturday’, and a public holiday to be a ‘sunday’ – if they are not a
+Sunday. **Note**: As of now the package supports only public holidays
+for Germany, which were retrieved from the [nager.Date
+API](https://github.com/nager/Nager.Date).
+
+``` r
+slp_G5 <- get_load_profile(profile = "G5",
+                           start_date = "2023-12-22",
+                           end_date = "2023-12-27")
+```
+
+<img src="man/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;" />
 
 ## Code of Conduct
 
