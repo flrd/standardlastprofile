@@ -4,13 +4,13 @@
 \alias{get_load_profile_info}
 \title{Get the description load profiles according to the BDEW}
 \source{
-https://www.bdew.de/energie/standardlastprofile-strom/
+\url{https://www.bdew.de/energie/standardlastprofile-strom/}
 }
 \usage{
 get_load_profile_info(language = c("EN", "DE"))
 }
 \arguments{
-\item{language}{One of 'EN' (English), 'DE' (German)}
+\item{language}{one of 'EN' (English), 'DE' (German)}
 }
 \value{
 A data.frame
@@ -19,7 +19,7 @@ A data.frame
 Get the description load profiles according to the BDEW
 }
 \examples{
-get_profile_info(language = "EN")
-get_profile_info(language = "DE")
+get_load_profile_info(language = "EN")
+get_load_profile_info(language = "DE")
 
 }

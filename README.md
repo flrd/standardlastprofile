@@ -18,7 +18,7 @@ profiles are used for customers (or customer groups) who do not have
 modern metering equipment. That is, customers whose electricity
 consumption is not measured continuously.
 
-<img src="man/figures/README-readme_xample-1.png" width="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;" />
 
 ## Installation
 
@@ -56,8 +56,11 @@ head(load_profiles)
 
 Included are 11 load profiles for 3 customer groups:
 
-- households: ‘H0’
-- commerce: ‘G0’, ‘G1’, ‘G2’, ‘G3’, ‘G4’, ‘G5’, ‘G6’
-- agriculture: ‘L0’, ‘L1’, ‘L2’
+- H0: households (German: “Haushalte”)
+- G0 to G6: commerce (“Gewerbe”)
+- L0 to L2: agriculture (“Landwirtschaft”)
+
+Call \[get_load_profile_info()\] for more information on each profile
+and examples.
 
 Call `get_load_profile_info()` to see a description for each profile.

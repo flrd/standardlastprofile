@@ -29,7 +29,7 @@ library(ggplot2)
 ```
 
 
-```{r readme_xample, echo = FALSE, fig.asp = 1.3, fig.retina=2}
+```{r readme_example, echo = FALSE, fig.asp = 1.3, fig.retina=2}
 # labeler
 label_names <- c(
   "saturday"="Saturday",

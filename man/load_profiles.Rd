@@ -3,17 +3,17 @@
 \docType{data}
 \name{load_profiles}
 \alias{load_profiles}
-\title{BDEW load profiles for electricity}
+\title{Data of load profiles for electricity}
 \format{
 \subsection{\code{load_profiles}}{
 
 A data frame with 9,504 rows and 5 columns:
 \describe{
-\item{profile}{One of 11 load profiles.}
-\item{period}{One of 3 different annual periods: summer, winter, transition.}
-\item{weekyday}{One of 'saturday', 'sunday', and 'working_day'.}
-\item{timestamp}{Timestemp in quarterly hour intervals from '00:15' to '00:00'.}
-\item{value}{Electricity load in Watt.}
+\item{profile}{one of 11 load profiles, see 'Details'}
+\item{period}{one of 'summer', 'winter', 'transition'}
+\item{weekyday}{one of 'saturday', 'sunday', and 'working_day'}
+\item{timestamp}{timestemp in 15-minutes interval}
+\item{value}{electricity load in Watt.}
 }
 }
 }
@@ -26,27 +26,27 @@ A data frame with 9,504 rows and 5 columns:
 load_profiles
 }
 \description{
-Data on representative load profiles for electricity provided by the German Association of Energy and
-Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). A load profile
-shows the variation in the electrical load versus time. Each of the eleven profiles contain
-96 quarter-hour values for three different days of the week ('working_day', 'saturday', 'sunday'),
-three different periods of the year ('summer', 'winter', 'transition'), i.e. a total of
-3x3x96 observations per profile.
+A load profile shows the variation in the electrical load versus time. Data is
+provided by the German Association of Energy andvWater Industries (BDEW
+Bundesverband der Energie- und Wasserwirtschaft e.V.). A load profile
+shows the variation in the electrical load versus time. For each profile
+there are 96 values for three different days of the week ('working_day',
+'saturday', 'sunday'), three different periods of the year ('summer', 'winter',
+'transition'), i.e. a total of 3x3x96 observations per profile. See 'Details'
+for more information.
 }
 \details{
-See 'Details' for more information.
-
-Included are eleven representative load \emph{profiles} covering three different
+Included are eleven representative load profiles covering three different
 customer groups:
 \itemize{
 \item households: 'H0'
-\item commercial: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
+\item commerce: 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6'
 \item agriculture: 'L0', 'L1', 'L2'
 }
 
-Call \code{\link[=get_profile_info]{get_profile_info()}} to get description for each profile.
+Call \code{\link[=get_load_profile_info]{get_load_profile_info()}} to get description for each profile.
 
-The definition of each \emph{period} follows the BDEW:
+Periods as defined by the BDEW:
 \itemize{
 \item summer: May 15 to September 14
 \item winter: November 1 to March 20

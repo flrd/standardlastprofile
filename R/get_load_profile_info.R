@@ -2,13 +2,13 @@
 #'
 #' @return A data.frame
 #'
-#' @param language One of 'EN' (English), 'DE' (German)
+#' @param language one of 'EN' (English), 'DE' (German)
 #' @export
 #'
-#' @source https://www.bdew.de/energie/standardlastprofile-strom/
+#' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
 #' @examples
-#' get_profile_info(language = "EN")
-#' get_profile_info(language = "DE")
+#' get_load_profile_info(language = "EN")
+#' get_load_profile_info(language = "DE")
 #'
 get_load_profile_info <- function(language = c("EN", "DE")) {
 
