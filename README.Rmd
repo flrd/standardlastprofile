@@ -1,0 +1,102 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "90%",
+  fig.align = "center"
+)
+```
+
+# standardlastprofile
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+A load profile describes the consumption profile of an electricity consumer over a certain period of time. `standardlastprofile` provides data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. 
+
+Each of the 11 load profiles represents a simplification for an electricity supplier to be able to create an annual consumption forecast for its customers (or customer groups). In practice, the standard load profiles are used for customers (or customer groups) who do not have modern metering equipment. That is, customers whose electricity consumption is not measured continuously.
+
+``` {r, message=FALSE, include = FALSE}
+library(standardlastprofile)
+library(ggplot2)
+```
+
+
+```{r readme_xample, echo = FALSE, fig.asp = 1.3, fig.retina=2}
+# labeler
+label_names <- c(
+  "saturday"="Saturday",
+  'sunday'="Sunday",
+  'working_day'="Working Day"
+)
+
+label_fun <- function(x) label_names[[x]]
+
+# plot
+ggplot(load_profiles,
+       aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
+           y = watt,
+           color = period)) + 
+  geom_line() +
+  facet_grid(profile ~ weekday, scales = "free_y",
+             labeller = labeller(weekday = as_labeller(label_names))) +
+  scale_x_datetime(NULL, date_labels = "%H") +
+  scale_y_continuous(NULL) +
+  scale_color_manual(name = NULL,
+                     values = c(
+                       "winter" = "#311dfc",
+                       "summer" = "#f4ae1b",
+                       "transition" = "#d77e7b"
+                       )) +
+  labs(title = "Representative Load Profiles",
+       subtitle = "96 x 1/4h-measurements each [in Watt], based on consumption of 1.000 kWh/a",
+       caption = "source: www.bdew.de") +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  theme(strip.text.y.right = element_text(angle = 0)) + 
+  theme(axis.text.x = element_blank()) +
+  theme(axis.text.y = element_blank()) +
+  NULL
+```
+
+
+## Installation
+
+You can install the development version of standardlastprofile from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("flrd/standardlastprofile")
+```
+
+## About the data
+The standardlastprofile package contains one dataset called `load_profiles` used in the plot above.
+
+``` {r, message=FALSE}
+library(standardlastprofile)
+data(package = "standardlastprofile")
+```
+
+It contains 9.504 observations of 5 variables, you can see the first records below, see `?load_profiles` for more information.
+
+``` {r, message=FALSE}
+head(load_profiles)
+```
+
+Included are 11 load profiles for 3 customer groups:
+
+- H0: households (German: "Haushalte")
+- G0 to G6: commerce ("Gewerbe")
+- L0 to L2: agriculture ("Landwirtschaft")
+
+Call [get_load_profile_info()] for more information on each profile and examples.
+
+Call `get_load_profile_info()` to see a description for each profile.
+

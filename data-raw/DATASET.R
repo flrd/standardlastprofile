@@ -6,7 +6,7 @@ library(httr2)
 # load data ---------------------------------------------------------------
 # url <- "https://www.bdew.de/media/documents/Profile.zip"
 # filename: "Repr„sentative Profile VDEW.xls" but that is not portable ;(
-path <- system.file("extdata", "representative_profiles.xls", package = "standardlastprofil")
+path <- system.file("extdata", "representative_profiles.xls", package = "standardlastprofile")
 sheets <- readxl::excel_sheets(path)
 n_sheets <- length(sheets)
 
@@ -48,8 +48,9 @@ profiles_lst <- lapply(profiles_lst, function(profile) {
   # rename columns
   data.table::setnames(profile, c(nms[1], paste(days, nms[-1], sep = "_")))
 
-  # remove date part from 'timestamp' column
+  # remove date part from 'timestamp' column; start at 00:00
   profile[, timestamp := format(timestamp, "%H:%M")]
+  profile[, timestamp := c(timestamp[.N], timestamp[-.N])]
 })
 
 
@@ -80,20 +81,20 @@ load_profiles <- lapply(profiles_lst, function(profile) {
 
 # save VDEW_profiles_wide to disk as CSV
 fwrite(x = load_profiles,
-       file = system.file("/inst/extdata", "load_profiles.csv", package = "standardlastprofil"))
+       file = system.file("/inst/extdata", "load_profiles.csv", package = "standardlastprofile"))
 
 
 # fetch public holidays in Germany from nager.Date API --------------------
 get_federal_holidays <- function(year) {
   if (year < 1973L || year > 2073L) {
-    stop("'API supports years between 1973 and 2073.")
+    stop("'API supports 'only' years between 1973 and 2073.")
   }
 
   year <- as.character(year)
   base_url <- "https://date.nager.at/api/v3"
 
   resp <- httr2::request(base_url = base_url) |>
-    httr2::req_user_agent("https://github.com/flrd/standardlastprofil") |>
+    httr2::req_user_agent("https://github.com/flrd/standardlastprofile") |>
     httr2::req_url_path_append("PublicHolidays") |>
     httr2::req_url_path_append(year) |>
     httr2::req_url_path_append("DE") |>
@@ -197,7 +198,11 @@ profile_description_EN <- data.frame(
   comment = comment_EN
 )
 
-# store data internally ---------------------------------------------------
+
+# store in data/ to be accessible for users -------------------------------
+usethis::use_data(load_profiles, overwrite = TRUE)
+
+# store data internally in R/sysdata.rda ----------------------------------
 # see: https://r-pkgs.org/data.html#sec-data-sysdata
 
 usethis::use_data(
