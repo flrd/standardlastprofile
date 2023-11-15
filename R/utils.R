@@ -191,16 +191,16 @@ get_wkday_period <- function(x) {
   paste_snake(get_weekday(x), get_period(x))
 }
 
-# format dates helpers ----------------------------------------------------
+# dates helpers -----------------------------------------------------------
 
 format_u <- function(x) format.Date(x, "%u")
 format_md <- function(x) format.Date(x, "%m-%d")
 format_Y <- function(x) format.Date(x, "%Y")
 
-make_utc <- function(x, y) {
-  paste(x, paste0(y, "Z"), sep = "T") |>
-    as.POSIXct(tz = "UTC", format = "%FT%H:%MZ")
+get_15min_seq <- function(start, end) {
+  seq.POSIXt(as.POSIXlt(start), as.POSIXlt(end), by = "15 min")
 }
+
 
 # paste string helpers ----------------------------------------------------
 

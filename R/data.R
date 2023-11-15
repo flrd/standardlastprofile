@@ -35,7 +35,8 @@
 #'
 #'In addition, a distinction is made between three different type of days:
 #'- 'working_day': Monday to Friday
-#'- 'saturday': Saturdays; Dec 24th and Dec 31th are considered a 'saturday' too, if they are not a 'sunday'
+#'- 'saturday': Saturdays; Dec 24th and Dec 31th are considered a 'saturday' too,
+#'if they are not a 'sunday'
 #'- 'sunday': Sundays and all public holidays
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
