@@ -12,9 +12,9 @@
 #' 'transition'.
 #'
 #' Supported profiles are:
-#' - H0: households (German: "Haushalte")
-#' - G0 to G6: commerce ("Gewerbe")
-#' - L0 to L2: agriculture ("Landwirtschaft")
+#' - `H0`: households (German: "Haushalte")
+#' - `G0` to `G6`: commerce ("Gewerbe")
+#' - `L0` to `L2`: agriculture ("Landwirtschaft")
 #'
 #' Call [get_load_profile_info()] for more information about profiles.
 #'
@@ -36,8 +36,8 @@
 #'
 #' @export
 #' @examples
-#' get_load_profile("H0", sys.Date(), sys.Date() + 1)
-#' get_load_profile("G5", "2024-01-01", "2024-01-31")
+#' today <- Sys.Date()
+#' get_load_profile("H0", today, today) |> head()
 #'
 get_load_profile <- function(
     profile = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
@@ -60,12 +60,12 @@ get_load_profile <- function(
   time_seq_n <- length(time_seq)
 
   # extraxt values from internal 'load_profiles_lst' object
-  values <- load_profiles_lst[[profile]][, wkday_period] |> as.vector()
+  values <- load_profiles_lst[[profile]][, wkday_period]
 
   data.frame(
     start_time = time_seq[-time_seq_n],
     end_time = time_seq[-1L],
-    watt = values
+    watt = as.vector(values)
   )
 }
 
