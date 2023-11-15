@@ -2,12 +2,12 @@
 % Please edit documentation in R/get_load_profile.R
 \name{get_load_profile}
 \alias{get_load_profile}
-\title{Generate a load profil}
+\title{Generate a load profile}
 \usage{
 get_load_profile(
   profile = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
-  start_date = Sys.Date(),
-  end_date = Sys.Date() + 2
+  start_date,
+  end_date
 )
 }
 \arguments{
@@ -18,32 +18,50 @@ get_load_profile(
 \item{end_date}{end date in ISO 8601 date format, required}
 }
 \value{
-A data.frame with two columns:
+A data.frame with three columns:
 \itemize{
-\item 'date', class POSIXct
-\item 'load_profile', in Watt
+\item 'start_time', class POSIXlt
+\item 'end_time', class POSIXlt
+\item 'watt', numeric
 }
 }
 \description{
-Generate a load profil
+Generate a load profile
 }
 \details{
 A load profile describes the consumption profile of an electricity
-consumer over a certain period of time. This function creates a data sequence
-based on the user input and generates a load profile for the requested
-'profile'.
+consumer over a certain period of time. Given a start date, end date and a
+profile, this function maps each date to a 'typical day', and returns a load
+profile for the requested period. A typical day is a combination of
+'working_day', 'saturday', 'sunday', and a period, i.e. 'summer', 'winter',
+'transition'.
 
-Supported are:
+Supported profiles are:
 \itemize{
 \item H0: households (German: "Haushalte")
 \item G0 to G6: commerce ("Gewerbe")
 \item L0 to L2: agriculture ("Landwirtschaft")
 }
 
-Call \code{\link[=get_load_profile_info]{get_load_profile_info()}} for more information on each profile and examples.
+Call \code{\link[=get_load_profile_info]{get_load_profile_info()}} for more information about profiles.
+
+In addition, a distinction is made between three different type of days:
+\itemize{
+\item 'working_day': Monday to Friday
+\item 'saturday': Saturdays; Dec 24th and Dec 31th are considered a
+'saturday' too, if they are not a 'sunday'
+\item 'sunday': Sundays and all public holidays
+}
+
+Periods as defined by the BDEW:
+\itemize{
+\item summer: May 15 to September 14
+\item winter: November 1 to March 20
+\item transition: March 21 to May 14, and September 15 to October 31
+}
 }
 \examples{
-get_load_profile()
-get_load_profile("G0", "2024-01-01", "2024-01-31")
+get_load_profile("H0", sys.Date(), sys.Date() + 1)
+get_load_profile("G5", "2024-01-01", "2024-01-31")
 
 }
