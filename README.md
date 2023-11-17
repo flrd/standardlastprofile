@@ -45,7 +45,7 @@ library(standardlastprofile)
 data(package = "standardlastprofile")
 ```
 
-The dataset contains 9.504 observations of 5 variables. Given a ‘day’
+The dataset contains 9,504 observations of 5 variables. Given a ‘day’
 and a ‘period’ the data in `load_profiles` for a given ‘profile’
 represents a ‘typical day’, e.g. a Sunday in winter versus a workday in
 summer. There are 11 load profiles for 3 customer groups:
@@ -71,18 +71,19 @@ Call `get_load_profile_info()` for more information and examples.
 
 ### Generate a load profile
 
-You can use the function `get_load_profile()` to generate a time series
-a given profile. The algorithm sets December 24 and 31 to be a Saturday,
-and a public holiday to be a Sunday – if they are not a Sunday.
-**Note**: As of now the package supports only public holidays for
-Germany, which were retrieved from the [nager.Date
-API](https://github.com/nager/Nager.Date).
+Use the function `get_load_profile()` to generate a load profile.
 
 ``` r
 get_load_profile(profile = "G5",
                  start_date = "2023-12-22",
                  end_date = "2023-12-27")
 ```
+
+The algorithm sets December 24 and 31 to be a Saturday, and a public
+holiday to be a Sunday – if they are not a Sunday. **Note**: As of now
+the package supports only public holidays for Germany, which were
+retrieved from the [nager.Date
+API](https://github.com/nager/Nager.Date).
 
 <img src="man/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;" />
 
