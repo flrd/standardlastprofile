@@ -7,8 +7,8 @@
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
 #' @examples
-#' get_load_profile_info(language = "EN")
-#' get_load_profile_info(language = "DE")
+#' get_load_profile_info(language = "EN") |> subset(profile == "G6")
+#' get_load_profile_info(language = "DE") |> subset(profile == "G6")
 #'
 get_load_profile_info <- function(language = c("EN", "DE")) {
 

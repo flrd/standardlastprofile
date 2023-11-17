@@ -19,7 +19,7 @@ A data.frame
 Get the description load profiles according to the BDEW
 }
 \examples{
-get_load_profile_info(language = "EN")
-get_load_profile_info(language = "DE")
+get_load_profile_info(language = "EN") |> subset(profile == "G6")
+get_load_profile_info(language = "DE") |> subset(profile == "G6")
 
 }
