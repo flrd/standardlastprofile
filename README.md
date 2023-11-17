@@ -4,21 +4,26 @@
 # standardlastprofile
 
 <!-- badges: start -->
+
+[![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://codecov.io/gh/flrd/standardlastprofile)
+<!-- [![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
 <!-- badges: end -->
 
-A load profile describes the consumption profile of an electricity
-consumer over a certain period of time. `standardlastprofile` provides
-data from the German Association of Energy and Water Industries (BDEW
-Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
+A load profile describes the consumption profile of an energy consumer
+over time. The package `standardlastprofile` provides load profile data
+for electricity from the German Association of Energy and Water
+Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
+in a tidy format.
 
 <img src="man/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;" />
 
-In practice, the standard load profiles are used for customers (or
-customer groups) who do not have a modern meter. That is, customers
-whose electricity consumption is not measured continuously. Each of the
-11 load profiles represents a simplification for an energy supplier to
-be able to create an annual consumption forecast for its customers (or
-customer groups).
+In practice, standard load profiles are used by an energy suppliers to
+create an annual consumption forecast for customers (or customer groups)
+who do not have a modern meter. That is, customers whose electricity
+consumption is not continuously measured. A load profile is a
+simplification that does not necessarily correspond to the consumption
+profile of an individual customer, but is a valid approximation for a
+larger group of similar customers.
 
 ## Installation
 
@@ -40,14 +45,14 @@ library(standardlastprofile)
 data(package = "standardlastprofile")
 ```
 
-It contains 9.504 observations of 5 variables. Given a ‘weekday’ and a
-‘period’ the data in `load_profiles` for a given ‘profile’ represents a
-‘typical day’, e.g. a Sunday in winter versus a working day in summer.
-There are 11 load profiles for 3 customer groups:
+The dataset contains 9.504 observations of 5 variables. Given a ‘day’
+and a ‘period’ the data in `load_profiles` for a given ‘profile’
+represents a ‘typical day’, e.g. a Sunday in winter versus a workday in
+summer. There are 11 load profiles for 3 customer groups:
 
 ``` r
 head(load_profiles)
-#>   profile period  weekday timestamp watt
+#>   profile period      day timestamp watt
 #> 1      H0 winter saturday     00:00 70.8
 #> 2      H0 winter saturday     00:15 68.2
 #> 3      H0 winter saturday     00:30 65.9
@@ -64,20 +69,27 @@ If you have no idea what “H0” etc. stands for, you are not alone.
 
 Call `get_load_profile_info()` for more information and examples.
 
+### Generate a load profile
+
 You can use the function `get_load_profile()` to generate a time series
-a given profile. The algorithm sets December 24 and 31 to be a
-‘saturday’, and a public holiday to be a ‘sunday’ – if they are not a
-Sunday. **Note**: As of now the package supports only public holidays
-for Germany, which were retrieved from the [nager.Date
+a given profile. The algorithm sets December 24 and 31 to be a Saturday,
+and a public holiday to be a Sunday – if they are not a Sunday.
+**Note**: As of now the package supports only public holidays for
+Germany, which were retrieved from the [nager.Date
 API](https://github.com/nager/Nager.Date).
 
 ``` r
-slp_G5 <- get_load_profile(profile = "G5",
-                           start_date = "2023-12-22",
-                           end_date = "2023-12-27")
+get_load_profile(profile = "G5",
+                 start_date = "2023-12-22",
+                 end_date = "2023-12-27")
 ```
 
 <img src="man/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;" />
+
+## Source
+
+Data is published on website of BDEW:
+<https://www.bdew.de/energie/standardlastprofile-strom/>
 
 ## Code of Conduct
 

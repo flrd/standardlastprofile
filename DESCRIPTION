@@ -1,5 +1,5 @@
 Package: standardlastprofile
-Title: Data on Load Profiles for Electricity from BDEW
+Title: Load Profiles for Electricity from BDEW
 Description: A load profile describes the consumption profile of an electricity 
   consumer over a certain period of time. For electricity customers without modern 
   meter devices, an energy utility uses standardised load profiles (SLP). These
@@ -8,7 +8,7 @@ Description: A load profile describes the consumption profile of an electricity
   This packages provides data from the German Association of Energy and Water 
   Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy
   format. For each of the eleven profiles, 96 quarter-hourly values are included
-  for three different days of the week - working day, Saturday, Sunday - and
+  for three different days of the week - workday, Saturday, Sunday - and
   three different seasons - summer, winter, transition -, i.e. a total of
   3x3x96 observations per profile.
 Version: 0.0.0.9000

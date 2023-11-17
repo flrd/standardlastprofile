@@ -37,7 +37,7 @@ for (sheet in sheets) {
 
 
 # data clean-up -----------------------------------------------------------
-days <- c("saturday", "sunday", "working_day")
+days <- c("saturday", "sunday", "workday")
 periods <- c("winter", "summer", "transition")
 nms <- c("timestamp", rep(periods, each = 3))
 
@@ -73,11 +73,11 @@ load_profiles <- lapply(profiles_lst, function(profile) {
 }) |>
   data.table::rbindlist(idcol = "profile") |>
   data.table::melt(
-    measure.vars = c("saturday", "sunday", "working_day"),
-    variable.name = "weekday",
+    measure.vars = c("saturday", "sunday", "workday"),
+    variable.name = "day",
     value.name = "watt"
 ) |>
-  data.table::setcolorder(c("profile", "period", "weekday", "timestamp", "watt"))
+  data.table::setcolorder(c("profile", "period", "day", "timestamp", "watt"))
 
 # save VDEW_profiles_wide to disk as CSV
 fwrite(x = load_profiles,
@@ -161,7 +161,7 @@ comment_DE <- c(
 description_EN = c(
   "household",
   "commerce in general",
-  "commerce working day from 8am - 6pm",
+  "commerce workday from 8am - 6pm",
   "commerce with predominant consumption in evening hours",
   "commerce continous",
   "shop / barbershop",

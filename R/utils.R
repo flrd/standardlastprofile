@@ -1,10 +1,6 @@
-#' Return a Sequence of Days
-#'
-#' @param start_date Starting date. Required
-#' @param end_date End date. Required
-#'
-#' @return A vector of class 'Date'
-#' @seealso [seq.Date()] which this function wraps.
+
+# create a daily sequence -------------------------------------------------
+
 get_daily_sequence <- function(start_date, end_date) {
 
   if (length(start_date) != 1L || length(end_date) != 1L) {
@@ -24,6 +20,7 @@ get_daily_sequence <- function(start_date, end_date) {
 }
 
 # date helpers ------------------------------------------------------------
+
 is_date <- function(x) {
   inherits(x, "Date")
 }
@@ -48,11 +45,6 @@ as_date <- function(x) {
 
 # Map a date to a weekday -------------------------------------------------
 
-#' Map a vector of class 'Date' to 'working_day', 'saturday', or 'sunday'
-#'
-#' @param x A sequence of class 'Date'
-#'
-#' @return A character vector; a vector of dates mapped to 'working_day', 'saturday', or 'sunday'
 get_weekday <- function(x) {
 
   if(!is_date(x)) {
@@ -64,7 +56,7 @@ get_weekday <- function(x) {
 
   wkday_decimal <- format_u(x)
 
-  weekday <- rep("working_day", length(x))
+  weekday <- rep("workday", length(x))
   weekday[wkday_decimal == "6"] <- "saturday"
   weekday[wkday_decimal == "7"] <- "sunday"
 
@@ -117,12 +109,6 @@ get_weekday <- function(x) {
 
 # Map date to consumption period ------------------------------------------
 
-#' Map a sequence of dates to a consumption period according to BDEW definition
-#'
-#' @param x A vector of class 'Date'
-#'
-#' @return A character vector; a vector of dates mapped to 'summer', 'winter', or 'transition'
-#' @source description
 get_period <- function(x) {
 
   if(!is_date(x)) {

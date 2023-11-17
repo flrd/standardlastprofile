@@ -4,14 +4,15 @@
 \name{standardlastprofile-package}
 \alias{standardlastprofile}
 \alias{standardlastprofile-package}
-\title{standardlastprofile: Data on Load Profiles for Electricity from BDEW}
+\title{standardlastprofile: Load Profiles for Electricity from BDEW}
 \description{
-A load profile describes the consumption profile of an electricity consumer over a certain period of time. For electricity customers without modern meter devices, an energy utility uses standardised load profiles (SLP). These SLPs replace the non-existent load profile of end consumers with a calculated, sufficiently accurate forecast of electricity consumption on a 15-minutes basis. This packages provides data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. For each of the eleven profiles, 96 quarter-hourly values are included for three different days of the week - working day, Saturday, Sunday - and three different seasons - summer, winter, transition -, i.e. a total of 3x3x96 observations per profile.
+A load profile describes the consumption profile of an electricity consumer over a certain period of time. For electricity customers without modern meter devices, an energy utility uses standardised load profiles (SLP). These SLPs replace the non-existent load profile of end consumers with a calculated, sufficiently accurate forecast of electricity consumption on a 15-minutes basis. This packages provides data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. For each of the eleven profiles, 96 quarter-hourly values are included for three different days of the week - workday, Saturday, Sunday - and three different seasons - summer, winter, transition -, i.e. a total of 3x3x96 observations per profile.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://github.com/flrd/standardlastprofile}
+  \item \url{https://flrd.github.io/standardlastprofile/}
   \item Report bugs at \url{https://github.com/flrd/standardlastprofile/issues}
 }
 

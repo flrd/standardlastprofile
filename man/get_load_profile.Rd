@@ -20,48 +20,50 @@ get_load_profile(
 \value{
 A data.frame with three columns:
 \itemize{
-\item 'start_time', class POSIXlt
-\item 'end_time', class POSIXlt
-\item 'watt', numeric
+\item \code{start_time}, class POSIXlt
+\item \code{end_time}, class POSIXlt
+\item \code{watt}, numeric
 }
 }
 \description{
-Generate a load profile
+\code{get_load_profile()} returns a load profiles in the form of quarter-hourly
+values (in Watt) that are standardised to an annual consumption of 1,000 kWh.
 }
 \details{
-A load profile describes the consumption profile of an electricity
-consumer over a certain period of time. Given a start date, end date and a
-profile, this function maps each date to a 'typical day', and returns a load
-profile for the requested period. A typical day is a combination of
-'working_day', 'saturday', 'sunday', and a period, i.e. 'summer', 'winter',
-'transition'.
+Given a start and end date, each day is first mapped to a combination of workday,
+Saturday, Sunday and a period, i.e. summer, winter, transition - the result is
+a so-called "type day". The values for each period, day, and profile can be
+taken from the \code{load_profile} data set.
 
 Supported profiles are:
 \itemize{
-\item H0: households (German: "Haushalte")
-\item G0 to G6: commerce ("Gewerbe")
-\item L0 to L2: agriculture ("Landwirtschaft")
+\item \code{H0}: households (German: "Haushalte")
+\item \code{G0} to \code{G6}: commerce ("Gewerbe")
+\item \code{L0} to \code{L2}: agriculture ("Landwirtschaft")
 }
 
 Call \code{\link[=get_load_profile_info]{get_load_profile_info()}} for more information about profiles.
 
-In addition, a distinction is made between three different type of days:
+Each day is mapped to one of the three values below:
 \itemize{
-\item 'working_day': Monday to Friday
-\item 'saturday': Saturdays; Dec 24th and Dec 31th are considered a
-'saturday' too, if they are not a 'sunday'
-\item 'sunday': Sundays and all public holidays
+\item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
+if they are not a Sunday
+\item \code{sunday}: Sundays and all public holidays
+\item \code{workday}: Monday to Friday
 }
 
 Periods as defined by the BDEW:
 \itemize{
-\item summer: May 15 to September 14
-\item winter: November 1 to March 20
-\item transition: March 21 to May 14, and September 15 to October 31
+\item \code{summer}: May 15 to September 14
+\item \code{winter}: November 1 to March 20
+\item \code{transition}: March 21 to May 14, and September 15 to October 31
 }
+
+See: \url{https://www.bdew.de/energie/standardlastprofile-strom/} for the
+methodology used to determine the profiles.
 }
 \examples{
-get_load_profile("H0", sys.Date(), sys.Date() + 1)
-get_load_profile("G5", "2024-01-01", "2024-01-31")
+today <- Sys.Date()
+get_load_profile("H0", today, today + 1) |> head()
 
 }
