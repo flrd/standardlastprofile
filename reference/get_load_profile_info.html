@@ -70,56 +70,12 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_load_profile_info</span><span class="op">(</span>language <span class="op">=</span> <span class="st">"EN"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    profile                                                   description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       H0                                                     household</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       G0                                           commerce in general</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       G1                               commerce workday from 8am - 6pm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       G2        commerce with predominant consumption in evening hours</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       G3                                            commerce continous</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       G4                                             shop / barbershop</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       G5                                         bakery with bakehouse</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       G6                                              weekend business</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       L0                                       agricultural in general</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      L1 agricultural with dairy farming / part-time livestock farming</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11      L2                                 other agricultural businesses</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                               comment</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                  weighted average of profiles G1-G6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  e.g. offices, doctor's office, workshop, administrative facilities</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4               e.g. sports club, fitness studio, evening restaurants</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         e.g. cold storage warehouse, pumps, sewage treatment plants</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                  e.g. movie theater</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                  weighted average of profiles L1-L2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                   </span>
-<span class="r-in"><span><span class="fu">get_load_profile_info</span><span class="op">(</span>language <span class="op">=</span> <span class="st">"DE"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    profile                                                         description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       H0                                                            Haushalt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       G0                                                   Gewerbe allgemein</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       G1                                           Gewerbe werktags 8-18 Uhr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       G2  Gewerbe mit starkem bis überwiegendem Verbrauch in den Abendstunde</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       G3                                                Gewerbe durchlaufend</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       G4                                                      Laden/ Friseur</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       G5                                              Bäckerei mit Backstube</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       G6                                                    Wochenendbetrieb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       L0                                   Landwirtschaftsbetriebe allgemein</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10      L1 Landwirtschaftsbetriebe mit Milchwirtschaft/ Nebenerwerbs-Tierzucht</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11      L2                                      Übrige Landwirtschaftsbetriebe</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                          comment</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                         Gewogener Mittelwert der Profile G1-G6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  z.B. Büros, Arztpraxen, Werkstätten, Verwaltungseinrichtungen</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4            z.B. Sportvereine, Fitnessstudios, Abendgaststätten</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                           z.B. Kühlhäuser, Pumpen, Kläranlagen</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                     z.B. Kinos</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                     Gewogener Mittelwert der Profile L1 und L2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                              </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_load_profile_info</span><span class="op">(</span>language <span class="op">=</span> <span class="st">"EN"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">profile</span> <span class="op">==</span> <span class="st">"G6"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   profile      description            comment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8      G6 weekend business e.g. movie theater</span>
+<span class="r-in"><span><span class="fu">get_load_profile_info</span><span class="op">(</span>language <span class="op">=</span> <span class="st">"DE"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">profile</span> <span class="op">==</span> <span class="st">"G6"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   profile      description    comment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8      G6 Wochenendbetrieb z.B. Kinos</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

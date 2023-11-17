@@ -100,7 +100,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flrd/standardlastprofile" class="external-link">standardlastprofile</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"standardlastprofile"</span><span class="op">)</span></span></code></pre></div>
-<p>The dataset contains 9.504 observations of 5 variables. Given a ‘day’ and a ‘period’ the data in <code>load_profiles</code> for a given ‘profile’ represents a ‘typical day’, e.g. a Sunday in winter versus a workday in summer. There are 11 load profiles for 3 customer groups:</p>
+<p>The dataset contains 9,504 observations of 5 variables. Given a ‘day’ and a ‘period’ the data in <code>load_profiles</code> for a given ‘profile’ represents a ‘typical day’, e.g. a Sunday in winter versus a workday in summer. There are 11 load profiles for 3 customer groups:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">load_profiles</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   profile period      day timestamp watt</span></span>
@@ -123,11 +123,12 @@
 <div class="section level3">
 <h3 id="generate-a-load-profile">Generate a load profile<a class="anchor" aria-label="anchor" href="#generate-a-load-profile"></a>
 </h3>
-<p>You can use the function <code><a href="reference/get_load_profile.html">get_load_profile()</a></code> to generate a time series a given profile. The algorithm sets December 24 and 31 to be a Saturday, and a public holiday to be a Sunday – if they are not a Sunday. <strong>Note</strong>: As of now the package supports only public holidays for Germany, which were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.</p>
+<p>Use the function <code><a href="reference/get_load_profile.html">get_load_profile()</a></code> to generate a load profile.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span>profile <span class="op">=</span> <span class="st">"G5"</span>,</span>
 <span>                 start_date <span class="op">=</span> <span class="st">"2023-12-22"</span>,</span>
 <span>                 end_date <span class="op">=</span> <span class="st">"2023-12-27"</span><span class="op">)</span></span></code></pre></div>
+<p>The algorithm sets December 24 and 31 to be a Saturday, and a public holiday to be a Sunday – if they are not a Sunday. <strong>Note</strong>: As of now the package supports only public holidays for Germany, which were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.</p>
 <p><img src="reference/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;"></p>
 </div>
 </div>
