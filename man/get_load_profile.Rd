@@ -2,39 +2,34 @@
 % Please edit documentation in R/get_load_profile.R
 \name{get_load_profile}
 \alias{get_load_profile}
-\title{Generate a load profile}
+\title{Generate a Load Profile}
 \usage{
 get_load_profile(
-  profile = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
+  profiles = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
   start_date,
   end_date
 )
 }
 \arguments{
-\item{profile}{Name of the load profile, see 'Details'.}
+\item{profiles}{Name of the load profile(s), see 'Details'.}
 
 \item{start_date}{starting date in ISO 8601 date format, required}
 
 \item{end_date}{end date in ISO 8601 date format, required}
 }
 \value{
-A data.frame with three columns:
+A data.frame with four columns:
 \itemize{
-\item \code{start_time}, class POSIXlt
-\item \code{end_time}, class POSIXlt
+\item \code{profile} load profile identifier
+\item \code{date_time}, class POSIXlt
 \item \code{watt}, numeric
 }
 }
 \description{
-\code{get_load_profile()} returns a load profiles in the form of quarter-hourly
+\code{get_load_profile()} returns load profiles in the form of quarter-hourly
 values (in Watt) that are standardised to an annual consumption of 1,000 kWh.
 }
 \details{
-Given a start and end date, each day is first mapped to a combination of workday,
-Saturday, Sunday and a period, i.e. summer, winter, transition - the result is
-a so-called "type day". The values for each period, day, and profile can be
-taken from the \code{load_profile} data set.
-
 Supported profiles are:
 \itemize{
 \item \code{H0}: households (German: "Haushalte")
@@ -44,7 +39,19 @@ Supported profiles are:
 
 Call \code{\link[=get_load_profile_info]{get_load_profile_info()}} for more information about profiles.
 
-Each day is mapped to one of the three values below:
+The standard load profiles are differentiated according to winter,
+transitional period and summer as well as workday, Saturday and Sunday.
+The values for each combination of profile, period and day can be retrieved
+from the \code{load_profile} dataset.
+
+Periods are defined as:
+\itemize{
+\item \code{summer}: May 15 to September 14
+\item \code{winter}: November 1 to March 20
+\item \code{transition}: March 21 to May 14, and September 15 to October 31
+}
+
+Dates are mapped to one of three days:
 \itemize{
 \item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
 if they are not a Sunday
@@ -52,12 +59,8 @@ if they are not a Sunday
 \item \code{workday}: Monday to Friday
 }
 
-Periods as defined by the BDEW:
-\itemize{
-\item \code{summer}: May 15 to September 14
-\item \code{winter}: November 1 to March 20
-\item \code{transition}: March 21 to May 14, and September 15 to October 31
-}
+\strong{Note}: As of now the package supports public holidays for Germany only. They
+were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 
 See: \url{https://www.bdew.de/energie/standardlastprofile-strom/} for the
 methodology used to determine the profiles.
@@ -65,5 +68,5 @@ methodology used to determine the profiles.
 \examples{
 today <- Sys.Date()
 get_load_profile("H0", today, today + 1) |> head()
-
+get_load_profile(c("L0", "L1", "L2"), today, today + 1) |> head()
 }

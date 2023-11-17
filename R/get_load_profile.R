@@ -1,9 +1,9 @@
 #' Generate a Load Profile
 #'
 #' `get_load_profile()` returns load profiles in the form of quarter-hourly
-#' values (in Watt) that are standardised to an annual consumption of 1,000 kWh.
+#' values (in Watt) that are standardized to an annual consumption of 1,000 kWh.
 #'
-#' @param profiles Name of the load profile(s), see 'Details'.
+#' @param profiles Name of one or more load profiles, see 'Details'.
 #' @param start_date starting date in ISO 8601 date format, required
 #' @param end_date end date in ISO 8601 date format, required
 #'
@@ -51,6 +51,17 @@ get_load_profile <- function(
     profiles = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
     start_date,
     end_date) {
+
+  start <- as_date(start_date)
+  end <- as_date(end_date)
+
+  if(anyNA(start, end)) {
+    stop("Please provide a valid date in ISO 8601 format")
+  }
+
+  if(start < as.Date("1973-01-01") || end > as.Date("2073-01-01")) {
+    stop("Supported date range must be between 1973-01-01 and 2072-12-31.")
+  }
 
   profiles <- toupper(profiles)
   profiles <- unique(profiles)
