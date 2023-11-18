@@ -55,12 +55,12 @@ get_load_profile <- function(
   start <- as_date(start_date)
   end <- as_date(end_date)
 
-  if(anyNA(start, end)) {
+  if(anyNA(c(start, end))) {
     stop("Please provide a valid date in ISO 8601 format")
   }
 
-  if(start < as.Date("1973-01-01") || end > as.Date("2073-01-01")) {
-    stop("Supported date range must be between 1973-01-01 and 2072-12-31.")
+  if(start < as_date("1973-01-01") || end > as_date("2073-12-21")) {
+    stop("Supported date range must be between 1973-01-01 and 2073-12-31.")
   }
 
   profiles <- toupper(profiles)

@@ -1,6 +1,3 @@
-library(ggplot2)
-library(ggpointless)
-library(vdiffr)
 
 # example #1 --------------------------------------------------------------
 
