@@ -19,3 +19,5 @@ reference:
 figures:
   dev: ragg::agg_png
 
+development:
+  mode: auto
