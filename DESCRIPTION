@@ -14,7 +14,7 @@ Description: A load profile describes the consumption profile of an electricity
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Markus", family = "Döring", email = "m4rkus.doering@gmail.com", role = c("aut", "cre"))
-License: MIT + file LICENSE
+License: CC0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
