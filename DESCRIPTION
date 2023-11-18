@@ -1,5 +1,5 @@
 Package: standardlastprofile
-Title: Load Profiles for Electricity from BDEW
+Title: R data package for load profiles for electricity
 Description: A load profile describes the consumption profile of an electricity 
   consumer over a certain period of time. For electricity customers without modern 
   meter devices, an energy utility uses standardised load profiles (SLP). These
