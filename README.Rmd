@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 <!-- [![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
 <!-- badges: end -->
 
-A load profile describes the consumption profile of an energy consumer over time. The package `standardlastprofile` provides load profile data for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. 
+This package provides data about load profile for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. 
 
 ``` {r, message=FALSE, include = FALSE}
 library(standardlastprofile)
@@ -56,7 +56,7 @@ ggplot(load_profiles,
                        "transition" = "#0CC792"
                        )) +
   labs(title = "Representative Load Profiles",
-       subtitle = "96 x 1/4h-measurements each day [in Watt], based on consumption of 1.000 kWh/a",
+       subtitle = "96 x 1/4h-measurements a day [in Watt], based on consumption of 1.000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -70,7 +70,7 @@ ggplot(load_profiles,
   NULL
 ```
 
-In practice, standard load profiles are used by an energy suppliers to create an annual consumption forecast for customers (or customer groups) who do not have a modern meter. That is, customers whose electricity consumption is not continuously measured. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.
+In practice, standardized load profiles are used by an energy suppliers to create an annual consumption forecast for customers (or customer groups) who do not have a modern meter. That is, customers whose electricity consumption is not continuously measured. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.
 
 ## Installation
 

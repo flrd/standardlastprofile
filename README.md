@@ -9,19 +9,17 @@
 <!-- [![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
 <!-- badges: end -->
 
-A load profile describes the consumption profile of an energy consumer
-over time. The package `standardlastprofile` provides load profile data
-for electricity from the German Association of Energy and Water
-Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
-in a tidy format.
+This package provides data about load profile for electricity from the
+German Association of Energy and Water Industries (BDEW Bundesverband
+der Energie- und Wasserwirtschaft e.V.) in a tidy format.
 
 <img src="man/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;" />
 
-In practice, standard load profiles are used by an energy suppliers to
-create an annual consumption forecast for customers (or customer groups)
-who do not have a modern meter. That is, customers whose electricity
-consumption is not continuously measured. A load profile is a
-simplification that does not necessarily correspond to the consumption
+In practice, standardized load profiles are used by an energy suppliers
+to create an annual consumption forecast for customers (or customer
+groups) who do not have a modern meter. That is, customers whose
+electricity consumption is not continuously measured. A load profile is
+a simplification that does not necessarily correspond to the consumption
 profile of an individual customer, but is a valid approximation for a
 larger group of similar customers.
 
