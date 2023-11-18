@@ -11,7 +11,7 @@ get_load_profile(
 )
 }
 \arguments{
-\item{profiles}{Name of the load profile(s), see 'Details'.}
+\item{profiles}{Name of one or more load profiles, see 'Details'.}
 
 \item{start_date}{starting date in ISO 8601 date format, required}
 
@@ -27,7 +27,7 @@ A data.frame with four columns:
 }
 \description{
 \code{get_load_profile()} returns load profiles in the form of quarter-hourly
-values (in Watt) that are standardised to an annual consumption of 1,000 kWh.
+values (in Watt) that are standardized to an annual consumption of 1,000 kWh.
 }
 \details{
 Supported profiles are:

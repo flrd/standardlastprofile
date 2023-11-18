@@ -3,6 +3,7 @@ template:
   bootstrap: 5
   bslib:
     primary: "#0CC792"
+    navbar-background: "#eefff6"
     border-radius: 0.5rem
     btn-border-radius: 0.25rem
 
