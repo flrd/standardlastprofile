@@ -18,7 +18,8 @@
 #' The standard load profiles are differentiated according to winter,
 #' transitional period and summer as well as workday, Saturday and Sunday.
 #' The values for each combination of profile, period and day can be retrieved
-#' from the `load_profile` dataset.
+#' from the `load_profile` dataset. See: <https://www.bdew.de/energie/standardlastprofile-strom/> for the
+#' methodology used to determine the profiles.
 #'
 #'Periods are defined as:
 #'- `summer`: May 15 to September 14
@@ -31,11 +32,19 @@
 #'- `sunday`: Sundays and all public holidays
 #'- `workday`: Monday to Friday
 #'
-#'**Note**: As of now the package supports public holidays for Germany only. They
-#'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
+#'**Note**: The package supports nationwide public holidays for Germany only. Those
+#'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date) and
+#'are listed below for 2024:
 #'
-#' See: <https://www.bdew.de/energie/standardlastprofile-strom/> for the
-#' methodology used to determine the profiles.
+#'- New Year's: Jan 1
+#'- Good Friday: Mar 29
+#'- Easter Monday: Apr 1
+#'- Labour Day: May 1
+#'- Ascension Day: May 9
+#'- Whit Monday: May 20
+#'- German Unity Day: Oct 3
+#'- Christmas Day: Dec 25
+#'- Boxing Day: Dec 26
 #'
 #' @return A data.frame with four columns:
 #' - `profile` load profile identifier
