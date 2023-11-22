@@ -51,7 +51,7 @@ slp_G5 <- get_load_profile(profile = "G5",
                            start_date = "2023-12-22",
                            end_date = "2023-12-27")
 
-p2 <- ggplot2::ggplot(slp_G5, ggplot2::aes(date_time, watt)) +
+p2 <- ggplot2::ggplot(slp_G5, ggplot2::aes(start_time, watt)) +
   ggplot2::geom_line(color = "#0CC792") +
   ggpointless::geom_pointless(color = "#0CC792", location = c("first", "last")) +
   ggplot2::scale_x_datetime(date_breaks = "1 day", date_labels = "%b %d") +

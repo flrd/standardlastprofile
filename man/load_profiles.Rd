@@ -5,19 +5,23 @@
 \alias{load_profiles}
 \title{Load Profile Data for Electricity from BDEW}
 \format{
-A data frame with 9,504 rows and 5 columns:
+A data.frame with 9,504 rows and 5 columns:
 \describe{
 \item{profile}{character, one of 11 load profiles, see 'Details'}
-\item{period}{factor, one of 'summer', 'winter', 'transition'}
-\item{day}{factor, one of 'saturday', 'sunday', and 'workday'}
-\item{timestamp}{character, format \%H:\%M}
+\item{period}{character, one of 'summer', 'winter', 'transition'}
+\item{day}{character, one of 'saturday', 'sunday', 'workday'}
+\item{timestamp}{character, format: \%H:\%M}
 \item{watt}{numeric, electricity load}
 }
 }
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
+\url{https://www.bdew.de/media/documents/Profile.zip}
+
 \url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
+
+\url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
 }
 \usage{
 load_profiles
@@ -28,11 +32,15 @@ provided by the German Association of Energy andvWater Industries (BDEW
 Bundesverband der Energie- und Wasserwirtschaft e.V.).
 }
 \details{
-The load profiles are available in the form of quarter-hourly values in Watt
-that are standardised to an annual consumption of 1,000 kWh. They are
-differentiated by workday, Saturday and Sunday in the three annual periods of
-winter, transitional period and summer. Hence for each profile there are 96
-values per weekday and period. See 'Details' for more information.
+Data is differentiated by workday, Saturday and Sunday in the three annual
+periods of winter, transitional period and summer. Hence for each profile
+there are 96 values per weekday and period.
+
+These 96 values per day correspond to the average quarter-hourly power
+that is expected if the customer / customer group consumes 1000 kWh/a
+("normalized annual consumption"). Put differently, the sum over all
+quarter-hourly power values for one calender year equals (roughly)
+1000 kWh/a.
 
 Included are eleven representative load profiles covering three different
 customer groups:
@@ -46,9 +54,9 @@ Call \code{\link[=get_load_profile_info]{get_load_profile_info()}} to get descri
 
 Periods as defined by the BDEW:
 \itemize{
-\item summer: May 15 to September 14
-\item winter: November 1 to March 20
-\item transition: March 21 to May 14, and September 15 to October 31
+\item \code{summer}: May 15 to September 14
+\item \code{winter}: November 1 to March 20
+\item \code{transition}: March 21 to May 14, and September 15 to October 31
 }
 
 In addition, a distinction is made between three different type of days:
@@ -56,7 +64,14 @@ In addition, a distinction is made between three different type of days:
 \item \code{workday}: Monday to Friday
 \item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
 if they are not a Sunday
-\item \code{sunday}'`: Sundays and all nationwide holidays in Germany
+\item \code{sunday}: Sundays and all nationwide holidays in Germany
 }
+}
+\examples{
+subset(load_profiles,
+      profile == "L0" & period == "summer" & day == "workday") |>
+ dim()
+ # [1] 96  5
+
 }
 \keyword{datasets}

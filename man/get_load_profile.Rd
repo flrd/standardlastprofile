@@ -3,6 +3,13 @@
 \name{get_load_profile}
 \alias{get_load_profile}
 \title{Generate a Load Profile}
+\source{
+\url{https://www.bdew.de/energie/standardlastprofile-strom/}
+
+\url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
+
+\url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
+}
 \usage{
 get_load_profile(
   profiles = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
@@ -11,18 +18,19 @@ get_load_profile(
 )
 }
 \arguments{
-\item{profiles}{Name of one or more load profiles, see 'Details'.}
+\item{profiles}{name of load profiles, see 'Details'.}
 
-\item{start_date}{starting date in ISO 8601 date format, required}
+\item{start_date}{start date in ISO 8601 date format, required}
 
 \item{end_date}{end date in ISO 8601 date format, required}
 }
 \value{
-A data.frame with four columns:
+A data.frame with four variables:
 \itemize{
-\item \code{profile} load profile identifier
-\item \code{date_time}, class POSIXlt
-\item \code{watt}, numeric
+\item \code{profile}, character, load profile identifier
+\item \code{start_time}, POSIXct / POSIXlt, start time
+\item \code{end_time}, POSIXct / POSIXlt, end time
+\item \code{watt}, numeric, measurement
 }
 }
 \description{
@@ -40,9 +48,9 @@ Supported profiles are:
 Call \code{\link[=get_load_profile_info]{get_load_profile_info()}} for more information about profiles.
 
 The standard load profiles are differentiated according to winter,
-transitional period and summer as well as workday, Saturday and Sunday.
-The values for each combination of profile, period and day can be retrieved
-from the \code{load_profile} dataset.
+transitional period, summer as well as workday, Saturday, Sunday. See:
+\url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
+for the methodology used to determine the profiles.
 
 Periods are defined as:
 \itemize{
@@ -59,14 +67,24 @@ if they are not a Sunday
 \item \code{workday}: Monday to Friday
 }
 
-\strong{Note}: As of now the package supports public holidays for Germany only. They
-were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
-
-See: \url{https://www.bdew.de/energie/standardlastprofile-strom/} for the
-methodology used to determine the profiles.
+\strong{Note}: The package supports nationwide, public holidays for Germany only. Those
+were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API} and
+are listed below for 2024:
+\itemize{
+\item New Year's: Jan 1
+\item Good Friday: Mar 29
+\item Easter Monday: Apr 1
+\item Labour Day: May 1
+\item Ascension Day: May 9
+\item Whit Monday: May 20
+\item German Unity Day: Oct 3
+\item Christmas Day: Dec 25
+\item Boxing Day: Dec 26
+}
 }
 \examples{
 today <- Sys.Date()
 get_load_profile("H0", today, today + 1) |> head()
-get_load_profile(c("L0", "L1", "L2"), today, today + 1) |> head()
+L <- get_load_profile(c("L0", "L1", "L2"), today, today + 1)
+head(L)
 }

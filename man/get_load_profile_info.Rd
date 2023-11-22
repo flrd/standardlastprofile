@@ -5,6 +5,8 @@
 \title{Get the description load profiles according to the BDEW}
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
+
+\url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
 }
 \usage{
 get_load_profile_info(language = c("EN", "DE"))
@@ -19,7 +21,7 @@ A data.frame
 Get the description load profiles according to the BDEW
 }
 \examples{
-get_load_profile_info(language = "EN") |> subset(profile == "G6")
-get_load_profile_info(language = "DE") |> subset(profile == "G6")
+get_load_profile_info(language = "EN")$G6
+get_load_profile_info(language = "DE")$G6
 
 }
