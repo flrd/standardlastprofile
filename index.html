@@ -129,7 +129,7 @@
 <span><span class="co">#&gt; [1] "household"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $details</span></span>
-<span><span class="co">#&gt; [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as electric storage heaters storage heaters or heat pumps."</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps."</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="generate-a-load-profile">Generate a load profile<a class="anchor" aria-label="anchor" href="#generate-a-load-profile"></a>
 </h3>
@@ -140,7 +140,7 @@
 <span>                 end_date <span class="op">=</span> <span class="st">"2023-12-27"</span><span class="op">)</span></span></code></pre></div>
 <p>The algorithm sets a public holiday to be a Sunday, December 24 and 31 to be a Saturday – if they are not a Sunday. <strong>Note</strong>: As of now the package supports only public holidays for Germany, which were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.</p>
 <p><img src="reference/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;"></p>
-<p>In contrast to most commercial and agricultural businesses, which have a relatively even consumption and a fairly constant power consumption in the three annual zones, households have a continuously decreasing load from winter to summer and an increasing load towards winter. This is taken into account by applying the dynamization function (4th order polynomial), see <a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">bdew.de</a>, page 32/46.</p>
+<p>In contrast to most commercial and agricultural businesses, which have a relatively even consumption and a fairly constant power consumption within the three periods, households on the other hand have a continuously decreasing load from winter to summer and vice versa. This is taken into account by applying a dynamization function (4th order polynomial), see <a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">bdew.de</a>, page 32/46.</p>
 <p><img src="reference/figures/README-H0_example-1.png" width="90%" style="display: block; margin: auto;"></p>
 </div>
 </div>
