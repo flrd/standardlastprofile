@@ -59,13 +59,19 @@ values (in Watt) that are standardized to an annual consumption of 1,000 kWh.</p
     </div>
 
     <div class="section level2">
+    <h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a></h2>
+    <p><a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link">https://www.bdew.de/energie/standardlastprofile-strom/</a></p>
+<p><a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf</a></p>
+<p><a href="https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf" class="external-link">https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf</a></p>
+    </div>
+    <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>profiles</dt>
-<dd><p>Name of one or more load profiles, see 'Details'.</p></dd>
+<dd><p>name of load profiles, see 'Details'.</p></dd>
 
 
 <dt>start_date</dt>
-<dd><p>starting date in ISO 8601 date format, required</p></dd>
+<dd><p>start date in ISO 8601 date format, required</p></dd>
 
 
 <dt>end_date</dt>
@@ -76,9 +82,10 @@ values (in Watt) that are standardized to an annual consumption of 1,000 kWh.</p
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A data.frame with four columns:</p><ul><li><p><code>profile</code> load profile identifier</p></li>
-<li><p><code>date_time</code>, class POSIXlt</p></li>
-<li><p><code>watt</code>, numeric</p></li>
+<p>A data.frame with four variables:</p><ul><li><p><code>profile</code>, character, load profile identifier</p></li>
+<li><p><code>start_time</code>, POSIXct / POSIXlt, start time</p></li>
+<li><p><code>end_time</code>, POSIXct / POSIXlt, end time</p></li>
+<li><p><code>watt</code>, numeric, measurement</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -87,9 +94,9 @@ values (in Watt) that are standardized to an annual consumption of 1,000 kWh.</p
 <li><p><code>L0</code> to <code>L2</code>: agriculture ("Landwirtschaft")</p></li>
 </ul><p>Call <code><a href="get_load_profile_info.html">get_load_profile_info()</a></code> for more information about profiles.</p>
 <p>The standard load profiles are differentiated according to winter,
-transitional period and summer as well as workday, Saturday and Sunday.
-The values for each combination of profile, period and day can be retrieved
-from the <code>load_profile</code> dataset.</p>
+transitional period, summer as well as workday, Saturday, Sunday. See:
+<a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf</a>
+for the methodology used to determine the profiles.</p>
 <p>Periods are defined as:</p><ul><li><p><code>summer</code>: May 15 to September 14</p></li>
 <li><p><code>winter</code>: November 1 to March 20</p></li>
 <li><p><code>transition</code>: March 21 to May 14, and September 15 to October 31</p></li>
@@ -97,31 +104,39 @@ from the <code>load_profile</code> dataset.</p>
 if they are not a Sunday</p></li>
 <li><p><code>sunday</code>: Sundays and all public holidays</p></li>
 <li><p><code>workday</code>: Monday to Friday</p></li>
-</ul><p><strong>Note</strong>: As of now the package supports public holidays for Germany only. They
-were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.</p>
-<p>See: <a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link">https://www.bdew.de/energie/standardlastprofile-strom/</a> for the
-methodology used to determine the profiles.</p>
-    </div>
+</ul><p><strong>Note</strong>: The package supports nationwide, public holidays for Germany only. Those
+were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a> and
+are listed below for 2024:</p><ul><li><p>New Year's: Jan 1</p></li>
+<li><p>Good Friday: Mar 29</p></li>
+<li><p>Easter Monday: Apr 1</p></li>
+<li><p>Labour Day: May 1</p></li>
+<li><p>Ascension Day: May 9</p></li>
+<li><p>Whit Monday: May 20</p></li>
+<li><p>German Unity Day: Oct 3</p></li>
+<li><p>Christmas Day: Dec 25</p></li>
+<li><p>Boxing Day: Dec 26</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">today</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">get_load_profile</span><span class="op">(</span><span class="st">"H0"</span>, <span class="va">today</span>, <span class="va">today</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   profile           date_time watt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      H0 2023-11-19 00:00:00 87.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      H0 2023-11-19 00:15:00 81.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      H0 2023-11-19 00:30:00 75.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4      H0 2023-11-19 00:45:00 69.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5      H0 2023-11-19 01:00:00 63.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      H0 2023-11-19 01:15:00 58.2</span>
-<span class="r-in"><span><span class="fu">get_load_profile</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"L0"</span>, <span class="st">"L1"</span>, <span class="st">"L2"</span><span class="op">)</span>, <span class="va">today</span>, <span class="va">today</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   profile           date_time watt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      L0 2023-11-19 00:00:00 68.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      L0 2023-11-19 00:15:00 66.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      L0 2023-11-19 00:30:00 64.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4      L0 2023-11-19 00:45:00 63.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5      L0 2023-11-19 01:00:00 62.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      L0 2023-11-19 01:15:00 61.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   profile          start_time            end_time     watt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      H0 2023-11-22 00:00:00 2023-11-22 00:15:00 75.93228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      H0 2023-11-22 00:15:00 2023-11-22 00:30:00 68.29412</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      H0 2023-11-22 00:30:00 2023-11-22 00:45:00 61.66689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      H0 2023-11-22 00:45:00 2023-11-22 01:00:00 56.05060</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      H0 2023-11-22 01:00:00 2023-11-22 01:15:00 51.89455</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      H0 2023-11-22 01:15:00 2023-11-22 01:30:00 48.97407</span>
+<span class="r-in"><span><span class="va">L</span> <span class="op">&lt;-</span> <span class="fu">get_load_profile</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"L0"</span>, <span class="st">"L1"</span>, <span class="st">"L2"</span><span class="op">)</span>, <span class="va">today</span>, <span class="va">today</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">L</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   profile          start_time            end_time watt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      L0 2023-11-22 00:00:00 2023-11-22 00:15:00 72.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      L0 2023-11-22 00:15:00 2023-11-22 00:30:00 69.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      L0 2023-11-22 00:30:00 2023-11-22 00:45:00 66.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      L0 2023-11-22 00:45:00 2023-11-22 01:00:00 64.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      L0 2023-11-22 01:00:00 2023-11-22 01:15:00 63.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      L0 2023-11-22 01:15:00 2023-11-22 01:30:00 61.9</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
