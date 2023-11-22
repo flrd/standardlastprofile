@@ -5,7 +5,7 @@
 \alias{load_profiles}
 \title{Load Profile Data for Electricity from BDEW}
 \format{
-A data.frame with 9,504 rows and 5 columns:
+A data.frame with 9,504 rows and 5 parameters:
 \describe{
 \item{profile}{character, one of 11 load profiles, see 'Details'}
 \item{period}{character, one of 'summer', 'winter', 'transition'}

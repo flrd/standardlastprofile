@@ -80,7 +80,7 @@ get_load_profile_info(language = "EN")$H0
 #> [1] "household"
 #> 
 #> $details
-#> [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as electric storage heaters storage heaters or heat pumps."
+#> [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps."
 ```
 
 ### Generate a load profile
@@ -101,10 +101,10 @@ from the [nager.Date API](https://github.com/nager/Nager.Date).
 <img src="man/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;" />
 
 In contrast to most commercial and agricultural businesses, which have a
-relatively even consumption and a fairly constant power consumption in
-the three annual zones, households have a continuously decreasing load
-from winter to summer and an increasing load towards winter. This is
-taken into account by applying the dynamization function (4th order
+relatively even consumption and a fairly constant power consumption
+within the three periods, households on the other hand have a
+continuously decreasing load from winter to summer and vice versa. This
+is taken into account by applying a dynamization function (4th order
 polynomial), see
 [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf),
 page 32/46.

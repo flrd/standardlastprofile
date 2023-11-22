@@ -148,7 +148,7 @@ ggplot(slp_G5, aes(start_time, watt)) +
   NULL
 ```
 
-In contrast to most commercial and agricultural businesses, which have a relatively even consumption and a fairly constant power consumption in the three annual zones, households have a continuously decreasing load from winter to summer and an increasing load towards winter. This is taken into account by applying the dynamization function (4th order polynomial), see [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf), page 32/46.
+In contrast to most commercial and agricultural businesses, which have a relatively even consumption and a fairly constant power consumption within the three periods, households on the other hand have a continuously decreasing load from winter to summer and vice versa. This is taken into account by applying a dynamization function (4th order polynomial), see [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf), page 32/46.
 
 ``` {r H0_example, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 slp_H0 <- get_load_profile(profile = "H0",
