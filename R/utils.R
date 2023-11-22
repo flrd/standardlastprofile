@@ -177,11 +177,20 @@ get_wkday_period <- function(x) {
   paste_snake(get_weekday(x), get_period(x))
 }
 
+
+# dynamization function ---------------------------------------------------
+
+dynamization_fun <- function(x) {
+  1.24 + 0.0021*x + -0.0000702*x^2 + 0.00000032*x^3 + -0.000000000392*x^4
+}
+
+
 # dates helpers -----------------------------------------------------------
 
-format_u <- function(x) format.Date(x, "%u")
-format_md <- function(x) format.Date(x, "%m-%d")
-format_Y <- function(x) format.Date(x, "%Y")
+format_u <- function(x) format.Date(x, "%u")      # Weekday as a decimal number (1–7, Monday is 1).
+format_md <- function(x) format.Date(x, "%m-%d")  # Month as decimal number - Day of the month
+format_Y <- function(x) format.Date(x, "%Y")      # Year with century
+format_j <- function(x) format.Date(x, "%j")      # Day of year as decimal number (001–366)
 
 get_15min_seq <- function(start, end) {
   seq.POSIXt(as.POSIXlt(start), as.POSIXlt(end), by = "15 min")

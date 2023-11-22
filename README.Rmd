@@ -27,6 +27,8 @@ This package provides data about load profile for electricity from the German As
 ``` {r, message=FALSE, include = FALSE}
 library(standardlastprofile)
 library(ggplot2)
+library(ggpointless)
+library(data.table)
 ```
 
 
@@ -90,10 +92,12 @@ library(standardlastprofile)
 data(package = "standardlastprofile")
 ```
 
-The dataset contains 9,504 observations of 5 variables. Given a day, a period and a profile the data in `load_profiles` represents a 'typical day', e.g. a Sunday in winter versus a workday in summer. There are 11 load profiles for 3 customer groups:
+Given a day, a period and a profile the data in `load_profiles` represents a 'characteristic day', e.g. a Sunday in winter versus a workday in summer. There are eleven load profiles for three customer groups. These 96 values per day correspond to the the average quarter-hourly power that is expected if the customer / customer group consumes 1000 kWh/a ("normalized annual consumption"). 
+
+In total the dataset contains 9,504 observations of five variables:
 
 ``` {r, message=FALSE}
-head(load_profiles)
+str(load_profiles)
 ```
 
 If you have no idea what `H0` etc. stands for, you are not alone. 
@@ -103,6 +107,10 @@ If you have no idea what `H0` etc. stands for, you are not alone.
 - `L0` to `L2`: agriculture ("Landwirtschaft")
 
 Call `get_load_profile_info()` for more information and examples.
+
+``` {r, message=FALSE, echo=TRUE}
+get_load_profile_info(language = "EN")$H0
+```
 
 ### Generate a load profile
 
@@ -123,7 +131,7 @@ slp_G5 <- get_load_profile(profile = "G5",
 
 library(ggplot2)
 library(ggpointless)
-ggplot(slp_G5, aes(date_time, watt)) +
+ggplot(slp_G5, aes(start_time, watt)) +
   geom_line(color = "#0CC792") +
   geom_pointless(color = "#0CC792", location = c("first", "last")) + 
   scale_x_datetime(date_breaks = "1 day", date_labels = "%b %d") +
@@ -140,8 +148,36 @@ ggplot(slp_G5, aes(date_time, watt)) +
   NULL
 ```
 
+In contrast to most commercial and agricultural businesses, which have a relatively even consumption and a fairly constant power consumption in the three annual zones, households have a continuously decreasing load from winter to summer and an increasing load towards winter. This is taken into account by applying the dynamization function (4th order polynomial), see [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf), page 32/46.
+
+``` {r H0_example, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+slp_H0 <- get_load_profile(profile = "H0",
+                           start_date = "2023-01-01",
+                           end_date = "2024-01-01") |> 
+  as.data.table()
+
+# aggregate by day of year and year
+dt_H0 <- slp_H0[, .(start_time = start_time[1], watt = mean(watt)), by = .(day = format(start_time, "%j"), year = format(start_time, "%Y"))]
+
+# plot
+ggplot(dt_H0, aes(start_time, watt)) +
+  geom_line(color = "#0CC792") +
+  geom_pointless(location = c("first", "last"), color = "#0CC792") + 
+  labs(title = "Profile 'H0': Households",
+       subtitle = "Daily consumption using a dynamic load profile",
+       caption = "data: www.bdew.de",
+       x = NULL,
+       y = "[Watt]") +
+  theme_minimal() +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank()
+  ) +
+  NULL
+```
+
 ## Source
-Data is published on website of BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
+Data and information about the methodology can be found on website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
 
 ## Code of Conduct
 

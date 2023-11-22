@@ -44,20 +44,23 @@ library(standardlastprofile)
 data(package = "standardlastprofile")
 ```
 
-The dataset contains 9,504 observations of 5 variables. Given a day, a
-period and a profile the data in `load_profiles` represents a ‘typical
-day’, e.g. a Sunday in winter versus a workday in summer. There are 11
-load profiles for 3 customer groups:
+Given a day, a period and a profile the data in `load_profiles`
+represents a ‘characteristic day’, e.g. a Sunday in winter versus a
+workday in summer. There are eleven load profiles for three customer
+groups. These 96 values per day correspond to the the average
+quarter-hourly power that is expected if the customer / customer group
+consumes 1000 kWh/a (“normalized annual consumption”).
+
+In total the dataset contains 9,504 observations of five variables:
 
 ``` r
-head(load_profiles)
-#>   profile period      day timestamp watt
-#> 1      H0 winter saturday     00:00 70.8
-#> 2      H0 winter saturday     00:15 68.2
-#> 3      H0 winter saturday     00:30 65.9
-#> 4      H0 winter saturday     00:45 63.3
-#> 5      H0 winter saturday     01:00 59.5
-#> 6      H0 winter saturday     01:15 55.0
+str(load_profiles)
+#> 'data.frame':    9504 obs. of  5 variables:
+#>  $ profile  : chr  "H0" "H0" "H0" "H0" ...
+#>  $ period   : chr  "winter" "winter" "winter" "winter" ...
+#>  $ day      : chr  "saturday" "saturday" "saturday" "saturday" ...
+#>  $ timestamp: chr  "00:00" "00:15" "00:30" "00:45" ...
+#>  $ watt     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
 ```
 
 If you have no idea what `H0` etc. stands for, you are not alone.
@@ -67,6 +70,18 @@ If you have no idea what `H0` etc. stands for, you are not alone.
 - `L0` to `L2`: agriculture (“Landwirtschaft”)
 
 Call `get_load_profile_info()` for more information and examples.
+
+``` r
+get_load_profile_info(language = "EN")$H0
+#> $profile
+#> [1] "H0"
+#> 
+#> $description
+#> [1] "household"
+#> 
+#> $details
+#> [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as electric storage heaters storage heaters or heat pumps."
+```
 
 ### Generate a load profile
 
@@ -85,10 +100,21 @@ from the [nager.Date API](https://github.com/nager/Nager.Date).
 
 <img src="man/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;" />
 
+In contrast to most commercial and agricultural businesses, which have a
+relatively even consumption and a fairly constant power consumption in
+the three annual zones, households have a continuously decreasing load
+from winter to summer and an increasing load towards winter. This is
+taken into account by applying the dynamization function (4th order
+polynomial), see
+[bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf),
+page 32/46.
+
+<img src="man/figures/README-H0_example-1.png" width="90%" style="display: block; margin: auto;" />
+
 ## Source
 
-Data is published on website of BDEW:
-<https://www.bdew.de/energie/standardlastprofile-strom/>
+Data and information about the methodology can be found on website of
+the BDEW: <https://www.bdew.de/energie/standardlastprofile-strom/>
 
 ## Code of Conduct
 

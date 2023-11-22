@@ -3,9 +3,13 @@
 #' `get_load_profile()` returns load profiles in the form of quarter-hourly
 #' values (in Watt) that are standardized to an annual consumption of 1,000 kWh.
 #'
-#' @param profiles Name of one or more load profiles, see 'Details'.
-#' @param start_date starting date in ISO 8601 date format, required
+#' @param profiles name of load profiles, see 'Details'.
+#' @param start_date start date in ISO 8601 date format, required
 #' @param end_date end date in ISO 8601 date format, required
+#'
+#' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
+#' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+#' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 #'
 #' @details
 #' Supported profiles are:
@@ -16,10 +20,9 @@
 #' Call [get_load_profile_info()] for more information about profiles.
 #'
 #' The standard load profiles are differentiated according to winter,
-#' transitional period and summer as well as workday, Saturday and Sunday.
-#' The values for each combination of profile, period and day can be retrieved
-#' from the `load_profile` dataset. See: <https://www.bdew.de/energie/standardlastprofile-strom/> for the
-#' methodology used to determine the profiles.
+#' transitional period, summer as well as workday, Saturday, Sunday. See:
+#' <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+#' for the methodology used to determine the profiles.
 #'
 #'Periods are defined as:
 #'- `summer`: May 15 to September 14
@@ -32,7 +35,7 @@
 #'- `sunday`: Sundays and all public holidays
 #'- `workday`: Monday to Friday
 #'
-#'**Note**: The package supports nationwide public holidays for Germany only. Those
+#'**Note**: The package supports nationwide, public holidays for Germany only. Those
 #'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date) and
 #'are listed below for 2024:
 #'
@@ -46,16 +49,18 @@
 #'- Christmas Day: Dec 25
 #'- Boxing Day: Dec 26
 #'
-#' @return A data.frame with four columns:
-#' - `profile` load profile identifier
-#' - `date_time`, class POSIXlt
-#' - `watt`, numeric
+#' @return A data.frame with four variables:
+#' - `profile`, character, load profile identifier
+#' - `start_time`, POSIXct / POSIXlt, start time
+#' - `end_time`, POSIXct / POSIXlt, end time
+#' - `watt`, numeric, measurement
 #'
 #' @export
 #' @examples
 #' today <- Sys.Date()
 #' get_load_profile("H0", today, today + 1) |> head()
-#' get_load_profile(c("L0", "L1", "L2"), today, today + 1) |> head()
+#' L <- get_load_profile(c("L0", "L1", "L2"), today, today + 1)
+#' head(L)
 get_load_profile <- function(
     profiles = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
     start_date,
@@ -90,8 +95,22 @@ get_load_profile <- function(
   vals <- vector("list", length = profiles_n)
   names(vals) <- profiles
 
-  for(profil in profiles) {
-    vals[[profil]] <- tmp[[profil]][, wkday_period]
+  for(profile in profiles) {
+    vals[[profile]] <- tmp[[profile]][, wkday_period]
+  }
+
+  # generate a dynamic profile for households which takes
+  # into account that electricity consumption increases
+  # in winter compared to summer, see: page 18f.
+  # https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
+  if ("H0" %in% profiles) {
+    tmp_h0 <- vals[["H0"]]
+
+    # get day of year as decimal number
+    days_decimal <- format_j(daily_seq) |> as.integer()
+
+    # multiply values for each day with
+    vals[["H0"]] <- tmp_h0 * rep(dynamization_fun(days_decimal), each = dim(tmp_h0)[[1]])
   }
 
   # timestamp for output
@@ -100,7 +119,8 @@ get_load_profile <- function(
 
     out <-   data.frame(
       profile = rep(profiles, each = time_seq_n - 1L),
-      date_time = rep(time_seq[-time_seq_n], profiles_n),
+      start_time = rep(time_seq[-time_seq_n], profiles_n),
+      end_time = rep(time_seq[-1], profiles_n),
       watt = unlist(vals, use.names = FALSE)
     )
 
