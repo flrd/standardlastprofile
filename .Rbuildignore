@@ -9,3 +9,5 @@
 ^docs$
 ^pkgdown$
 ^CONDUCT\.md$
+^doc$
+^Meta$

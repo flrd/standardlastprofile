@@ -117,7 +117,7 @@ get_load_profile <- function(
   time_seq <- get_15min_seq(start, end + 1)
   time_seq_n <- length(time_seq)
 
-    out <-   data.frame(
+    out <- data.frame(
       profile = rep(profiles, each = time_seq_n - 1L),
       start_time = rep(time_seq[-time_seq_n], profiles_n),
       end_time = rep(time_seq[-1], profiles_n),

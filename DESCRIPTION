@@ -22,6 +22,8 @@ Suggests:
     covr,
     ggplot2,
     ggpointless,
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0),
     vdiffr
 Config/testthat/edition: 3
@@ -31,3 +33,4 @@ BugReports: https://github.com/flrd/standardlastprofile/issues
 Depends: 
     R (>= 2.10)
 LazyData: true
+VignetteBuilder: knitr

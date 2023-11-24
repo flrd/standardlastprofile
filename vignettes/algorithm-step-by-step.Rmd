@@ -1,0 +1,39 @@
+---
+title: "algorithm-step-by-step"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{algorithm-step-by-step}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(standardlastprofile)
+```
+
+I am happy you made it this far. In this vignette I want to show you step by step how the algorithm of the function `get_load_profiles()` works.
+
+The data in the `load_profiles` dataset forms the basis for all subsequent steps. There are 96 values for each combination of profile, period and day. These are 1/4-hour measurements (in watts) and represent a standardized load profile. This data was derived in 1999 on the basis of a study of 1,209 load profiles[^bdew-1].
+
+  [^bdew-1]: https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
+
+When you create a load profile calling `get_load_profiles()` these steps are performed, which I'll show step-by-step below:
+
+1. generate a date sequence from `start_date` to `end_date`
+2. each day is mapped a combination of `day` and `period`
+3. for each profile the result from 2. is used to extract values from `load_profiles`[^data-1]
+
+    [^data-1]: That is actually a lie. There is an internal data object called `load_profiles_lst` from which the data is extracted. A list of matrices where each matrix holds the data for one profile.
+
+4. apply dynamization function for values of profile `H0` 
+5. return data
+
+  
+
