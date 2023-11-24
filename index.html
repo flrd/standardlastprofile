@@ -18,8 +18,8 @@
   3x3x96 observations per profile.">
 <title>R data package for load profiles for electricity • standardlastprofile</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="R data package for load profiles for electricity">
 <meta property="og:description" content="A load profile describes the consumption profile of an electricity 
@@ -58,6 +58,12 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/algorithm-step-by-step.html">algorithm-step-by-step</a>
+  </div>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -82,9 +88,8 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This package provides data about load profile for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.</p>
+<p>This package provides data about representative, standardized load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. These load profiles are used by energy suppliers to create an annual consumption forecast for their customers. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.</p>
 <p><img src="reference/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;"></p>
-<p>In practice, standardized load profiles are used by an energy suppliers to create an annual consumption forecast for customers (or customer groups) who do not have a modern meter. That is, customers whose electricity consumption is not continuously measured. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -96,13 +101,9 @@
 <div class="section level2">
 <h2 id="about-the-data">About the data<a class="anchor" aria-label="anchor" href="#about-the-data"></a>
 </h2>
-<p>The standardlastprofile package contains one dataset called <code>load_profiles</code> used for the plot above.</p>
+<p>The standardlastprofile package contains one dataset called <code>load_profiles</code>. These profiles were created on the basis of a total of 1,209 individual customer load profiles, which were classified according to customer group, period of the year and day of the week.</p>
+<p>Given a profile, a period and a day there are 96 x 1/4h-measurements in watts, based on a normalized annual consumption of 1.000 kWh. See vignette .. . In total the dataset contains 9,504 observations of five variables:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flrd/standardlastprofile" class="external-link">standardlastprofile</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"standardlastprofile"</span><span class="op">)</span></span></code></pre></div>
-<p>Given a day, a period and a profile the data in <code>load_profiles</code> represents a ‘characteristic day’, e.g. a Sunday in winter versus a workday in summer. There are eleven load profiles for three customer groups. These 96 values per day correspond to the the average quarter-hourly power that is expected if the customer / customer group consumes 1000 kWh/a (“normalized annual consumption”).</p>
-<p>In total the dataset contains 9,504 observations of five variables:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">load_profiles</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    9504 obs. of  5 variables:</span></span>
 <span><span class="co">#&gt;  $ profile  : chr  "H0" "H0" "H0" "H0" ...</span></span>
@@ -120,7 +121,7 @@
 <code>L0</code> to <code>L2</code>: agriculture (“Landwirtschaft”)</li>
 </ul>
 <p>Call <code><a href="reference/get_load_profile_info.html">get_load_profile_info()</a></code> for more information and examples.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/get_load_profile_info.html">get_load_profile_info</a></span><span class="op">(</span>language <span class="op">=</span> <span class="st">"EN"</span><span class="op">)</span><span class="op">$</span><span class="va">H0</span></span>
 <span><span class="co">#&gt; $profile</span></span>
 <span><span class="co">#&gt; [1] "H0"</span></span>
@@ -134,13 +135,18 @@
 <h3 id="generate-a-load-profile">Generate a load profile<a class="anchor" aria-label="anchor" href="#generate-a-load-profile"></a>
 </h3>
 <p>Use the function <code><a href="reference/get_load_profile.html">get_load_profile()</a></code> to generate a load profile.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span>profile <span class="op">=</span> <span class="st">"G5"</span>,</span>
 <span>                 start_date <span class="op">=</span> <span class="st">"2023-12-22"</span>,</span>
 <span>                 end_date <span class="op">=</span> <span class="st">"2023-12-27"</span><span class="op">)</span></span></code></pre></div>
 <p>The algorithm sets a public holiday to be a Sunday, December 24 and 31 to be a Saturday – if they are not a Sunday. <strong>Note</strong>: As of now the package supports only public holidays for Germany, which were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.</p>
 <p><img src="reference/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;"></p>
-<p>In contrast to most commercial and agricultural businesses, which have a relatively even consumption and a fairly constant power consumption within the three periods, households on the other hand have a continuously decreasing load from winter to summer and vice versa. This is taken into account by applying a dynamization function (4th order polynomial), see <a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">bdew.de</a>, page 32/46.</p>
+<p>In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing load from winter to summer and vice versa.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span>profile <span class="op">=</span> <span class="st">"H0"</span>,</span>
+<span>                 start_date <span class="op">=</span> <span class="st">"2023-01-01"</span>,</span>
+<span>                 end_date <span class="op">=</span> <span class="st">"2024-01-01"</span><span class="op">)</span></span></code></pre></div>
+<p>This is taken into account by applying a dynamization function (4th order polynomial), see <a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">bdew.de</a>, page 32/46.</p>
 <p><img src="reference/figures/README-H0_example-1.png" width="90%" style="display: block; margin: auto;"></p>
 </div>
 </div>
