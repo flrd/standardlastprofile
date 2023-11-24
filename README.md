@@ -10,19 +10,16 @@
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-This package provides data about load profile for electricity from the
-German Association of Energy and Water Industries (BDEW Bundesverband
-der Energie- und Wasserwirtschaft e.V.) in a tidy format.
+This package provides data about representative, standardized load
+profiles for electricity from the German Association of Energy and Water
+Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
+in a tidy format. These load profiles are used by energy suppliers to
+create an annual consumption forecast for their customers. A load
+profile is a simplification that does not necessarily correspond to the
+consumption profile of an individual customer, but is a valid
+approximation for a larger group of similar customers.
 
 <img src="man/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;" />
-
-In practice, standardized load profiles are used by an energy suppliers
-to create an annual consumption forecast for customers (or customer
-groups) who do not have a modern meter. That is, customers whose
-electricity consumption is not continuously measured. A load profile is
-a simplification that does not necessarily correspond to the consumption
-profile of an individual customer, but is a valid approximation for a
-larger group of similar customers.
 
 ## Installation
 
@@ -37,21 +34,14 @@ devtools::install_github("flrd/standardlastprofile")
 ## About the data
 
 The standardlastprofile package contains one dataset called
-`load_profiles` used for the plot above.
+`load_profiles`. These profiles were created on the basis of a total of
+1,209 individual customer load profiles, which were classified according
+to customer group, period of the year and day of the week.
 
-``` r
-library(standardlastprofile)
-data(package = "standardlastprofile")
-```
-
-Given a day, a period and a profile the data in `load_profiles`
-represents a ‘characteristic day’, e.g. a Sunday in winter versus a
-workday in summer. There are eleven load profiles for three customer
-groups. These 96 values per day correspond to the the average
-quarter-hourly power that is expected if the customer / customer group
-consumes 1000 kWh/a (“normalized annual consumption”).
-
-In total the dataset contains 9,504 observations of five variables:
+Given a profile, a period and a day there are 96 x 1/4h-measurements in
+watts, based on a normalized annual consumption of 1.000 kWh. See
+vignette .. . In total the dataset contains 9,504 observations of five
+variables:
 
 ``` r
 str(load_profiles)
@@ -101,11 +91,18 @@ from the [nager.Date API](https://github.com/nager/Nager.Date).
 <img src="man/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;" />
 
 In contrast to most commercial and agricultural businesses, which have a
-relatively even consumption and a fairly constant power consumption
-within the three periods, households on the other hand have a
-continuously decreasing load from winter to summer and vice versa. This
-is taken into account by applying a dynamization function (4th order
-polynomial), see
+relatively even and a fairly constant power consumption over the course
+of a year, households on the other hand have a continuously decreasing
+load from winter to summer and vice versa.
+
+``` r
+get_load_profile(profile = "H0",
+                 start_date = "2023-01-01",
+                 end_date = "2024-01-01")
+```
+
+This is taken into account by applying a dynamization function (4th
+order polynomial), see
 [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf),
 page 32/46.
 

@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-This package provides data about load profile for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. 
+This package provides data about representative, standardized load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. These load profiles are used by energy suppliers to create an annual consumption forecast for their customers. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.
 
 ``` {r, message=FALSE, include = FALSE}
 library(standardlastprofile)
@@ -59,21 +59,19 @@ ggplot(load_profiles,
                        "transition" = "#0CC792"
                        )) +
   labs(title = "Representative Load Profiles",
-       subtitle = "96 x 1/4h-measurements a day [in Watt], based on consumption of 1.000 kWh/a",
+       subtitle = "96 x 1/4h-measurements a day [in watts], based on consumption of 1.000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
   theme(strip.text.y.right = element_text(angle = 0)) + 
   theme(
       panel.grid.major.x = element_blank(),
-      panel.grid.major.y = element_blank(),
+      panel.grid.major.y = element_blank()
   ) +
   theme(axis.text.x = element_blank()) +
   theme(axis.text.y = element_blank()) +
   NULL
 ```
-
-In practice, standardized load profiles are used by an energy suppliers to create an annual consumption forecast for customers (or customer groups) who do not have a modern meter. That is, customers whose electricity consumption is not continuously measured. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.
 
 ## Installation
 
@@ -85,16 +83,9 @@ devtools::install_github("flrd/standardlastprofile")
 ```
 
 ## About the data
-The standardlastprofile package contains one dataset called `load_profiles` used for the plot above. 
+The standardlastprofile package contains one dataset called `load_profiles`. These profiles were created on the basis of a total of 1,209 individual customer load profiles, which were classified according to customer group, period of the year and day of the week. 
 
-``` {r, message=FALSE}
-library(standardlastprofile)
-data(package = "standardlastprofile")
-```
-
-Given a day, a period and a profile the data in `load_profiles` represents a 'characteristic day', e.g. a Sunday in winter versus a workday in summer. There are eleven load profiles for three customer groups. These 96 values per day correspond to the the average quarter-hourly power that is expected if the customer / customer group consumes 1000 kWh/a ("normalized annual consumption"). 
-
-In total the dataset contains 9,504 observations of five variables:
+Given a profile, a period and a day there are 96 x 1/4h-measurements in watts, based on a normalized annual consumption of 1.000 kWh. See vignette .. . In total the dataset contains 9,504 observations of five variables:
 
 ``` {r, message=FALSE}
 str(load_profiles)
@@ -139,7 +130,7 @@ ggplot(slp_G5, aes(start_time, watt)) +
        subtitle = "1/4h-measurements, based on consumption of 1.000 kWh/a",
        caption = "data: www.bdew.de",
        x = NULL,
-       y = "[Watt]") +
+       y = "[watts]") +
   theme_minimal() +
   theme(
       panel.grid.minor.x = element_blank(),
@@ -148,16 +139,28 @@ ggplot(slp_G5, aes(start_time, watt)) +
   NULL
 ```
 
-In contrast to most commercial and agricultural businesses, which have a relatively even consumption and a fairly constant power consumption within the three periods, households on the other hand have a continuously decreasing load from winter to summer and vice versa. This is taken into account by applying a dynamization function (4th order polynomial), see [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf), page 32/46.
+In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing load from winter to summer and vice versa. 
+
+``` {r, message=FALSE, echo=TRUE, eval=FALSE}
+get_load_profile(profile = "H0",
+                 start_date = "2023-01-01",
+                 end_date = "2024-01-01")
+```
+
+This is taken into account by applying a dynamization function (4th order polynomial), see [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf), page 32/46.
 
 ``` {r H0_example, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 slp_H0 <- get_load_profile(profile = "H0",
                            start_date = "2023-01-01",
-                           end_date = "2024-01-01") |> 
-  as.data.table()
+                           end_date = "2024-01-01")
 
 # aggregate by day of year and year
-dt_H0 <- slp_H0[, .(start_time = start_time[1], watt = mean(watt)), by = .(day = format(start_time, "%j"), year = format(start_time, "%Y"))]
+dt_H0 <- as.data.table(slp_H0)[,
+                               .(start_time = start_time[1],
+                                 watt = mean(watt)),
+                               by = .(day = format(start_time, "%j"),
+                                      year = format(start_time, "%Y"))
+                               ]
 
 # plot
 ggplot(dt_H0, aes(start_time, watt)) +
@@ -167,7 +170,7 @@ ggplot(dt_H0, aes(start_time, watt)) +
        subtitle = "Daily consumption using a dynamic load profile",
        caption = "data: www.bdew.de",
        x = NULL,
-       y = "[Watt]") +
+       y = "[watts]") +
   theme_minimal() +
   theme(
     panel.grid.minor.x = element_blank(),
