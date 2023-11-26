@@ -91,13 +91,13 @@ consumption values for a year, the result is (approximately) 1,000
 kWh/a.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flrd/standardlastprofile" class="external-link">standardlastprofile</a></span><span class="op">)</span></span>
-<span><span class="va">H0_2023</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span></span>
+<span><span class="va">H0_2024</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span></span>
 <span>  <span class="st">"H0"</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="st">"2024-01-01"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2024-12-31"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">H0_2023</span><span class="op">$</span><span class="va">watts</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">H0_2024</span><span class="op">$</span><span class="va">watts</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">prettyNum</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "4,008,335"</span></span></code></pre></div>
 <p>“Hold on - didn’t you just say 1,000?!”, you might be thinking. Yes
@@ -107,7 +107,7 @@ measurements in watts. To convert the values to watt-hours, we must
 hence divide them by 4; and since one watt-hour is equal to 1/1000
 kilowatt-hour, we divide also by 1,000:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">H0_2023</span><span class="op">$</span><span class="va">watts</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">H0_2024</span><span class="op">$</span><span class="va">watts</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">prettyNum</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1,002.084"</span></span></code></pre></div>
 <div class="section level2">
@@ -161,7 +161,7 @@ are listed below for 2024:</p>
 <li>Dec 25: Christmas Day:</li>
 <li>Dec 26: Boxing Day</li>
 </ul>
-<p>The 3 periods are defined as:</p>
+<p>For each year there are 3 periods as defined below:</p>
 <ul>
 <li>
 <code>summer</code>: May 15 to September 14</li>
@@ -254,13 +254,10 @@ year, starting at 1 on January 1st</li>
 </ul>
 <p>Hence for household customers, things look a little different, at
 least under the hood, as can be seen in the following graphic. It shows
-the aggregated daily values for 2023 created at the beginning of this
-vignette:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span>profile <span class="op">=</span> <span class="st">"H0"</span>,</span>
-<span>                 start_date <span class="op">=</span> <span class="st">"2023-01-01"</span>,</span>
-<span>                 end_date <span class="op">=</span> <span class="st">"2023-12-31"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="algorithm-step-by-step_files/figure-html/H0_2023_plot-1.png" alt="Line plot a standardized load profile 'H0' (households) aggreagted by day from January 1st to December 31st, 2023. The plot shows that households have a continuously decreasing load from winter to summer and vice versa." width="700"></p>
+the the values of load profile <code>H0</code> for 2024 created at the
+beginning of this vignette, but aggregated by day for better
+clarity:</p>
+<p><img src="algorithm-step-by-step_files/figure-html/H0_2024_plot-1.png" alt="Line plot a standardized load profile 'H0' (households) aggreagted by day from January 1st to December 31st, 2023. The plot shows that households have a continuously decreasing load from winter to summer and vice versa." width="700"></p>
 </div>
 </div>
 
