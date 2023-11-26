@@ -13,7 +13,7 @@ label_fun <- function(x) label_names[[x]]
 # plot
 p1 <- ggplot2::ggplot(load_profiles,
                       ggplot2::aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
-                                   y = watt,
+                                   y = watts,
                                    color = period)) +
   ggplot2::geom_line() +
   ggplot2::facet_grid(profile ~ day, scales = "free_y",
@@ -47,13 +47,12 @@ test_that("readme example #1 works", {
 
 
 # example #2 --------------------------------------------------------------
-slp_G5 <- get_load_profile(profile = "G5",
-                           start_date = "2023-12-22",
-                           end_date = "2023-12-27")
+G5 <- get_load_profile(profile = "G5",
+                       start_date = "2023-12-22",
+                       end_date = "2023-12-27")
 
-p2 <- ggplot2::ggplot(slp_G5, ggplot2::aes(start_time, watt)) +
+p2 <- ggplot2::ggplot(G5, ggplot2::aes(start_time, watts)) +
   ggplot2::geom_line(color = "#0CC792") +
-  ggpointless::geom_pointless(color = "#0CC792", location = c("first", "last")) +
   ggplot2::scale_x_datetime(date_breaks = "1 day", date_labels = "%b %d") +
   ggplot2::labs(title = "Profile 'G5': bakery with bakehouse",
                 subtitle = "1/4h-measurements, based on consumption of 1.000 kWh/a",

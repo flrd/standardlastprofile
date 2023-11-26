@@ -30,7 +30,7 @@ A data.frame with four variables:
 \item \code{profile}, character, load profile identifier
 \item \code{start_time}, POSIXct / POSIXlt, start time
 \item \code{end_time}, POSIXct / POSIXlt, end time
-\item \code{watt}, numeric, measurement
+\item \code{watts}, numeric, electric power
 }
 }
 \description{
@@ -71,15 +71,15 @@ if they are not a Sunday
 were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API} and
 are listed below for 2024:
 \itemize{
-\item New Year's: Jan 1
-\item Good Friday: Mar 29
-\item Easter Monday: Apr 1
-\item Labour Day: May 1
-\item Ascension Day: May 9
-\item Whit Monday: May 20
-\item German Unity Day: Oct 3
-\item Christmas Day: Dec 25
-\item Boxing Day: Dec 26
+\item Jan 1: New Year's
+\item Mar 29: Good Friday
+\item Apr 1: Easter Monday
+\item May 1: Labour Day
+\item May 9: Ascension Day
+\item May 20: Whit Monday
+\item Oct 3: German Unity Day
+\item Dec 25: Christmas Day:
+\item Dec 26: Boxing Day
 }
 }
 \examples{

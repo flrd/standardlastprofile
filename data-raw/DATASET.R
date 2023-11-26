@@ -80,9 +80,9 @@ load_profiles <- lapply(profiles_lst, function(profile) {
     measure.vars = c("saturday", "sunday", "workday"),
     variable.name = "day",
     variable.factor = FALSE,
-    value.name = "watt"
+    value.name = "watts"
 ) |>
-  data.table::setcolorder(c("profile", "period", "day", "timestamp", "watt")) |>
+  data.table::setcolorder(c("profile", "period", "day", "timestamp", "watts")) |>
   as.data.frame()
 
 # save VDEW_profiles_wide to disk as CSV

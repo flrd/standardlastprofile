@@ -39,21 +39,21 @@
 #'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date) and
 #'are listed below for 2024:
 #'
-#'- New Year's: Jan 1
-#'- Good Friday: Mar 29
-#'- Easter Monday: Apr 1
-#'- Labour Day: May 1
-#'- Ascension Day: May 9
-#'- Whit Monday: May 20
-#'- German Unity Day: Oct 3
-#'- Christmas Day: Dec 25
-#'- Boxing Day: Dec 26
+#' - Jan 1: New Year's
+#' - Mar 29: Good Friday
+#' - Apr 1: Easter Monday
+#' - May 1: Labour Day
+#' - May 9: Ascension Day
+#' - May 20: Whit Monday
+#' - Oct 3: German Unity Day
+#' - Dec 25: Christmas Day:
+#' - Dec 26: Boxing Day
 #'
 #' @return A data.frame with four variables:
 #' - `profile`, character, load profile identifier
 #' - `start_time`, POSIXct / POSIXlt, start time
 #' - `end_time`, POSIXct / POSIXlt, end time
-#' - `watt`, numeric, measurement
+#' - `watts`, numeric, electric power
 #'
 #' @export
 #' @examples
@@ -121,7 +121,7 @@ get_load_profile <- function(
       profile = rep(profiles, each = time_seq_n - 1L),
       start_time = rep(time_seq[-time_seq_n], profiles_n),
       end_time = rep(time_seq[-1], profiles_n),
-      watt = unlist(vals, use.names = FALSE)
+      watts = unlist(vals, use.names = FALSE)
     )
 
   out
