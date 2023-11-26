@@ -61,7 +61,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/algorithm-step-by-step.html">algorithm-step-by-step</a>
+    <a class="dropdown-item" href="articles/algorithm-step-by-step.html">Generate a standardized load profile</a>
   </div>
 </li>
       </ul>
@@ -88,8 +88,8 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This package provides data about representative, standardized load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. These load profiles are used by energy suppliers to create an annual consumption forecast for their customers. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.</p>
-<p><img src="reference/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;"></p>
+<p>This package provides data about representative, standardized load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.</p>
+<p><img src="reference/figures/README-small_multiples-1.png" alt="Small multiple line chart of 11 standardized load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="90%" style="display: block; margin: auto;"></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -101,8 +101,19 @@
 <div class="section level2">
 <h2 id="about-the-data">About the data<a class="anchor" aria-label="anchor" href="#about-the-data"></a>
 </h2>
-<p>The standardlastprofile package contains one dataset called <code>load_profiles</code>. These profiles were created on the basis of a total of 1,209 individual customer load profiles, which were classified according to customer group, period of the year and day of the week.</p>
-<p>Given a profile, a period and a day there are 96 x 1/4h-measurements in watts, based on a normalized annual consumption of 1.000 kWh. See vignette .. . In total the dataset contains 9,504 observations of five variables:</p>
+<p>The standardlastprofile package contains one data-set called <code>load_profiles</code>. In total there are 9,504 observations of five variables:</p>
+<ul>
+<li>
+<code>profile</code>: one of 11 load profiles</li>
+<li>
+<code>period</code>: one of ‘summer’, ‘winter’, ‘transition’</li>
+<li>
+<code>day</code>: one of ‘saturday’, ‘sunday’, ‘workday’</li>
+<li>
+<code>timestamp</code>: format ‘%H:%M’</li>
+<li>
+<code>watts</code>: electric power</li>
+</ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">load_profiles</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    9504 obs. of  5 variables:</span></span>
@@ -110,8 +121,9 @@
 <span><span class="co">#&gt;  $ period   : chr  "winter" "winter" "winter" "winter" ...</span></span>
 <span><span class="co">#&gt;  $ day      : chr  "saturday" "saturday" "saturday" "saturday" ...</span></span>
 <span><span class="co">#&gt;  $ timestamp: chr  "00:00" "00:15" "00:30" "00:45" ...</span></span>
-<span><span class="co">#&gt;  $ watt     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...</span></span></code></pre></div>
-<p>If you have no idea what <code>H0</code> etc. stands for, you are not alone.</p>
+<span><span class="co">#&gt;  $ watts    : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...</span></span></code></pre></div>
+<p>A standardized load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but represents a valid approximation for a larger group of similar customers. These load profiles can be used as a basis for energy utilities to create an annual consumption forecast for their customers.</p>
+<p>For each combination of <code>profile</code>, <code>period</code> and <code>day</code> there are 96 x 1/4h-measurements (in watts). If you have no idea what the profile <code>H0</code> stands for, you are not alone.</p>
 <ul>
 <li>
 <code>H0</code>: households (German: “Haushalte”)</li>
@@ -120,7 +132,7 @@
 <li>
 <code>L0</code> to <code>L2</code>: agriculture (“Landwirtschaft”)</li>
 </ul>
-<p>Call <code><a href="reference/get_load_profile_info.html">get_load_profile_info()</a></code> for more information and examples.</p>
+<p>There are 11 different <code>profile</code>s in total, call <code><a href="reference/get_load_profile_info.html">get_load_profile_info()</a></code> for more information<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More detail on the methodology can be found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>1</sup></a>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/get_load_profile_info.html">get_load_profile_info</a></span><span class="op">(</span>language <span class="op">=</span> <span class="st">"EN"</span><span class="op">)</span><span class="op">$</span><span class="va">H0</span></span>
 <span><span class="co">#&gt; $profile</span></span>
@@ -139,15 +151,8 @@
 <code class="sourceCode R"><span><span class="fu"><a href="reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span>profile <span class="op">=</span> <span class="st">"G5"</span>,</span>
 <span>                 start_date <span class="op">=</span> <span class="st">"2023-12-22"</span>,</span>
 <span>                 end_date <span class="op">=</span> <span class="st">"2023-12-27"</span><span class="op">)</span></span></code></pre></div>
-<p>The algorithm sets a public holiday to be a Sunday, December 24 and 31 to be a Saturday – if they are not a Sunday. <strong>Note</strong>: As of now the package supports only public holidays for Germany, which were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.</p>
-<p><img src="reference/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;"></p>
-<p>In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing load from winter to summer and vice versa.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/get_load_profile.html">get_load_profile</a></span><span class="op">(</span>profile <span class="op">=</span> <span class="st">"H0"</span>,</span>
-<span>                 start_date <span class="op">=</span> <span class="st">"2023-01-01"</span>,</span>
-<span>                 end_date <span class="op">=</span> <span class="st">"2024-01-01"</span><span class="op">)</span></span></code></pre></div>
-<p>This is taken into account by applying a dynamization function (4th order polynomial), see <a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">bdew.de</a>, page 32/46.</p>
-<p><img src="reference/figures/README-H0_example-1.png" width="90%" style="display: block; margin: auto;"></p>
+<p>See <a href="https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html"><code>vignette("algorithm-step-by-step", package = "standardlastprofile")</code></a> for a detailed explanation of the algorithm<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More detail on the algorithm can be found &lt;a href="https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>2</sup></a>.</p>
+<p><img src="reference/figures/README-G5_plot_readme-1.png" alt="Line plot of the standardized load profile 'G5' (Bakery with a bakehouse) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000kWh per annum." width="90%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -161,6 +166,8 @@
 <p>Please note that this project is released with a <a href="https://github.com/flrd/standardlastprofile/blob/master/conduct.md" class="external-link">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>
 </div>
+
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
