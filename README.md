@@ -13,13 +13,9 @@
 This package provides data about representative, standardized load
 profiles for electricity from the German Association of Energy and Water
 Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
-in a tidy format. These load profiles are used by energy suppliers to
-create an annual consumption forecast for their customers. A load
-profile is a simplification that does not necessarily correspond to the
-consumption profile of an individual customer, but is a valid
-approximation for a larger group of similar customers.
+in a tidy format.
 
-<img src="man/figures/README-readme_example-1.png" width="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-small_multiples-1.png" alt="Small multiple line chart of 11 standardized load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="90%" style="display: block; margin: auto;" />
 
 ## Installation
 
@@ -33,15 +29,15 @@ devtools::install_github("flrd/standardlastprofile")
 
 ## About the data
 
-The standardlastprofile package contains one dataset called
-`load_profiles`. These profiles were created on the basis of a total of
-1,209 individual customer load profiles, which were classified according
-to customer group, period of the year and day of the week.
-
-Given a profile, a period and a day there are 96 x 1/4h-measurements in
-watts, based on a normalized annual consumption of 1.000 kWh. See
-vignette .. . In total the dataset contains 9,504 observations of five
+The standardlastprofile package contains one data-set called
+`load_profiles`. In total there are 9,504 observations of five
 variables:
+
+- `profile`: one of 11 load profiles
+- `period`: one of ‘summer’, ‘winter’, ‘transition’
+- `day`: one of ‘saturday’, ‘sunday’, ‘workday’
+- `timestamp`: format ‘%H:%M’
+- `watts`: electric power
 
 ``` r
 str(load_profiles)
@@ -50,16 +46,25 @@ str(load_profiles)
 #>  $ period   : chr  "winter" "winter" "winter" "winter" ...
 #>  $ day      : chr  "saturday" "saturday" "saturday" "saturday" ...
 #>  $ timestamp: chr  "00:00" "00:15" "00:30" "00:45" ...
-#>  $ watt     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
+#>  $ watts    : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
 ```
 
-If you have no idea what `H0` etc. stands for, you are not alone.
+A standardized load profile is a simplification that does not
+necessarily correspond to the consumption profile of an individual
+customer, but represents a valid approximation for a larger group of
+similar customers. These load profiles can be used as a basis for energy
+utilities to create an annual consumption forecast for their customers.
+
+For each combination of `profile`, `period` and `day` there are 96 x
+1/4h-measurements (in watts). If you have no idea what the profile `H0`
+stands for, you are not alone.
 
 - `H0`: households (German: “Haushalte”)
 - `G0` to `G6`: commerce (“Gewerbe”)
 - `L0` to `L2`: agriculture (“Landwirtschaft”)
 
-Call `get_load_profile_info()` for more information and examples.
+There are 11 different `profile`s in total, call
+`get_load_profile_info()` for more information[^1].
 
 ``` r
 get_load_profile_info(language = "EN")$H0
@@ -83,30 +88,11 @@ get_load_profile(profile = "G5",
                  end_date = "2023-12-27")
 ```
 
-The algorithm sets a public holiday to be a Sunday, December 24 and 31
-to be a Saturday – if they are not a Sunday. **Note**: As of now the
-package supports only public holidays for Germany, which were retrieved
-from the [nager.Date API](https://github.com/nager/Nager.Date).
+See
+[`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
+for a detailed explanation of the algorithm[^2].
 
-<img src="man/figures/README-G5_example-1.png" width="90%" style="display: block; margin: auto;" />
-
-In contrast to most commercial and agricultural businesses, which have a
-relatively even and a fairly constant power consumption over the course
-of a year, households on the other hand have a continuously decreasing
-load from winter to summer and vice versa.
-
-``` r
-get_load_profile(profile = "H0",
-                 start_date = "2023-01-01",
-                 end_date = "2024-01-01")
-```
-
-This is taken into account by applying a dynamization function (4th
-order polynomial), see
-[bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf),
-page 32/46.
-
-<img src="man/figures/README-H0_example-1.png" width="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standardized load profile 'G5' (Bakery with a bakehouse) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000kWh per annum." width="90%" style="display: block; margin: auto;" />
 
 ## Source
 
@@ -118,3 +104,9 @@ the BDEW: <https://www.bdew.de/energie/standardlastprofile-strom/>
 Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/flrd/standardlastprofile/blob/master/conduct.md).
 By participating in this project you agree to abide by its terms.
+
+[^1]: More detail on the methodology can be found
+    [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
+
+[^2]: More detail on the algorithm can be found
+    [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).

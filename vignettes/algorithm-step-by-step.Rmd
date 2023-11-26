@@ -1,8 +1,8 @@
 ---
-title: "algorithm-step-by-step"
+title: "Generate a standardized load profile"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{algorithm-step-by-step}
+  %\VignetteIndexEntry{Generate a standardized load profile}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,26 +14,195 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+``` {r, message=FALSE, include=FALSE}
 library(standardlastprofile)
+library(ggplot2)
 ```
 
-I am happy you made it this far. In this vignette I want to show you step by step how the algorithm of the function `get_load_profiles()` works.
+The goal of this vignette is to show step by step how the algorithm of the function `get_load_profiles()` works. The data in the `load_profiles` data-set forms the basis for all subsequent steps. There are 96 values for each combination of profile, period and day. These are 1/4-hour measurements and represent a standardized load profile (German: "Standardlastprofile"). This data was derived in 1999 on the basis of 1,209 load profiles and data from low-voltage customers[^bdew-1].
 
-The data in the `load_profiles` dataset forms the basis for all subsequent steps. There are 96 values for each combination of profile, period and day. These are 1/4-hour measurements (in watts) and represent a standardized load profile. This data was derived in 1999 on the basis of a study of 1,209 load profiles[^bdew-1].
+  [^bdew-1]: More detail on the methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
-  [^bdew-1]: https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
+Those 96 values in watts for each day are normalized to an annual consumption of 1.000 kWh. So if we sum up all the quarter-hour consumption values for a year, the result is (approximately) 1,000 kWh/a.
 
-When you create a load profile calling `get_load_profiles()` these steps are performed, which I'll show step-by-step below:
+```{r H0_data, message=FALSE}
+library(standardlastprofile)
+H0_2023 <- get_load_profile(
+  "H0",
+  start_date = "2024-01-01",
+  end_date = "2024-12-31"
+  )
+```
 
-1. generate a date sequence from `start_date` to `end_date`
-2. each day is mapped a combination of `day` and `period`
-3. for each profile the result from 2. is used to extract values from `load_profiles`[^data-1]
+```{r normalization-1, message=FALSE}
+sum(H0_2023$watts) |> 
+  prettyNum(big.mark = ",")
+```
 
-    [^data-1]: That is actually a lie. There is an internal data object called `load_profiles_lst` from which the data is extracted. A list of matrices where each matrix holds the data for one profile.
+"Hold on - didn't you just say 1,000?!", you might be thinking. Yes you are correct, we must [convert power units into energy units](https://en.wikipedia.org/wiki/Watt#Distinction_between_watts_and_watt-hours). The values returned are 1/4h measurements in watts. To convert the values to watt-hours, we must hence divide them by 4; and since one watt-hour is equal to 1/1000 kilowatt-hour, we divide also by 1,000:
 
-4. apply dynamization function for values of profile `H0` 
-5. return data
+```{r normalization-2, message=FALSE}
+sum(H0_2023$watts / 4 / 1000) |> 
+  prettyNum(big.mark = ",")
+```
+
+## Algorithm step by step
+
+When you call `get_load_profiles()` to generate a load profile these steps are performed:
+
+1. Generate a date sequence from `start_date` to `end_date`
+2. Map each day to combination of `day` and `period`
+3. Use result from 2nd step to extract values from `load_profiles`[^data-1]
+
+    [^data-1]: That is actually a lie. There is an internal data object called from which the data is extracted for effiecency.
+
+4. Apply polynomial function to values of profile H0
+5. Return data[^bdew-2]
+
+  [^bdew-2]: More detail on the algorithm can be found [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).
 
   
+### Generate a date sequence
 
+In the very first step a date sequence is created from `start_date` to `end_date` based on the user input. Here is a simple example; the result is a vector of class Date:
+
+```{r date_seq-1, message=FALSE, echo=FALSE}
+start_date <- as.Date("2023-12-22")
+end_date <- as.Date("2023-12-27")
+(date_seq <- seq.Date(start_date, end_date, by = "day"))
+```
+
+### Map each day to a period and a weekday
+
+When analyzing the 1,209 load profiles, the study found that consumption varies both over the course of the year and over the days within a week. However, it was also found that there was no significant difference in consumption between Monday and Friday for each group. For this reason, the days Monday to Friday are grouped together as 'workdays'.
+
+December 24th and 31th are considered a Saturday too, if they are not a Sunday, and public holidays are set to a Sunday. The package supports nationwide, public holidays for Germany only. Those were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date) and are listed below for 2024:
+
+* Jan 1: New Year's
+* Mar 29: Good Friday
+* Apr 1: Easter Monday
+* May 1: Labor Day
+* May 9: Ascension Day
+* May 20: Whit Monday
+* Oct 3: German Unity Day
+* Dec 25: Christmas Day: 
+* Dec 26: Boxing Day
+
+The 3 periods are defined as:
+
+* `summer`: May 15 to September 14
+* `winter`: November 1 to March 20
+* `transition`: March 21 to May 14, and September 15 to October 31
+
+The result of this second step is a mapping from each date to a so-called characteristic profile day, i.e. a combination of weekday and period:
+
+```{r characteristic_days, message=FALSE}
+wkday_period <- standardlastprofile:::get_wkday_period(date_seq)
+data.frame(date = date_seq, day = wkday_period)
+```
+
+### Assign consumption values to each day
+
+The obvious next step is to assign the 1/4-hour power values contained in the `load_profiles` data set to each characteristic profile day created in the previous step. This is the job of the `get_load_profiles()` function. 
+
+``` {r G5_data_vignette, echo=TRUE}
+G5 <- get_load_profile(profile = "G5",
+                       start_date = start_date, # defined above
+                       end_date = end_date)
+```
+
+The analysis of the data showed that the load fluctuations for commercial and agricultural customers are moderate and can therefore be easily mapped using workday, Saturday and Sunday profiles in three annual periods. This method produces the annual load profile for customers/customer groups `G0` to `G6` and `L0` to `L2`, and it is referred to in the study as the 'static load profile', as it can be determined directly from the 3x3 characteristic profile days. 
+
+Here is the code to reproduce the plot for profile `G5` from the [README](https://github.com/flrd/standardlastprofile#generate-a-load-profile):
+
+``` {r G5_plot_vignette, echo=TRUE, eval=TRUE, message=FALSE, fig.retina=2, fig.asp=0.5}
+#| fig.alt = "Line plot of the standardized load profile 'G5' (Bakery
+#|  with a bakehouse) from December 22nd to December 27th 2023; values 
+#|  are normalized to an annual consumption of 1,000kWh per annum."
+library(ggplot2)
+ggplot(G5, aes(start_time, watts)) +
+  geom_line(color = "#0CC792") +
+  scale_x_datetime(
+    date_breaks = "1 day",
+    date_labels = "%b %d") +
+  labs(
+    title = "Profile 'G5': bakery with bakehouse",
+    subtitle = "1/4h-measurements, based on consumption of 1.000 kWh/a",
+    caption = "data: www.bdew.de",
+    x = NULL,
+    y = "[watts]") +
+  theme_minimal() +
+  theme(
+      panel.grid.minor.x = element_blank(),
+      panel.grid.minor.y = element_blank()
+  ) +
+  NULL
+```
+
+### Generate a dynamic load profile H0
+
+In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing load from winter to summer (in Germany at least). This fact is taken into account when you call `get_load_profile()` by applying a 4th order polynomial function to the values of profile `H0`:
+
+$$
+x = x_0 (-3.92e^{-10} \times d^4 + 3.20^{-7} \times  d^3 - 7.02^{-5} \times d^2 + 2.10^{-3} \times d + 1.24)
+$$
+Where:
+
+* $x$ is the resulting 'dynamic' quarter-hour value
+* $x_0$ is the static quarter-hourly value of the profile
+* $d$ is the day of the respective year, starting at 1 on January 1st
+
+Hence for household customers, things look a little different, at least under the hood, as can be seen in the following graphic. It shows the aggregated daily values for 2023 created at the beginning of this vignette:
+
+``` {r, message=FALSE, echo=TRUE, eval=FALSE}
+get_load_profile(profile = "H0",
+                 start_date = "2023-01-01",
+                 end_date = "2023-12-31")
+```
+
+``` {r H0_2023_daily, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+# aggregate by day of year as decimal number (1 - 365)
+H0_2023_daily <- by(H0_2023, INDICES = format(H0_2023$start_time, "%j"), FUN = function(x) {
+  data.frame(
+    start_time = x[["start_time"]][1],
+    watts = mean(x[["watts"]])
+  )
+}) |> do.call(rbind, args = _)
+```
+
+
+``` {r H0_2023_plot, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+#| fig.alt = "Line plot a standardized load profile 'H0' (households)
+#|  aggreagted by day from January 1st to December 31st, 2023. The plot shows that  
+#|  households have a continuously decreasing load from winter 
+#|  to summer and vice versa."
+ggplot(H0_2023_daily, aes(start_time, watts)) +
+  geom_line(color = "#0CC792") +
+  labs(title = "Profile 'H0': Households",
+       subtitle = "Daily consumption using a dynamic load profile",
+       caption = "data: www.bdew.de",
+       x = NULL,
+       y = "[watts]") +
+  theme_minimal() +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank()
+  ) +
+  NULL
+```
+
+
+
+``` {r dynamization_fun, message=FALSE, eval= FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+ggplot(data.frame(day_of_year = seq.int(365)), aes(day_of_year)) +
+         geom_function(fun = standardlastprofile:::dynamization_fun,
+                       color = "#0CC792") +
+  labs(title = "Dynamization Function applied to values of load profile H0",
+       x = "Day of Year as Integer",
+       y = NULL) +
+  theme_minimal() +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank()
+  )
+```

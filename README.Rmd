@@ -22,18 +22,22 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-This package provides data about representative, standardized load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. These load profiles are used by energy suppliers to create an annual consumption forecast for their customers. A load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but is a valid approximation for a larger group of similar customers.
+This package provides data about representative, standardized load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
 
 ``` {r, message=FALSE, include = FALSE}
 library(standardlastprofile)
 library(ggplot2)
-library(ggpointless)
-library(data.table)
 ```
 
 
-```{r readme_example, echo = FALSE, fig.asp = 1.4, fig.retina=2}
-# labeler
+```{r small_multiples, echo = FALSE, fig.asp = 1.4, fig.retina=2}
+#| fig.alt = "Small multiple line chart of 11 standardized load profiles
+#|  published by the German Association of Energy and Water Industries (BDEW 
+#|  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
+#|  the consumption for three different periods over a year, and
+#|  also compare the consumption between different days of a week."
+
+# labeller
 label_names <- c(
   "saturday"="Saturday",
   'sunday'="Sunday",
@@ -45,7 +49,7 @@ label_fun <- function(x) label_names[[x]]
 # plot
 ggplot(load_profiles,
        aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
-           y = watt,
+           y = watts,
            color = period)) +
   geom_line() +
   facet_grid(profile ~ day, scales = "free_y",
@@ -83,21 +87,30 @@ devtools::install_github("flrd/standardlastprofile")
 ```
 
 ## About the data
-The standardlastprofile package contains one dataset called `load_profiles`. These profiles were created on the basis of a total of 1,209 individual customer load profiles, which were classified according to customer group, period of the year and day of the week. 
+The standardlastprofile package contains one data-set called `load_profiles`. In total there are 9,504 observations of five variables:
 
-Given a profile, a period and a day there are 96 x 1/4h-measurements in watts, based on a normalized annual consumption of 1.000 kWh. See vignette .. . In total the dataset contains 9,504 observations of five variables:
+- `profile`: one of 11 load profiles
+- `period`: one of 'summer', 'winter', 'transition'
+- `day`: one of 'saturday', 'sunday', 'workday'
+- `timestamp`: format '%H:%M'
+- `watts`: electric power
 
 ``` {r, message=FALSE}
 str(load_profiles)
 ```
+A standardized load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but represents a valid approximation for a larger group of similar customers. These load profiles can be used as a basis for energy utilities to create an annual consumption forecast for their customers. 
 
-If you have no idea what `H0` etc. stands for, you are not alone. 
+For each combination of `profile`, `period` and `day` there are 96 x 1/4h-measurements (in watts). If you have no idea what the profile `H0` stands for, you are not alone. 
 
 - `H0`: households (German: "Haushalte")
 - `G0` to `G6`: commerce ("Gewerbe")
 - `L0` to `L2`: agriculture ("Landwirtschaft")
 
-Call `get_load_profile_info()` for more information and examples.
+There are 11 different `profile`s in total, call `get_load_profile_info()` for more information[^bdew-1].
+
+  [^bdew-1]: More detail on the methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
+
+  
 
 ``` {r, message=FALSE, echo=TRUE}
 get_load_profile_info(language = "EN")$H0
@@ -113,68 +126,35 @@ get_load_profile(profile = "G5",
                  end_date = "2023-12-27")
 ```
 
-The algorithm sets a public holiday to be a Sunday, December 24 and 31 to be a Saturday -- if they are not a Sunday. **Note**: As of now the package supports only public holidays for Germany, which were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
+See [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm[^bdew-2].
 
-``` {r G5_example, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
-slp_G5 <- get_load_profile(profile = "G5",
-                           start_date = "2023-12-22",
-                           end_date = "2023-12-27")
+  [^bdew-2]: More detail on the algorithm can be found [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).
+  
+``` {r G5_data_readme, message=FALSE, echo=FALSE}
+G5 <- get_load_profile(profile = "G5",
+                       start_date = "2023-12-22",
+                       end_date = "2023-12-27")
+```
 
-library(ggplot2)
-library(ggpointless)
-ggplot(slp_G5, aes(start_time, watt)) +
+``` {r G5_plot_readme, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+#| fig.alt = "Line plot of the standardized load profile 'G5' (Bakery
+#|  with a bakehouse) from December 22nd to December 27th 2023; values 
+#|  are normalized to an annual consumption of 1,000kWh per annum."
+ggplot(G5, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
-  geom_pointless(color = "#0CC792", location = c("first", "last")) + 
-  scale_x_datetime(date_breaks = "1 day", date_labels = "%b %d") +
-  labs(title = "Profile 'G5': bakery with bakehouse",
-       subtitle = "1/4h-measurements, based on consumption of 1.000 kWh/a",
-       caption = "data: www.bdew.de",
-       x = NULL,
-       y = "[watts]") +
+  scale_x_datetime(
+    date_breaks = "1 day",
+    date_labels = "%b %d") +
+  labs(
+    title = "Profile 'G5': bakery with bakehouse",
+    subtitle = "1/4h-measurements, based on consumption of 1.000 kWh/a",
+    caption = "data: www.bdew.de",
+    x = NULL,
+    y = "[watts]") +
   theme_minimal() +
   theme(
       panel.grid.minor.x = element_blank(),
       panel.grid.minor.y = element_blank()
-  ) +
-  NULL
-```
-
-In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing load from winter to summer and vice versa. 
-
-``` {r, message=FALSE, echo=TRUE, eval=FALSE}
-get_load_profile(profile = "H0",
-                 start_date = "2023-01-01",
-                 end_date = "2024-01-01")
-```
-
-This is taken into account by applying a dynamization function (4th order polynomial), see [bdew.de](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf), page 32/46.
-
-``` {r H0_example, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
-slp_H0 <- get_load_profile(profile = "H0",
-                           start_date = "2023-01-01",
-                           end_date = "2024-01-01")
-
-# aggregate by day of year and year
-dt_H0 <- as.data.table(slp_H0)[,
-                               .(start_time = start_time[1],
-                                 watt = mean(watt)),
-                               by = .(day = format(start_time, "%j"),
-                                      year = format(start_time, "%Y"))
-                               ]
-
-# plot
-ggplot(dt_H0, aes(start_time, watt)) +
-  geom_line(color = "#0CC792") +
-  geom_pointless(location = c("first", "last"), color = "#0CC792") + 
-  labs(title = "Profile 'H0': Households",
-       subtitle = "Daily consumption using a dynamic load profile",
-       caption = "data: www.bdew.de",
-       x = NULL,
-       y = "[watts]") +
-  theme_minimal() +
-  theme(
-    panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank()
   ) +
   NULL
 ```
