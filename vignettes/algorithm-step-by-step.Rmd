@@ -144,7 +144,7 @@ ggplot(G5, aes(start_time, watts)) +
 In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing load from winter to summer (in Germany at least). This fact is taken into account when you call `get_load_profile()` by applying a 4th order polynomial function to the values of profile `H0`:
 
 $$
-x = x_0 (-3.92e^{-10} \times d^4 + 3.20^{-7} \times  d^3 - 7.02^{-5} \times d^2 + 2.10^{-3} \times d + 1.24)
+x = x_0 (-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7} \times  d^3 - 7.02\mathrm{e}{-5} \times d^2 + 2.10\mathrm{e}{-3} \times d + 1.24)
 $$
 Where:
 
