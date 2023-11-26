@@ -27,7 +27,7 @@ Those 96 values in watts for each day are normalized to an annual consumption of
 
 ```{r H0_data, message=FALSE}
 library(standardlastprofile)
-H0_2023 <- get_load_profile(
+H0_2024 <- get_load_profile(
   "H0",
   start_date = "2024-01-01",
   end_date = "2024-12-31"
@@ -35,14 +35,14 @@ H0_2023 <- get_load_profile(
 ```
 
 ```{r normalization-1, message=FALSE}
-sum(H0_2023$watts) |> 
+sum(H0_2024$watts) |> 
   prettyNum(big.mark = ",")
 ```
 
 "Hold on - didn't you just say 1,000?!", you might be thinking. Yes you are correct, we must [convert power units into energy units](https://en.wikipedia.org/wiki/Watt#Distinction_between_watts_and_watt-hours). The values returned are 1/4h measurements in watts. To convert the values to watt-hours, we must hence divide them by 4; and since one watt-hour is equal to 1/1000 kilowatt-hour, we divide also by 1,000:
 
 ```{r normalization-2, message=FALSE}
-sum(H0_2023$watts / 4 / 1000) |> 
+sum(H0_2024$watts / 4 / 1000) |> 
   prettyNum(big.mark = ",")
 ```
 
@@ -88,7 +88,7 @@ December 24th and 31th are considered a Saturday too, if they are not a Sunday, 
 * Dec 25: Christmas Day: 
 * Dec 26: Boxing Day
 
-The 3 periods are defined as:
+For each year there are 3 periods as defined below:
 
 * `summer`: May 15 to September 14
 * `winter`: November 1 to March 20
@@ -152,17 +152,11 @@ Where:
 * $x_0$ is the static quarter-hourly value of the profile
 * $d$ is the day of the respective year, starting at 1 on January 1st
 
-Hence for household customers, things look a little different, at least under the hood, as can be seen in the following graphic. It shows the aggregated daily values for 2023 created at the beginning of this vignette:
+Hence for household customers, things look a little different, at least under the hood, as can be seen in the following graphic. It shows the the values of load profile `H0` for 2024 created at the beginning of this vignette, but aggregated by day for better clarity:
 
-``` {r, message=FALSE, echo=TRUE, eval=FALSE}
-get_load_profile(profile = "H0",
-                 start_date = "2023-01-01",
-                 end_date = "2023-12-31")
-```
-
-``` {r H0_2023_daily, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+``` {r H0_2024_daily, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 # aggregate by day of year as decimal number (1 - 365)
-H0_2023_daily <- by(H0_2023, INDICES = format(H0_2023$start_time, "%j"), FUN = function(x) {
+H0_2024_daily <- by(H0_2024, INDICES = format(H0_2024$start_time, "%j"), FUN = function(x) {
   data.frame(
     start_time = x[["start_time"]][1],
     watts = mean(x[["watts"]])
@@ -171,12 +165,12 @@ H0_2023_daily <- by(H0_2023, INDICES = format(H0_2023$start_time, "%j"), FUN = f
 ```
 
 
-``` {r H0_2023_plot, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+``` {r H0_2024_plot, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 #| fig.alt = "Line plot a standardized load profile 'H0' (households)
 #|  aggreagted by day from January 1st to December 31st, 2023. The plot shows that  
 #|  households have a continuously decreasing load from winter 
 #|  to summer and vice versa."
-ggplot(H0_2023_daily, aes(start_time, watts)) +
+ggplot(H0_2024_daily, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
   labs(title = "Profile 'H0': Households",
        subtitle = "Daily consumption using a dynamic load profile",
