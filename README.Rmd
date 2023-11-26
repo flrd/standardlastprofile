@@ -106,11 +106,7 @@ For each combination of `profile`, `period` and `day` there are 96 x 1/4h-measur
 - `G0` to `G6`: commerce ("Gewerbe")
 - `L0` to `L2`: agriculture ("Landwirtschaft")
 
-There are 11 different `profile`s in total, call `get_load_profile_info()` for more information[^bdew-1].
-
-  [^bdew-1]: More detail on the methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
-
-  
+There are 11 different `profile`s in total, call `get_load_profile_info()` for more information.
 
 ``` {r, message=FALSE, echo=TRUE}
 get_load_profile_info(language = "EN")$H0
@@ -126,9 +122,7 @@ get_load_profile(profile = "G5",
                  end_date = "2023-12-27")
 ```
 
-See [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm[^bdew-2].
-
-  [^bdew-2]: More detail on the algorithm can be found [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).
+See [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm.
   
 ``` {r G5_data_readme, message=FALSE, echo=FALSE}
 G5 <- get_load_profile(profile = "G5",

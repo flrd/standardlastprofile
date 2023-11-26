@@ -64,7 +64,7 @@ stands for, you are not alone.
 - `L0` to `L2`: agriculture (“Landwirtschaft”)
 
 There are 11 different `profile`s in total, call
-`get_load_profile_info()` for more information[^1].
+`get_load_profile_info()` for more information.
 
 ``` r
 get_load_profile_info(language = "EN")$H0
@@ -90,7 +90,7 @@ get_load_profile(profile = "G5",
 
 See
 [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
-for a detailed explanation of the algorithm[^2].
+for a detailed explanation of the algorithm.
 
 <img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standardized load profile 'G5' (Bakery with a bakehouse) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000kWh per annum." width="90%" style="display: block; margin: auto;" />
 
@@ -104,9 +104,3 @@ the BDEW: <https://www.bdew.de/energie/standardlastprofile-strom/>
 Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/flrd/standardlastprofile/blob/master/conduct.md).
 By participating in this project you agree to abide by its terms.
-
-[^1]: More detail on the methodology can be found
-    [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
-
-[^2]: More detail on the algorithm can be found
-    [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).
