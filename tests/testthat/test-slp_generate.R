@@ -1,7 +1,7 @@
 test_that("end_date expects a ISO date", {
   expect_error(
-    get_load_profile(
-      profiles = "H0",
+    slp_generate(
+      profile_id = "H0",
       start_date = Sys.Date(),
       end_date = "2023-13-01"
     ),
@@ -11,8 +11,8 @@ test_that("end_date expects a ISO date", {
 
 test_that("start_date expects a ISO date", {
   expect_error(
-    get_load_profile(
-      profiles = "H0",
+    slp_generate(
+      profile_id = "H0",
       start_date = "2023-13-01",
       end_date = Sys.Date()
       ),
@@ -22,8 +22,8 @@ test_that("start_date expects a ISO date", {
 
 test_that("start_date must be greater 1973", {
   expect_error(
-    get_load_profile(
-      profiles = "H0",
+    slp_generate(
+      profile_id = "H0",
       start_date = "1972-12-31",
       end_date = Sys.Date()
     ),
@@ -33,8 +33,8 @@ test_that("start_date must be greater 1973", {
 
 test_that("start_date must be greater 1973", {
   expect_error(
-    get_load_profile(
-      profiles = "H0",
+    slp_generate(
+      profile_id = "H0",
       start_date = Sys.Date(),
       end_date = "2074-01-01"
     ),

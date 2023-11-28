@@ -7,13 +7,14 @@ template:
     btn-border-radius: 0.25rem
 
 reference:
-- title: Functions
-  contents:
-  - get_load_profile
-  - get_load_profile_info
 - title: Data
   contents:
-  - load_profiles
+  - slp
+
+- title: Functions
+  contents:
+  - slp_generate
+  - slp_info
 
 figures:
   dev: ragg::agg_png

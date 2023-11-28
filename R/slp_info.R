@@ -9,10 +9,10 @@
 #' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 #'
 #' @examples
-#' get_load_profile_info(language = "EN")$G6
-#' get_load_profile_info(language = "DE")$G6
+#' slp_info(language = "EN")$G6
+#' slp_info(language = "DE")$G6
 #'
-get_load_profile_info <- function(language = c("EN", "DE")) {
+slp_info <- function(language = c("EN", "DE")) {
 
   language <- toupper(language)
   language <- match.arg(language)

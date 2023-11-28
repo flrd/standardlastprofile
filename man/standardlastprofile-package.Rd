@@ -6,7 +6,7 @@
 \alias{standardlastprofile-package}
 \title{standardlastprofile: R data package for load profiles for electricity}
 \description{
-A load profile describes the consumption profile of an electricity consumer over a certain period of time. For electricity customers without modern meter devices, an energy utility uses standardised load profiles (SLP). These SLPs replace the non-existent load profile of end consumers with a calculated, sufficiently accurate forecast of electricity consumption on a 15-minutes basis. This packages provides data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. For each of the eleven profiles, 96 quarter-hourly values are included for three different days of the week - workday, Saturday, Sunday - and three different seasons - summer, winter, transition -, i.e. a total of 3x3x96 observations per profile.
+This package provides data on standardized load profiles from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The data was published in 1999 and since then has formed a basis for energy suppliers to approximate the estimated electricity consumption for their customers. A standardized load profile describes the consumption profile of an energy consumer over a certain period of time. The package also provides an interface to generate a load profile over a user specified period of time.
 }
 \seealso{
 Useful links:

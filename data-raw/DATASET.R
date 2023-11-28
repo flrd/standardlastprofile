@@ -11,12 +11,12 @@ sheets <- readxl::excel_sheets(path)
 n_sheets <- length(sheets)
 
 # creates empty list of length = n_sheets
-profiles_lst <- vector(mode = "list", length = n_sheets)
-names(profiles_lst) <- sheets
+slp_lst <- vector(mode = "list", length = n_sheets)
+names(slp_lst) <- sheets
 
 # populate list
 for (sheet in sheets) {
-  profiles_lst[[sheet]] <- readxl::read_excel(
+  slp_lst[[sheet]] <- readxl::read_excel(
     sheet = sheet,
     path,
     range = "A3:J99",
@@ -41,7 +41,7 @@ days <- c("saturday", "sunday", "workday")
 periods <- c("winter", "summer", "transition")
 nms <- c("timestamp", rep(periods, each = 3))
 
-profiles_lst <- lapply(profiles_lst, function(profile) {
+slp_lst <- lapply(slp_lst, function(profile) {
   # use data.table, set profile to
   data.table::setDT(profile)
 
@@ -55,13 +55,13 @@ profiles_lst <- lapply(profiles_lst, function(profile) {
 
 
 # create list of matrices to be used internally ---------------------------
-load_profiles_lst <- lapply(profiles_lst, function(profile) {
+load_profiles_lst <- lapply(slp_lst, function(profile) {
   as.matrix(profile, rownames = "timestamp")
 })
 
 
 # create .csv to be added in inst/extdata ---------------------------------
-load_profiles <- lapply(profiles_lst, function(profile) {
+slp <- lapply(slp_lst, function(profile) {
   # reshape from wide to long format
   profile <- data.table::melt(profile,
                               measure.vars = patterns(days),
@@ -75,25 +75,25 @@ load_profiles <- lapply(profiles_lst, function(profile) {
   profile
 
 }) |>
-  data.table::rbindlist(idcol = "profile") |>
+  data.table::rbindlist(idcol = "profile_id") |>
   data.table::melt(
     measure.vars = c("saturday", "sunday", "workday"),
     variable.name = "day",
     variable.factor = FALSE,
     value.name = "watts"
 ) |>
-  data.table::setcolorder(c("profile", "period", "day", "timestamp", "watts")) |>
+  data.table::setcolorder(c("profile_id", "period", "day", "timestamp", "watts")) |>
   as.data.frame()
 
-# save VDEW_profiles_wide to disk as CSV
-fwrite(x = load_profiles,
-       file = system.file("/inst/extdata", "load_profiles.csv", package = "standardlastprofile"))
+# save as .csv
+fwrite(x = slp,
+       file = system.file("/inst/extdata", "slp.csv", package = "standardlastprofile"))
 
 
 # fetch public holidays in Germany from nager.Date API --------------------
 get_federal_holidays <- function(year) {
-  if (year < 1973L || year > 2073L) {
-    stop("'API supports 'only' years between 1973 and 2073.")
+  if (year < 1990L || year > 2073L) {
+    stop("'API supports 'only' years from 1990 to 2073.")
   }
 
   year <- as.character(year)
@@ -109,9 +109,10 @@ get_federal_holidays <- function(year) {
   resp_body <- resp |>
     httr2::resp_body_json()
 
-  # we'll only support nationwide holidays
-  is_federal <- function(x)
+  # extract nationwide holidays
+  is_federal <- function(x) {
     is.null(x[["counties"]])
+  }
 
   federal_idx <- vapply(resp_body, is_federal, logical(1))
   federal_holidays <-
@@ -125,7 +126,7 @@ get_federal_holidays <- function(year) {
 }
 
 
-years <- seq.int(1973, 2073)
+years <- seq.int(1990, 2073)
 federal_holidays_DE <- sapply(years, get_federal_holidays)
 
 names(federal_holidays_DE) <- years
@@ -133,7 +134,7 @@ names(federal_holidays_DE) <- years
 # abbreviations of the 11 profiles included in this package ---------------
 profiles <- c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2")
 
-# german description ------------------------------------------------------
+# German description ------------------------------------------------------
 description_DE = c(
   H0 = "Haushalt",
   G0 = "Gewerbe allgemein",
@@ -162,7 +163,7 @@ details_DE <- c(
   L2 = "Traditionell findet sich bei den meisten westdeutschen Betrieben ein Nebeneinander von Haushalt und Produktion. Für solche Betriebe ist dieses mittlere Profil anzuwenden. Soweit in einem landwirtschaftlichen Betrieb eine weitgehend tageszeitenunabhängige Produktion vorliegt (z.B. Tierproduktionsanlagen in Ostdeutschland), ist das passende Gewerbe-Profil zu wählen."
 )
 
-# english description -----------------------------------------------------
+# English description -----------------------------------------------------
 description_EN = c(
   H0 = "household",
   G0 = "commerce in general",
@@ -194,8 +195,6 @@ details_EN = c(
 
 # create data.frame and store internally ----------------------------------
 
-# toDo
-
 infos_DE <- vector("list", length(profiles))
 names(infos_DE) <- profiles
 
@@ -216,7 +215,7 @@ for (profile in profiles) {
 
 
 # store in data/ to be accessible for users -------------------------------
-usethis::use_data(load_profiles, overwrite = TRUE)
+usethis::use_data(slp, overwrite = TRUE)
 
 # store data internally in R/sysdata.rda ----------------------------------
 # see: https://r-pkgs.org/data.html#sec-data-sysdata

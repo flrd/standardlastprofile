@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-This package provides data about representative, standardized load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
+This package provides data about representative, standard load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
 
 ``` {r, message=FALSE, include = FALSE}
 library(standardlastprofile)
@@ -31,7 +31,7 @@ library(ggplot2)
 
 
 ```{r small_multiples, echo = FALSE, fig.asp = 1.4, fig.retina=2}
-#| fig.alt = "Small multiple line chart of 11 standardized load profiles
+#| fig.alt = "Small multiple line chart of 11 standard load profiles
 #|  published by the German Association of Energy and Water Industries (BDEW 
 #|  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
 #|  the consumption for three different periods over a year, and
@@ -47,12 +47,12 @@ label_names <- c(
 label_fun <- function(x) label_names[[x]]
 
 # plot
-ggplot(load_profiles,
+ggplot(slp,
        aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
            y = watts,
            color = period)) +
   geom_line() +
-  facet_grid(profile ~ day, scales = "free_y",
+  facet_grid(profile_id ~ day, scales = "free_y",
              labeller = labeller(day = as_labeller(label_names))) +
   scale_x_datetime(NULL, date_labels = "%H") +
   scale_y_continuous(NULL) +
@@ -62,7 +62,7 @@ ggplot(load_profiles,
                        "summer" = "#FA9529",
                        "transition" = "#0CC792"
                        )) +
-  labs(title = "Representative Load Profiles",
+  labs(title = "Standard Load Profiles",
        subtitle = "96 x 1/4h-measurements a day [in watts], based on consumption of 1.000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
@@ -79,7 +79,12 @@ ggplot(load_profiles,
 
 ## Installation
 
-You can install the development version of standardlastprofile from [GitHub](https://github.com/) with:
+<!-- You can install the released version of standardlastprofile from CRAN with: -->
+<!-- ```{r eval=FALSE} -->
+<!-- install.packages("standardlastprofile") -->
+<!-- ``` -->
+
+To install the development version of standardlastprofile from [GitHub](https://github.com/) call:
 
 ``` r
 # install.packages("devtools")
@@ -87,52 +92,50 @@ devtools::install_github("flrd/standardlastprofile")
 ```
 
 ## About the data
-The standardlastprofile package contains one data-set called `load_profiles`. In total there are 9,504 observations of five variables:
+The standardlastprofile package contains one data-set called `slp`. In total there are 9,504 observations of 5 variables:
 
-- `profile`: one of 11 load profiles
+- `profile_id`: identifier of standard load profile
 - `period`: one of 'summer', 'winter', 'transition'
 - `day`: one of 'saturday', 'sunday', 'workday'
 - `timestamp`: format '%H:%M'
 - `watts`: electric power
 
 ``` {r, message=FALSE}
-str(load_profiles)
+str(slp)
 ```
-A standardized load profile is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but represents a valid approximation for a larger group of similar customers. These load profiles can be used as a basis for energy utilities to create an annual consumption forecast for their customers. 
+A standard load profile can be used as a basis for energy utilities to create an annual consumption forecast for their customers. It is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but represents a valid approximation for a larger group of similar customers. 
 
-For each combination of `profile`, `period` and `day` there are 96 x 1/4h-measurements (in watts). If you have no idea what the profile `H0` stands for, you are not alone. 
+For each combination of `profile`, `period` and `day` there are 96 x 1/4h-measurements in watts. If you have no idea what the profile `H0` stands for, you are not alone.
 
 - `H0`: households (German: "Haushalte")
 - `G0` to `G6`: commerce ("Gewerbe")
 - `L0` to `L2`: agriculture ("Landwirtschaft")
 
-There are 11 different `profile`s in total, call `get_load_profile_info()` for more information.
+Call `slp_info()` for more information.
 
 ``` {r, message=FALSE, echo=TRUE}
-get_load_profile_info(language = "EN")$H0
+slp_info(language = "EN")$H0
 ```
 
-### Generate a load profile
+### Generate a standard load profile
 
-Use the function `get_load_profile()` to generate a load profile. 
+Use the function `slp_generate()` to create data for one or more standard load profile identifiers:
 
-``` {r, message=FALSE, echo=TRUE, eval=FALSE}
-get_load_profile(profile = "G5",
-                 start_date = "2023-12-22",
-                 end_date = "2023-12-27")
+``` {r, G5_data_readme, message=FALSE, echo=TRUE}
+G5 <- slp_generate(
+  profile_id = "G5",
+  start_date = "2023-12-22",
+  end_date = "2023-12-27"
+  )
+head(G5)
 ```
 
-See [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm.
-  
-``` {r G5_data_readme, message=FALSE, echo=FALSE}
-G5 <- get_load_profile(profile = "G5",
-                       start_date = "2023-12-22",
-                       end_date = "2023-12-27")
-```
 
 ``` {r G5_plot_readme, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
-#| fig.alt = "Line plot of the standardized load profile 'G5' (Bakery
-#|  with a bakehouse) from December 22nd to December 27th 2023; values 
+#| fig.alt = "Line plot of the standard load profile 'G5' (i.e. Bakery
+#|  with a bakehouse) based on data from the German Association of Energy
+#|  and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft
+#|  e.V.) from December 22nd to December 27th 2023; values 
 #|  are normalized to an annual consumption of 1,000kWh per annum."
 ggplot(G5, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
@@ -140,7 +143,7 @@ ggplot(G5, aes(start_time, watts)) +
     date_breaks = "1 day",
     date_labels = "%b %d") +
   labs(
-    title = "Profile 'G5': bakery with bakehouse",
+    title = "'G5': bakery with bakehouse",
     subtitle = "1/4h-measurements, based on consumption of 1.000 kWh/a",
     caption = "data: www.bdew.de",
     x = NULL,
@@ -152,6 +155,8 @@ ggplot(G5, aes(start_time, watts)) +
   ) +
   NULL
 ```
+
+See [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm.
 
 ## Source
 Data and information about the methodology can be found on website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
