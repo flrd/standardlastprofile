@@ -34,13 +34,13 @@ devtools::install_github("flrd/standardlastprofile")
 
 ## About the data
 
-The standardlastprofile package contains one data-set called `slp`. In
+The standardlastprofile package contains one dataset called `slp`. In
 total there are 9,504 observations of 5 variables:
 
 - `profile_id`: identifier of standard load profile
-- `period`: one of ‘summer’, ‘winter’, ‘transition’
-- `day`: one of ‘saturday’, ‘sunday’, ‘workday’
-- `timestamp`: format ‘%H:%M’
+- `period`: one of “summer”, “winter”, “transition”
+- `day`: one of “saturday”, “sunday”, “workday”
+- `timestamp`: format “%H:%M”
 - `watts`: electric power
 
 ``` r
@@ -59,9 +59,9 @@ simplification that does not necessarily correspond to the consumption
 profile of an individual customer, but represents a valid approximation
 for a larger group of similar customers.
 
-For each combination of `profile`, `period` and `day` there are 96 x
-1/4h-measurements in watts. If you have no idea what the profile `H0`
-stands for, you are not alone.
+For each combination of `profile_id`, `period` and `day` there are 96 x
+1/4h-measurements in watts. If you have no idea what `H0` stands for,
+you are not alone.
 
 - `H0`: households (German: “Haushalte”)
 - `G0` to `G6`: commerce (“Gewerbe”)
@@ -83,8 +83,8 @@ slp_info(language = "EN")$H0
 
 ### Generate a standard load profile
 
-Use the function `slp_generate()` to create data for one or more
-standard load profile identifiers:
+Use the function `slp_generate()` to gernate a standard load profile for
+a given period of time:
 
 ``` r
 G5 <- slp_generate(

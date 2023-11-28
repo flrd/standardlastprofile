@@ -19,19 +19,17 @@
 #'# There are 96 observations for each combination of profile_id, period and day
 #'tmp <- subset(slp, profile_id == "L0" & period == "summer" & day == "workday")
 #'dim(tmp)
-#'# [1] 96  5
 #'
 #'@details
-#'There are 96 values for each combination of profile_id, period and day. These
-#'are 1/4-hour measurements and represent a standard load profile
-#'(German: "Standardlastprofil"). The data was derived in 1999 on the
-#'basis of 1,209 measured load profiles from low-voltage customers in Germany
+#'There are 96 x 1/4h measurements of electrical power for each combination
+#'of `profile_id`, `period` and `day`, which we refer to as the "standard load
+#'profile". The data was determined in 1999 on the basis of 1,209 measured load
+#'profiles of low-voltage customers in Germany.
 #'
-#'These 96 values per day correspond to the average quarter-hourly power
-#'that is expected if the customer / customer group consumes 1000 kWh/a
-#'("normalized annual consumption"). So if we sum up all the quarter-hourly
-#'consumption values for one year, the result is (approximately) 1,000 kWh/a. See
-#'vignette("algorithm-step-by-step") for more information.
+#'For each profile identifier the measurements were normalized so that they
+#'correspond to an annual consumption of 1,000 kWh. So if we sum up all the
+#'quarter-hourly consumption values for one year, the result is (approximately)
+#'1,000 kWh/a. See `vignette("algorithm-step-by-step")` for more information.
 #'
 #'In total there are 11 representative, standard load profiles for 3 different
 #'customer groups:

@@ -2,7 +2,7 @@
 % Please edit documentation in R/slp_generate.R
 \name{slp_generate}
 \alias{slp_generate}
-\title{Generate a Load Profile}
+\title{Generate a Standard Load Profile}
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
@@ -34,32 +34,35 @@ A data.frame with four variables:
 }
 }
 \description{
-\code{slp_generate()} returns standard load profiles in the form of quarter-hourly
-values (in watts) that are normalized to an annual consumption of 1,000 kWh.
+Generate a standard load profile normalized to an annual
+consumption of 1,000 kWh.
 }
 \details{
-Supported profiles are:
+For every day there are 96 x 1/4h measurements of electrical power for
+each combination of \code{profile_id}, \code{period} and \code{day}. For each profile
+identifier the measurements were normalized so that they correspond to an
+annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
+consumption values for one year, the result is (approximately) 1,000 kWh/a,
+see 'Examples' and call \code{vignette("algorithm-step-by-step")} for more information.
+
+In total there are 11 representative, standard load profiles for 3 different
+customer groups:
 \itemize{
-\item \code{H0}: households (German: "Haushalte")
-\item \code{G0} to \code{G6}: commerce ("Gewerbe")
-\item \code{L0} to \code{L2}: agriculture ("Landwirtschaft")
+\item households: \code{H0}
+\item commercial: \code{G0}, \code{G1}, \code{G2}, \code{G3}, \code{G4}, \code{G5}, \code{G6}
+\item agriculture: \code{L0}, \code{L1}, \code{L2}
 }
 
-Call \code{\link[=slp_info]{slp_info()}} for more information about profiles.
+Call \code{\link[=slp_info]{slp_info()}} to for more information and examples.
 
-The standard load profiles are differentiated according to winter,
-transitional period, summer as well as workday, Saturday, Sunday. See:
-\url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
-for the methodology used to determine the profiles.
-
-Periods are defined as:
+Definition of periods:
 \itemize{
 \item \code{summer}: May 15 to September 14
 \item \code{winter}: November 1 to March 20
 \item \code{transition}: March 21 to May 14, and September 15 to October 31
 }
 
-Dates are mapped to one of three days:
+Definition of characteristic days:
 \itemize{
 \item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
 if they are not a Sunday
@@ -68,22 +71,18 @@ if they are not a Sunday
 }
 
 \strong{Note}: The package supports nationwide, public holidays for Germany. Those
-were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API} and
-are listed below for 2024:
-\itemize{
-\item Jan 1: New Year's
-\item Mar 29: Good Friday
-\item Apr 1: Easter Monday
-\item May 1: Labour Day
-\item May 9: Ascension Day
-\item May 20: Whit Monday
-\item Oct 3: German Unity Day
-\item Dec 25: Christmas Day:
-\item Dec 26: Boxing Day
-}
+were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
+
+\code{start_date} must be greater or equal too "1990-01-01", \code{end_date} must be smaller
+or equal to "2073-12-31". This is because public holidays in Germany would be ambitious before
+before the reunification in 1990, and 2073 is the latest year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 }
 \examples{
 today <- Sys.Date()
 L <- slp_generate(c("L0", "L1", "L2"), today, today + 1)
 head(L)
+
+# Values are normilzed to an annual consumption of 1,000 kWh
+H0_2024 <- slp_generate("H0", "2024-01-01", "2024-12-31")
+sum(H0_2024$watts / 4 / 1000)
 }

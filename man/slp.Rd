@@ -5,9 +5,9 @@
 \alias{slp}
 \title{Standard Load Profile Data for Electricity from BDEW}
 \format{
-A data.frame with 9,504 rows and 5 variables:
+A data.frame with 9,504 observations and 5 variables:
 \describe{
-\item{profile_id}{character, identifier for load profile , see 'Details'}
+\item{profile_id}{character, identifier for load profile, see 'Details'}
 \item{period}{character, one of 'summer', 'winter', 'transition'}
 \item{day}{character, one of 'saturday', 'sunday', 'workday'}
 \item{timestamp}{character, format: \%H:\%M}
@@ -27,28 +27,30 @@ A data.frame with 9,504 rows and 5 variables:
 slp
 }
 \description{
-Data is provided by the German Association of Energy and Water Industries (BDEW
-Bundesverband der Energie- und Wasserwirtschaft e.V.).
+Data about representative, standard load profiles for electricity from
+the German Association of Energy and Water Industries (BDEW Bundesverband
+der Energie- und Wasserwirtschaft e.V.) in a tidy format.
 }
 \details{
-Data is differentiated by workday, Saturday and Sunday in the three annual
-periods: winter, transitional period and summer. There are 96 values for each
-combination of 'day' and 'period'.
+There are 96 x 1/4h measurements of electrical power for each combination
+of \code{profile_id}, \code{period} and \code{day}, which we refer to as the "standard load
+profile". The data was determined in 1999 on the basis of 1,209 measured load
+profiles of low-voltage customers in Germany.
 
-These 96 values per day correspond to the average quarter-hourly power
-that is expected if the customer / customer group consumes 1000 kWh/a
-("normalized annual consumption"). So if we sum up all the quarter-hourly
-consumption values for one year, the result is (approximately) 1,000 kWh/a. See
-vignette("algorithm-step-by-step") for more information.
+For each profile identifier the measurements were normalized so that they
+correspond to an annual consumption of 1,000 kWh. So if we sum up all the
+quarter-hourly consumption values for one year, the result is (approximately)
+1,000 kWh/a. See \code{vignette("algorithm-step-by-step")} for more information.
 
-There are 11 representative, standard load profiles for 3 different
-customer groups, call \code{\link[=slp_info]{slp_info()}} to get description for
-each profile.
+In total there are 11 representative, standard load profiles for 3 different
+customer groups:
 \itemize{
 \item households: \code{H0}
 \item commercial: \code{G0}, \code{G1}, \code{G2}, \code{G3}, \code{G4}, \code{G5}, \code{G6}
 \item agriculture: \code{L0}, \code{L1}, \code{L2}
 }
+
+Call \code{\link[=slp_info]{slp_info()}} to for more information and examples.
 
 Periods are defined as:
 \itemize{
@@ -68,10 +70,9 @@ if they are not a Sunday
 \examples{
 head(slp)
 
-# There are 96 observations for each combination of profile, period and day
+# There are 96 observations for each combination of profile_id, period and day
 tmp <- subset(slp, profile_id == "L0" & period == "summer" & day == "workday")
 dim(tmp)
-# [1] 96  5
 
 }
 \keyword{datasets}

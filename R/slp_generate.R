@@ -1,7 +1,7 @@
-#' Generate a Load Profile
+#' Generate a Standard Load Profile
 #'
-#' Generate a standard load profile in watts, normalized to an annual
-#' consumption of 1,000 kWh.
+#' Generate a standard load profile, normalized to an annual
+#' consumption of 1,000 kWh
 #'
 #' @param profile_id load profile identifier, see 'Details'.
 #' @param start_date start date in ISO 8601 format, required
@@ -12,24 +12,28 @@
 #' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 #'
 #' @details
-#' Supported profiles are:
-#' - `H0`: households (German: "Haushalte")
-#' - `G0` to `G6`: commerce ("Gewerbe")
-#' - `L0` to `L2`: agriculture ("Landwirtschaft")
+#'For every day there are 96 x 1/4h measurements of electrical power for
+#'each combination of `profile_id`, `period` and `day`. For each profile
+#'identifier the measurements were normalized so that they correspond to an
+#'annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
+#'consumption values for one year, the result is (approximately) 1,000 kWh/a,
+#'see 'Examples' and call `vignette("algorithm-step-by-step")` for more information.
 #'
-#' Call [slp_info()] for more information about profiles.
+#'In total there are 11 representative, standard load profiles for 3 different
+#'customer groups:
 #'
-#' The standard load profiles are differentiated according to winter,
-#' transitional period, summer as well as workday, Saturday, Sunday. See:
-#' <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
-#' for the methodology used to determine the profiles.
+#'- households: `H0`
+#'- commercial: `G0`, `G1`, `G2`, `G3`, `G4`, `G5`, `G6`
+#'- agriculture: `L0`, `L1`, `L2`
 #'
-#'Periods are defined as:
+#'Call [slp_info()] to for more information and examples.
+#'
+#'Definition of periods:
 #'- `summer`: May 15 to September 14
 #'- `winter`: November 1 to March 20
 #'- `transition`: March 21 to May 14, and September 15 to October 31
 #'
-#'There are 3 different characteristic days:
+#'Definition of characteristic days:
 #'- `saturday`: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
 #'if they are not a Sunday
 #'- `sunday`: Sundays and all public holidays
@@ -37,6 +41,10 @@
 #'
 #'**Note**: The package supports nationwide, public holidays for Germany. Those
 #'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
+#'
+#' `start_date` must be greater or equal too "1990-01-01", `end_date` must be smaller
+#' or equal to "2073-12-31". This is because public holidays in Germany would be ambitious before
+#' before the reunification in 1990, and 2073 is the latest year supported by the [nager.Date API](https://github.com/nager/Nager.Date).
 #'
 #' @return A data.frame with four variables:
 #' - `profile_id`, character, load profile identifier
@@ -49,6 +57,10 @@
 #' today <- Sys.Date()
 #' L <- slp_generate(c("L0", "L1", "L2"), today, today + 1)
 #' head(L)
+#'
+#' # Values are normilzed to an annual consumption of 1,000 kWh
+#' H0_2024 <- slp_generate("H0", "2024-01-01", "2024-12-31")
+#' sum(H0_2024$watts / 4 / 1000)
 slp_generate <- function(
     profile_id = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
     start_date,
@@ -61,8 +73,8 @@ slp_generate <- function(
     stop("Please provide a valid date in ISO 8601 format")
   }
 
-  if(start < as_date("1973-01-01") || end > as_date("2073-12-21")) {
-    stop("Supported date range must be between 1973-01-01 and 2073-12-31.")
+  if(start < as_date("1990-01-01") || end > as_date("2073-12-21")) {
+    stop("Supported date range must be between 1990-01-01 and 2073-12-31.")
   }
 
   profile_id <- toupper(profile_id)
