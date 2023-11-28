@@ -27,7 +27,7 @@ p1 <- ggplot2::ggplot(slp,
                        "transition" = "#0CC792"
                      )) +
   ggplot2::labs(title = "Standard Load Profiles",
-       subtitle = "96 x 1/4h-measurements each day [in watts], based on consumption of 1.000 kWh/a",
+       subtitle = "96 x 1/4h-measurements each day [in watts], based on consumption of 1,000 kWh/a",
        caption = "data: www.bdew.de") +
   ggplot2::theme_minimal() +
   ggplot2::theme(legend.position = "top") +
@@ -55,7 +55,7 @@ p2 <- ggplot2::ggplot(G5, ggplot2::aes(start_time, watts)) +
   ggplot2::geom_line(color = "#0CC792") +
   ggplot2::scale_x_datetime(date_breaks = "1 day", date_labels = "%b %d") +
   ggplot2::labs(title = "'G5': bakery with bakehouse",
-                subtitle = "1/4h-measurements, based on consumption of 1.000 kWh/a",
+                subtitle = "1/4h-measurements, based on consumption of 1,000 kWh/a",
                 caption = "data: www.bdew.de",
                 x = NULL,
                 y = "[watts]") +
