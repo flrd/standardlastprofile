@@ -1,4 +1,4 @@
-#' Get the description load profiles according to the BDEW
+#' Details and Examples of standard load profiles
 #'
 #' @return A data.frame
 #'

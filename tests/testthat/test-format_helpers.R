@@ -11,3 +11,7 @@ test_that("format_md works", {
 test_that("format_Y works", {
   expect_equal(format_Y(tmp), "2023")
 })
+
+test_that("format_Y works", {
+  expect_equal(format_j(tmp), "358")
+})

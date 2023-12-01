@@ -160,7 +160,7 @@ slp_generate <- function(
     days_decimal <- format_j(daily_seq) |> as.integer()
 
     # multiply values for each day with
-    vals[["H0"]] <- tmp_h0 * rep(dynamization_fun(days_decimal), each = dim(tmp_h0)[[1]])
+    vals[["H0"]] <- suppressWarnings( tmp_h0 * rep(dynamization_fun(days_decimal), each = dim(tmp_h0)[[1]]))
   }
 
   # timestamp for output

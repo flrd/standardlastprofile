@@ -1,16 +1,12 @@
 Package: standardlastprofile
-Title: R data package for load profiles for electricity
-Description: This package provides data on standardized load profiles from
-  the German Association of Energy and Water Industries (BDEW Bundesverband
-  der Energie- und Wasserwirtschaft e.V.) in a tidy format. The data was
-  published in 1999 and since then has formed a basis for energy suppliers
-  to approximate the estimated electricity consumption for their customers.
-  A standardized load profile describes the consumption profile of an energy 
-  consumer over a certain period of time. The package also provides an interface
-  to generate a load profile over a user specified period of time. 
+Title: R Data Package for Load Profiles for Electricity
+Description: Data on standard load profiles from the German Association of 
+  Energy and Water Industries (BDEW Bundesverband der Energie- und 
+  Wasserwirtschaft e.V.) in a tidy format. The package also provides an
+  interface to generate a load profile over a user specified period of time. 
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Markus", family = "Döring", email = "m4rkus.doering@gmail.com", role = c("aut", "cre"))
+    person(given = "Markus", family = "Döring", email = "m4rkus.doering@gmail.com", role = c("aut", "cre", "cph"))
 License: CC0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

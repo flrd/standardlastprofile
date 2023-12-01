@@ -4,9 +4,9 @@
 \name{standardlastprofile-package}
 \alias{standardlastprofile}
 \alias{standardlastprofile-package}
-\title{standardlastprofile: R data package for load profiles for electricity}
+\title{standardlastprofile: R Data Package for Load Profiles for Electricity}
 \description{
-This package provides data on standardized load profiles from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The data was published in 1999 and since then has formed a basis for energy suppliers to approximate the estimated electricity consumption for their customers. A standardized load profile describes the consumption profile of an energy consumer over a certain period of time. The package also provides an interface to generate a load profile over a user specified period of time.
+Data on standard load profiles from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The package also provides an interface to generate a load profile over a user specified period of time.
 }
 \seealso{
 Useful links:
@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Markus Döring \email{m4rkus.doering@gmail.com}
+\strong{Maintainer}: Markus Döring \email{m4rkus.doering@gmail.com} [copyright holder]
 
 }
 \keyword{internal}
