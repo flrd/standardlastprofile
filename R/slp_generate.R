@@ -6,6 +6,7 @@
 #' @param profile_id load profile identifier, see 'Details'.
 #' @param start_date start date in ISO 8601 format, required
 #' @param end_date end date in ISO 8601 format, required
+#' @param state_code identifier for one of 16 German states, see 'Details', optional
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
 #' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
@@ -41,10 +42,35 @@
 #'
 #'**Note**: The package supports nationwide, public holidays for Germany. Those
 #'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
+#'The optional argument `state_code` can take one of the following  ISO 3166-2
+#'state codes, see 'Examples' and <https://en.wikipedia.org/wiki/ISO_3166-2:DE> for more information on German states:
 #'
-#' `start_date` must be greater or equal too "1990-01-01", `end_date` must be smaller
-#' or equal to "2073-12-31". This is because public holidays in Germany would be ambitious before
-#' before the reunification in 1990, and 2073 is the latest year supported by the [nager.Date API](https://github.com/nager/Nager.Date).
+#' - `DE-BB`: Brandenburg
+#' - `DE-BE`: Berlin
+#' - `DE-BW`: Baden-Württemberg
+#' - `DE-BY`: Bavaria
+#' - `DE-HB`: Bremen
+#' - `DE-HE`: Hesse
+#' - `DE-HH`: Hamburg
+#' - `DE-MV`: Mecklenburg-Vorpommern
+#' - `DE-NI`: Lower-Saxony
+#' - `DE-NW`: North Rhine-Westphalia
+#' - `DE-RP`: Rhineland-Palatinate
+#' - `DE-SH`: Schleswig-Holstein
+#' - `DE-SL`: Saarland
+#' - `DE-SN`: Saxony
+#' - `DE-ST`: Saxony-Anhalt
+#' - `DE-TH`: Thuringia
+#'
+#' The prefix "DE-" must not be provided for convenience, see 'Examples'.
+#'
+#' You can retrieve a dataset called `german_states` to get all 16 state codes
+#' and their respective name in German and English.
+#'
+#' `start_date` must be greater or equal to "1990-01-01", `end_date` must be smaller
+#' or equal to "2073-12-31". This is because public holidays in Germany would
+#' be ambitious before the reunification in 1990 (think of the state of Berlin),
+#' and 2073 is the highest year supported by the [nager.Date API](https://github.com/nager/Nager.Date).
 #'
 #' @return A data.frame with four variables:
 #' - `profile_id`, character, load profile identifier
@@ -58,13 +84,22 @@
 #' L <- slp_generate(c("L0", "L1", "L2"), today, today + 1)
 #' head(L)
 #'
-#' # Values are normilzed to an annual consumption of 1,000 kWh
+#' # you can supply one of 16 states, with or without "DE-" prefix
+#' slp_generate("H0", "2024-01-01", "2024-12-31", state = "BE")
+#' slp_generate("H0", "2024-01-01", "2024-12-31", state = "DE-BE")
+#' slp_generate("H0", "2024-01-01", "2024-12-31", state_code = "de-be") # all Berlin
+#'
+#' # if no state code is provided then only nationwide public holidays are considered
+#' slp_generate("H0", "2024-01-01", "2024-12-31")
+#'
+#' # Electric power values are normalized to an annual consumption of 1,000 kWh
 #' H0_2024 <- slp_generate("H0", "2024-01-01", "2024-12-31")
 #' sum(H0_2024$watts / 4 / 1000)
 slp_generate <- function(
-    profile_id = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
+    profile_id = "H0",
     start_date,
-    end_date) {
+    end_date,
+    state_code = NULL) {
 
   start <- as_date(start_date)
   end <- as_date(end_date)
@@ -80,14 +115,29 @@ slp_generate <- function(
   profile_id <- toupper(profile_id)
   profile_id <- unique(profile_id)
 
-  profile_id <- match.arg(arg = profile_id, several.ok = TRUE)
+  profile_id <- match.arg(arg = profile_id,
+                          choices = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
+                          several.ok = TRUE)
   profiles_n <- length(profile_id)
+
+  if(!is.null(state_code)) {
+
+    # just in case
+    state_code <- toupper(state_code)
+
+    # users can provide state code without leading "DE-", for convenience
+    if (state_code %in% sub("DE-", "", standardlastprofile::german_states$state_code)) {
+      state_code <- standardise_state_names(state_code)
+    }
+
+    state_code <- match.arg(state_code, choices = standardlastprofile::german_states$state_code)
+  }
 
   # returns vector of class 'Date'
   daily_seq <- get_daily_sequence(start_date, end_date)
 
   # given a date, returns combination of weekday and period
-  wkday_period <- get_wkday_period(daily_seq)
+  wkday_period <- get_wkday_period(daily_seq, state_code = state_code)
 
   # subset of load_profiles_lst
   tmp <- load_profiles_lst[profile_id]

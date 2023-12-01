@@ -45,7 +45,15 @@ as_date <- function(x) {
 
 # Map a date to a weekday -------------------------------------------------
 
-get_weekday <- function(x) {
+get_holidays <- function(x, years, state_code) {
+
+  state_code <- paste_dash("DE", state_code)
+
+  idx <- x[["year"]] %in% years & x[["region"]] %in% c("DE", state_code)
+  x[idx, "holiday"]
+}
+
+get_weekday <- function(x, state_code = NULL) {
 
   if(!is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
@@ -80,23 +88,19 @@ get_weekday <- function(x) {
   }
 
   # get public holidays in Germany for all years in 'x'
-  # nager.Date API covers 1972 to 2050
 
-  yrs_rng <- format_Y(x) |> range()
-  yrs_unq <- unique(yrs_rng)
-  yrs_int <- as.integer(yrs_unq)
+  # range returns a vector of length 2
+  yrs_rng <- range(format_Y(x))
+  yrs_int <- as.integer(yrs_rng)
+  yrs_seq <- seq.int(yrs_int[1], yrs_int[2])
 
-  if(length(yrs_unq) > 1L) {
-    yrs_seq <- seq.int(yrs_int[1], yrs_int[2])
-
-    holidays <- federal_holidays_DE[as.character(yrs_seq)] |>
-      unlist(use.names = FALSE)
-  } else {
-    holidays <- federal_holidays_DE[[yrs_unq]]
-  }
+  holidays <- get_holidays(
+    x = holidays_DE,
+    years = yrs_seq,
+    state_code = state_code
+    )
 
   # public holidays are mapped to a Sunday
-
   holidays_idx <- x %in% as.Date(holidays)
 
   if(any(holidays_idx)) {
@@ -173,8 +177,18 @@ get_period <- function(x) {
 
 # helper to concatenate weekday and period --------------------------------
 
-get_wkday_period <- function(x) {
-  paste_snake(get_weekday(x), get_period(x))
+# This function adds "DE-" as prefixe to state codes if a user did not provide it,
+# see also: [ISO 3166-2:DE](https://en.wikipedia.org/wiki/ISO_3166-2:DE)
+standardise_state_names <- function(state) {
+
+  state <- match.arg(
+    state,
+    sub("DE-", "", standardlastprofile::german_states$state_code))
+  paste_dash("DE", state)
+}
+
+get_wkday_period <- function(x, state_code = NULL) {
+  paste_snake(get_weekday(x, state_code = state_code), get_period(x))
 }
 
 

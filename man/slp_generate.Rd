@@ -11,11 +11,7 @@
 \url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
 }
 \usage{
-slp_generate(
-  profile_id = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
-  start_date,
-  end_date
-)
+slp_generate(profile_id = "H0", start_date, end_date, state_code = NULL)
 }
 \arguments{
 \item{profile_id}{load profile identifier, see 'Details'.}
@@ -23,6 +19,8 @@ slp_generate(
 \item{start_date}{start date in ISO 8601 format, required}
 
 \item{end_date}{end date in ISO 8601 format, required}
+
+\item{state_code}{identifier for one of 16 German states, see 'Details', optional}
 }
 \value{
 A data.frame with four variables:
@@ -34,8 +32,8 @@ A data.frame with four variables:
 }
 }
 \description{
-Generate a standard load profile normalized to an annual
-consumption of 1,000 kWh.
+Generate a standard load profile, normalized to an annual
+consumption of 1,000 kWh
 }
 \details{
 For every day there are 96 x 1/4h measurements of electrical power for
@@ -72,17 +70,51 @@ if they are not a Sunday
 
 \strong{Note}: The package supports nationwide, public holidays for Germany. Those
 were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
+The optional argument \code{state_code} can take one of the following  ISO 3166-2
+state codes, see 'Examples' and \url{https://en.wikipedia.org/wiki/ISO_3166-2:DE} for more information on German states:
+\itemize{
+\item \code{DE-BB}: Brandenburg
+\item \code{DE-BE}: Berlin
+\item \code{DE-BW}: Baden-Württemberg
+\item \code{DE-BY}: Bavaria
+\item \code{DE-HB}: Bremen
+\item \code{DE-HE}: Hesse
+\item \code{DE-HH}: Hamburg
+\item \code{DE-MV}: Mecklenburg-Vorpommern
+\item \code{DE-NI}: Lower-Saxony
+\item \code{DE-NW}: North Rhine-Westphalia
+\item \code{DE-RP}: Rhineland-Palatinate
+\item \code{DE-SH}: Schleswig-Holstein
+\item \code{DE-SL}: Saarland
+\item \code{DE-SN}: Saxony
+\item \code{DE-ST}: Saxony-Anhalt
+\item \code{DE-TH}: Thuringia
+}
 
-\code{start_date} must be greater or equal too "1990-01-01", \code{end_date} must be smaller
-or equal to "2073-12-31". This is because public holidays in Germany would be ambitious before
-before the reunification in 1990, and 2073 is the latest year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
+The prefix "DE-" must not be provided for convenience, see 'Examples'.
+
+You can retrieve a dataset called \code{german_states} to get all 16 state codes
+and their respective name in German and English.
+
+\code{start_date} must be greater or equal to "1990-01-01", \code{end_date} must be smaller
+or equal to "2073-12-31". This is because public holidays in Germany would
+be ambitious before the reunification in 1990 (think of the state of Berlin),
+and 2073 is the highest year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 }
 \examples{
 today <- Sys.Date()
 L <- slp_generate(c("L0", "L1", "L2"), today, today + 1)
 head(L)
 
-# Values are normilzed to an annual consumption of 1,000 kWh
+# you can supply one of 16 states, with or without "DE-" prefix
+slp_generate("H0", "2024-01-01", "2024-12-31", state = "BE")
+slp_generate("H0", "2024-01-01", "2024-12-31", state = "DE-BE")
+slp_generate("H0", "2024-01-01", "2024-12-31", state_code = "de-be") # all Berlin
+
+# if no state code is provided then only nationwide public holidays are considered
+slp_generate("H0", "2024-01-01", "2024-12-31")
+
+# Electric power values are normalized to an annual consumption of 1,000 kWh
 H0_2024 <- slp_generate("H0", "2024-01-01", "2024-12-31")
 sum(H0_2024$watts / 4 / 1000)
 }

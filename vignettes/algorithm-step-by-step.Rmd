@@ -22,8 +22,56 @@ library(ggplot2)
 The aim of this vignette is to show how the algorithm of the `slp_generate()` function works step by step. The data in the `slp` dataset forms the basis for all subsequent steps. There are 96 x 1/4 hour measurements of electrical power for each combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The data was determined in 1999 on the basis of 1,209 measured load profiles of low-voltage customers in Germany[^bdew-1].
 
   [^bdew-1]: More detail on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
+  
+```{r small_multiples_vignette, echo = FALSE, fig.asp = 1.4, fig.retina=2}
+#| fig.alt = "Small multiple line chart of 11 standard load profiles
+#|  published by the German Association of Energy and Water Industries (BDEW 
+#|  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
+#|  the consumption for three different periods over a year, and
+#|  also compare the consumption between different days of a week."
 
-Those measurements are normalized to an annual consumption of 1,000 kWh. So if we sum up all the quarter-hour consumption values for a year, the result is (approximately) 1,000 kWh/a.
+# labeller
+label_names <- c(
+  "saturday" = "Saturday",
+  "sunday" = "Sunday",
+  "workday" = "Workday"
+)
+
+label_fun <- function(x) label_names[[x]]
+
+# plot
+ggplot(slp,
+       aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
+           y = watts,
+           color = period)) +
+  geom_line() +
+  facet_grid(profile_id ~ day, scales = "free_y",
+             labeller = labeller(day = as_labeller(label_names))) +
+  scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%H:%M") +
+  scale_y_continuous(NULL) +
+  scale_color_manual(name = NULL,
+                     values = c(
+                       "winter" = "#961BFA",
+                       "summer" = "#FA9529",
+                       "transition" = "#0CC792"
+                       )) +
+  labs(title = "Standard Load Profiles",
+       subtitle = "96 x 1/4h-measurements a day [in watts], based on consumption of 1,000 kWh/a",
+       caption = "data: www.bdew.de") +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  theme(strip.text.y.right = element_text(angle = 0)) + 
+  theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.major.y = element_blank()
+  ) +
+  theme(axis.text.y = element_blank()) +
+  NULL
+```
+
+
+
+Those measurements are normalized to an annual consumption of 1,000 kWh, so if we sum up all the quarter-hour consumption values for a year, the result is (approximately) 1,000 kWh/a.
 
 ```{r H0_data, message=FALSE}
 library(standardlastprofile)
@@ -70,13 +118,13 @@ In the very first step a date sequence is created from `start_date` to `end_date
 
 ### Map each day to a period and a weekday
 
-The study found that consumption varies both over the course of the year and over the days within a week when analyzing 1,209 measured load profiles of low-voltage customers. The definition of periods is:
+The study found that consumption varies both over the course of the year and over the days within a week. The definition of `period`s is:
 
 * `summer`: May 15 to September 14
 * `winter`: November 1 to March 20
 * `transition`: March 21 to May 14, and September 15 to October 31
 
-However, it was also found that there was no significant difference in consumption between Monday and Friday for any group. For this reason, the days Monday to Friday are grouped together as 'workdays'. December 24th and 31th are considered a Saturday too, if they are not a Sunday, and public holidays are set to a Sunday.
+It was also found that there was no significant difference in consumption on weekdays from Monday to Friday in any group. For this reason, the days Monday to Friday are grouped together as 'workdays'. December 24th and 31th are considered a Saturday too, if they are not a Sunday, and public holidays are set to a Sunday.
 
 *Note*: The package standardlastprofile supports only public holidays for Germany. Those were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date) and below are listed nationwide holidays for 2024:
 
@@ -90,11 +138,17 @@ However, it was also found that there was no significant difference in consumpti
 * Dec 25: Christmas Day
 * Dec 26: Boxing Day
 
+There is an optional argument `state_code` that can take one of 16 values representing a German state. This allows you to consider holidays that are defined at the state level. Call `german_states` to get an overview of the possible values and their meaning:
+
+```{r german_states, message=FALSE}
+german_states
+```
+
 The result of this second step is a mapping from each date to a so-called characteristic profile day, i.e. a combination of weekday and period:
 
 ```{r characteristic_days, message=FALSE}
 wkday_period <- standardlastprofile:::get_wkday_period(date_seq)
-data.frame(date = date_seq, day = wkday_period)
+data.frame(input = date_seq, day = wkday_period)
 ```
 
 ### Assign consumption values to each day
@@ -105,11 +159,12 @@ The third step is to assign the measurements we know from the `slp` dataset to e
 G5 <- slp_generate(
   profile_id = "G5",
   start_date = "2023-12-22",
-  end_date = "2023-12-27"
+  end_date = "2023-12-27",
+  state_code = "DE-BE"       # Berlin
   )
 ```
 
-It was found that the load fluctuations for commercial and agricultural customers are moderate. That is, for for customers/customer groups `G0` to `G6`, and `L0` to `L2` the standard load profile can be determined directly from the 3x3 characteristic profile days. Here is the code to reproduce the plot for profile `G5` from the [README](https://github.com/flrd/standardlastprofile#generate-a-load-profile), where we can see the result of the algorithm:
+It was found that the load fluctuations for commercial and agricultural customers are moderate over the course of a year. That is, for for customers/customer groups `G0` to `G6`, and `L0` to `L2` the standard load profile can be determined directly from the 3x3 characteristic profile days. Here is the code to reproduce the plot for profile `G5` from the [README](https://github.com/flrd/standardlastprofile#generate-a-load-profile), where we can see the result of the algorithm:
 
 ``` {r G5_plot_vignette, echo=TRUE, eval=TRUE, message=FALSE, fig.retina=2, fig.asp=0.5}
 #| fig.alt = "Line plot of the BDEW standard load profile 'G5' (Bakery
@@ -139,7 +194,7 @@ As you can see, in 2023 the values are the same for December 24th, 2024 (a Sunda
 
 ### Generate a dynamic load profile 
 
-In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing electricity consumption from winter to summer  (in Germany), et vice versa. This fact is taken into account when you call `slp_generate()`. The study suggested the application of a 4th order polynomial function to the electric power values of profile identifier `H0`:
+In contrast to most commercial and agricultural businesses, which have a relatively even and a fairly constant power consumption over the course of a year, households on the other hand have a continuously decreasing electricity consumption from winter to summer (in Germany at least), et vice versa. This fact is taken into account when you call `slp_generate()`. The study suggested the application of a 4th order polynomial function to the electric power values of profile identifier `H0`:
 
 $$
 x = x_0 \times(-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7} \times  d^3 - 7.02\mathrm{e}{-5} \times d^2 + 2.10\mathrm{e}{-3} \times d + 1.24)
@@ -150,7 +205,7 @@ Where:
 * $x_0$ is the static quarter-hourly value
 * $d$ is the day of the year as integer, starting at 1 on January 1st
 
-The following plot shows how the electrical power develops over the year for the profile identifier `H0`. For a clearer picture, the values are aggregated at daily level:
+The following plot shows how the electrical power develops over the year for the profile identifier `H0`; for a clearer picture, the values are aggregated at daily level:
 
 ``` {r H0_2024_daily, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 # aggregate by day of year as decimal number (1 - 365)
@@ -183,6 +238,8 @@ ggplot(H0_2024_daily, aes(start_time, watts)) +
   ) +
   NULL
 ```
+
+Use data at your own caution. Feel free to [create an issues](https://github.com/flrd/standardlastprofile/issues) and suggest imporvements.
 
 
 

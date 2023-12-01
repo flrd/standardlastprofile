@@ -90,8 +90,79 @@ fwrite(x = slp,
        file = system.file("/inst/extdata", "slp.csv", package = "standardlastprofile"))
 
 
+# state names -------------------------------------------------------------
+
+german_states <-
+  structure(list(
+    state_code = c(
+      "DE-BW",
+      "DE-BY",
+      "DE-ST",
+      "DE-BE",
+      "DE-MV",
+      "DE-SL",
+      "DE-RP",
+      "DE-NW",
+      "DE-HE",
+      "DE-SH",
+      "DE-NI",
+      "DE-BB",
+      "DE-HH",
+      "DE-HB",
+      "DE-SN",
+      "DE-TH"
+    ),
+    state_de = c(
+      "Baden-Württemberg",
+      "Bayern",
+      "Sachsen-Anhalt",
+      "Berlin",
+      "Mecklenburg-Vorpommern",
+      "Saarland",
+      "Rheinland-Pfalz",
+      "Nordrhein-Westfalen",
+      "Hessen",
+      "Schleswig-Holstein",
+      "Niedersachsen",
+      "Brandenburg",
+      "Hamburg",
+      "Bremen",
+      "Sachsen",
+      "Thüringen"
+    ),
+    state_en = c(
+      "Baden-Württemberg",
+      "Bavaria",
+      "Saxony-Anhalt",
+      "Berlin",
+      "Mecklenburg-Vorpommern",
+      "Saarland",
+      "Rhineland-Palatinate",
+      "North Rhine-Westphalia",
+      "Hesse",
+      "Schleswig-Holstein",
+      "Lower-Saxony",
+      "Brandenburg",
+      "Hamburg",
+      "Bremen",
+      "Saxony",
+      "Thuringia"
+    )
+  ),
+  class = "data.frame",
+  row.names = c(NA,-16L))
+
+# to be exported
+usethis::use_data(german_states, overwrite = TRUE)
+
 # fetch public holidays in Germany from nager.Date API --------------------
-get_federal_holidays <- function(year) {
+
+# extract nationwide holidays
+is_nationwide <- function(x) {
+  x[["global"]]
+}
+
+get_holidays_DE <- function(year) {
   if (year < 1990L || year > 2073L) {
     stop("'API supports 'only' years from 1990 to 2073.")
   }
@@ -109,27 +180,38 @@ get_federal_holidays <- function(year) {
   resp_body <- resp |>
     httr2::resp_body_json()
 
-  # extract nationwide holidays
-  is_federal <- function(x) {
-    is.null(x[["counties"]])
-  }
-
-  federal_idx <- vapply(resp_body, is_federal, logical(1))
-  federal_holidays <-
-    vapply(
-      resp_body[federal_idx],
+  idx_nation <- vapply(resp_body, is_nationwide, logical(1))
+  holidays_nationwide <- data.frame(
+    region = "DE",
+    holiday = vapply(
+      resp_body[idx_nation],
       FUN = function(x) x[["date"]],
       FUN.VALUE = character(1)
     )
+  )
 
-  federal_holidays
+  # idx_states <- vapply(resp_body, Negate(is_nationwide), logical(1))
+  holidays_states <- lapply(resp_body[!idx_nation], function(x) {
+    data.frame(
+      holiday = x[["date"]],
+      region = unlist(x["counties"], use.names = FALSE)
+    )
+  }) |> do.call(rbind, args = _)
+
+  # combine national and regional holidays into 1 data.frame
+  out <- rbind(holidays_nationwide, holidays_states)
+
+  # add year column and return data.frame
+  cbind(data.frame(year = year), out)
 }
 
-
 years <- seq.int(1990, 2073)
-federal_holidays_DE <- sapply(years, get_federal_holidays)
 
-names(federal_holidays_DE) <- years
+# fetch holidays for every year in years
+holidays_DE <- lapply(years, get_holidays_DE)
+
+# creates a single data.frame for all years
+holidays_DE <- do.call(rbind, holidays_DE)
 
 # abbreviations of the 11 profiles included in this package ---------------
 profiles <- c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2")
@@ -222,7 +304,7 @@ usethis::use_data(slp, overwrite = TRUE)
 
 usethis::use_data(
   load_profiles_lst,
-  federal_holidays_DE,
+  holidays_DE,
   infos_DE,
   infos_EN,
   internal = TRUE,

@@ -83,14 +83,15 @@ slp_info(language = "EN")$H0
 
 ### Generate a standard load profile
 
-Use the function `slp_generate()` to gernate a standard load profile for
-a given period of time:
+Use the function `slp_generate()` to generate a standard load profile
+for a given period of time:
 
 ``` r
 G5 <- slp_generate(
   profile_id = "G5",
   start_date = "2023-12-22",
-  end_date = "2023-12-27"
+  end_date = "2023-12-27",
+  state_code = "DE-BE"       # Berlin
   )
 head(G5)
 #>   profile_id          start_time            end_time watts
@@ -102,9 +103,10 @@ head(G5)
 #> 6         G5 2023-12-22 01:15:00 2023-12-22 01:30:00  43.8
 ```
 
-<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000kWh per annum." width="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000kWh." width="90%" style="display: block; margin: auto;" />
 
-See
+Optionally you can also retrieve public holidays for a given German
+state, see
 [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
 for a detailed explanation of the algorithm.
 

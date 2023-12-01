@@ -57,3 +57,15 @@
 #' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 #'
 "slp"
+
+#' German state names
+#'
+#' The Federal Republic of Germany, as a federal state, consists of 16 states.
+#' This dataset returns all 16 state codes in ISO 3166 standard and their respective
+#' name in German and English.
+#'
+#' @format A data.frame with 3 variables: \code{state_code}, \code{state_de}, and \code{state_en}
+#'
+#' @source <https://www.iso.org/iso-3166-country-codes.html>
+#' @source <https://en.wikipedia.org/wiki/States_of_Germany>
+"german_states"

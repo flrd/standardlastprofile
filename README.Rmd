@@ -120,13 +120,14 @@ slp_info(language = "EN")$H0
 
 ### Generate a standard load profile
 
-Use the function `slp_generate()` to gernate a standard load profile for a given period of time:
+Use the function `slp_generate()` to generate a standard load profile for a given period of time:
 
 ``` {r, G5_data_readme, message=FALSE, echo=TRUE}
 G5 <- slp_generate(
   profile_id = "G5",
   start_date = "2023-12-22",
-  end_date = "2023-12-27"
+  end_date = "2023-12-27",
+  state_code = "DE-BE"       # Berlin
   )
 head(G5)
 ```
@@ -137,7 +138,7 @@ head(G5)
 #|  with a bakehouse) based on data from the German Association of Energy
 #|  and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft
 #|  e.V.) from December 22nd to December 27th 2023; values 
-#|  are normalized to an annual consumption of 1,000kWh per annum."
+#|  are normalized to an annual consumption of 1,000kWh."
 ggplot(G5, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
   scale_x_datetime(
@@ -157,7 +158,7 @@ ggplot(G5, aes(start_time, watts)) +
   NULL
 ```
 
-See [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm.
+Optionally you can also retrieve public holidays for a given German state, see [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm.
 
 ## Source
 Data and information about the methodology can be found on website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
