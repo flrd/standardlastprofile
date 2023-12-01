@@ -85,8 +85,9 @@ of <code>profile_id</code>, <code>period</code> and <code>day</code>,
 which we refer to as the “standard load profile”. The data was
 determined in 1999 on the basis of 1,209 measured load profiles of
 low-voltage customers in Germany<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More detail on the data and methodology can be found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>1</sup></a>.</p>
+<p><img src="algorithm-step-by-step_files/figure-html/small_multiples_vignette-1.png" alt="Small multiple line chart of 11 standard load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="700"></p>
 <p>Those measurements are normalized to an annual consumption of 1,000
-kWh. So if we sum up all the quarter-hour consumption values for a year,
+kWh, so if we sum up all the quarter-hour consumption values for a year,
 the result is (approximately) 1,000 kWh/a.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flrd/standardlastprofile" class="external-link">standardlastprofile</a></span><span class="op">)</span></span>
@@ -141,8 +142,8 @@ Date:</p>
 <h3 id="map-each-day-to-a-period-and-a-weekday">Map each day to a period and a weekday<a class="anchor" aria-label="anchor" href="#map-each-day-to-a-period-and-a-weekday"></a>
 </h3>
 <p>The study found that consumption varies both over the course of the
-year and over the days within a week when analyzing 1,209 measured load
-profiles of low-voltage customers. The definition of periods is:</p>
+year and over the days within a week. The definition of
+<code>period</code>s is:</p>
 <ul>
 <li>
 <code>summer</code>: May 15 to September 14</li>
@@ -152,11 +153,11 @@ profiles of low-voltage customers. The definition of periods is:</p>
 <code>transition</code>: March 21 to May 14, and September 15 to
 October 31</li>
 </ul>
-<p>However, it was also found that there was no significant difference
-in consumption between Monday and Friday for any group. For this reason,
-the days Monday to Friday are grouped together as ‘workdays’. December
-24th and 31th are considered a Saturday too, if they are not a Sunday,
-and public holidays are set to a Sunday.</p>
+<p>It was also found that there was no significant difference in
+consumption on weekdays from Monday to Friday in any group. For this
+reason, the days Monday to Friday are grouped together as ‘workdays’.
+December 24th and 31th are considered a Saturday too, if they are not a
+Sunday, and public holidays are set to a Sunday.</p>
 <p><em>Note</em>: The package standardlastprofile supports only public
 holidays for Germany. Those were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a> and below
 are listed nationwide holidays for 2024:</p>
@@ -171,13 +172,37 @@ are listed nationwide holidays for 2024:</p>
 <li>Dec 25: Christmas Day</li>
 <li>Dec 26: Boxing Day</li>
 </ul>
+<p>There is an optional argument <code>state_code</code> that can take
+one of 16 values representing a German state. This allows you to
+consider holidays that are defined at the state level. Call
+<code>german_states</code> to get an overview of the possible values and
+their meaning:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">german_states</span></span>
+<span><span class="co">#&gt;    state_code               state_de               state_en</span></span>
+<span><span class="co">#&gt; 1       DE-BW      Baden-Württemberg      Baden-Württemberg</span></span>
+<span><span class="co">#&gt; 2       DE-BY                 Bayern                Bavaria</span></span>
+<span><span class="co">#&gt; 3       DE-ST         Sachsen-Anhalt          Saxony-Anhalt</span></span>
+<span><span class="co">#&gt; 4       DE-BE                 Berlin                 Berlin</span></span>
+<span><span class="co">#&gt; 5       DE-MV Mecklenburg-Vorpommern Mecklenburg-Vorpommern</span></span>
+<span><span class="co">#&gt; 6       DE-SL               Saarland               Saarland</span></span>
+<span><span class="co">#&gt; 7       DE-RP        Rheinland-Pfalz   Rhineland-Palatinate</span></span>
+<span><span class="co">#&gt; 8       DE-NW    Nordrhein-Westfalen North Rhine-Westphalia</span></span>
+<span><span class="co">#&gt; 9       DE-HE                 Hessen                  Hesse</span></span>
+<span><span class="co">#&gt; 10      DE-SH     Schleswig-Holstein     Schleswig-Holstein</span></span>
+<span><span class="co">#&gt; 11      DE-NI          Niedersachsen           Lower-Saxony</span></span>
+<span><span class="co">#&gt; 12      DE-BB            Brandenburg            Brandenburg</span></span>
+<span><span class="co">#&gt; 13      DE-HH                Hamburg                Hamburg</span></span>
+<span><span class="co">#&gt; 14      DE-HB                 Bremen                 Bremen</span></span>
+<span><span class="co">#&gt; 15      DE-SN                Sachsen                 Saxony</span></span>
+<span><span class="co">#&gt; 16      DE-TH              Thüringen              Thuringia</span></span></code></pre></div>
 <p>The result of this second step is a mapping from each date to a
 so-called characteristic profile day, i.e. a combination of weekday and
 period:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wkday_period</span> <span class="op">&lt;-</span> <span class="fu">standardlastprofile</span><span class="fu">:::</span><span class="fu">get_wkday_period</span><span class="op">(</span><span class="va">date_seq</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>date <span class="op">=</span> <span class="va">date_seq</span>, day <span class="op">=</span> <span class="va">wkday_period</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         date             day</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>input <span class="op">=</span> <span class="va">date_seq</span>, day <span class="op">=</span> <span class="va">wkday_period</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        input             day</span></span>
 <span><span class="co">#&gt; 1 2023-12-22  workday_winter</span></span>
 <span><span class="co">#&gt; 2 2023-12-23 saturday_winter</span></span>
 <span><span class="co">#&gt; 3 2023-12-24   sunday_winter</span></span>
@@ -191,20 +216,21 @@ period:</p>
 <p>The third step is to assign the measurements we know from the
 <code>slp</code> dataset to each characteristic profile day. This is the
 job of the <code><a href="../reference/slp_generate.html">slp_generate()</a></code> function:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">G5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_generate.html">slp_generate</a></span><span class="op">(</span></span>
 <span>  profile_id <span class="op">=</span> <span class="st">"G5"</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="st">"2023-12-22"</span>,</span>
-<span>  end_date <span class="op">=</span> <span class="st">"2023-12-27"</span></span>
+<span>  end_date <span class="op">=</span> <span class="st">"2023-12-27"</span>,</span>
+<span>  state_code <span class="op">=</span> <span class="st">"DE-BE"</span>       <span class="co"># Berlin</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>It was found that the load fluctuations for commercial and
-agricultural customers are moderate. That is, for for customers/customer
-groups <code>G0</code> to <code>G6</code>, and <code>L0</code> to
-<code>L2</code> the standard load profile can be determined directly
-from the 3x3 characteristic profile days. Here is the code to reproduce
-the plot for profile <code>G5</code> from the <a href="https://github.com/flrd/standardlastprofile#generate-a-load-profile" class="external-link">README</a>,
+agricultural customers are moderate over the course of a year. That is,
+for for customers/customer groups <code>G0</code> to <code>G6</code>,
+and <code>L0</code> to <code>L2</code> the standard load profile can be
+determined directly from the 3x3 characteristic profile days. Here is
+the code to reproduce the plot for profile <code>G5</code> from the <a href="https://github.com/flrd/standardlastprofile#generate-a-load-profile" class="external-link">README</a>,
 where we can see the result of the algorithm:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">G5</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">start_time</span>, <span class="va">watts</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#0CC792"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -233,8 +259,8 @@ where we can see the result of the algorithm:</p>
 <p>In contrast to most commercial and agricultural businesses, which
 have a relatively even and a fairly constant power consumption over the
 course of a year, households on the other hand have a continuously
-decreasing electricity consumption from winter to summer (in Germany),
-et vice versa. This fact is taken into account when you call
+decreasing electricity consumption from winter to summer (in Germany at
+least), et vice versa. This fact is taken into account when you call
 <code><a href="../reference/slp_generate.html">slp_generate()</a></code>. The study suggested the application of a
 4th order polynomial function to the electric power values of profile
 identifier <code>H0</code>:</p>
@@ -255,9 +281,11 @@ quarter-hourly value</li>
 integer, starting at 1 on January 1st</li>
 </ul>
 <p>The following plot shows how the electrical power develops over the
-year for the profile identifier <code>H0</code>. For a clearer picture,
+year for the profile identifier <code>H0</code>; for a clearer picture,
 the values are aggregated at daily level:</p>
 <p><img src="algorithm-step-by-step_files/figure-html/H0_2024_plot-1.png" alt="Line plot of standard load profile 'H0' (households) aggreagted by day from January 1st to December 31st, 2023. The plot shows that households have a continuously decreasing load from winter to summer and vice versa." width="700"></p>
+<p>Use data at your own caution. Feel free to <a href="https://github.com/flrd/standardlastprofile/issues" class="external-link">create an
+issues</a> and suggest imporvements.</p>
 </div>
 </div>
 
