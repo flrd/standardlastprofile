@@ -71,7 +71,7 @@ if they are not a Sunday
 \strong{Note}: The package supports nationwide, public holidays for Germany. Those
 were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 The optional argument \code{state_code} can take one of the following  ISO 3166-2
-state codes, see 'Examples' and \url{https://en.wikipedia.org/wiki/ISO_3166-2:DE} for more information on German states:
+state codes:
 \itemize{
 \item \code{DE-BB}: Brandenburg
 \item \code{DE-BE}: Berlin
@@ -90,8 +90,6 @@ state codes, see 'Examples' and \url{https://en.wikipedia.org/wiki/ISO_3166-2:DE
 \item \code{DE-ST}: Saxony-Anhalt
 \item \code{DE-TH}: Thuringia
 }
-
-The prefix "DE-" must not be provided for convenience, see 'Examples'.
 
 You can retrieve a dataset called \code{german_states} to get all 16 state codes
 and their respective name in German and English.

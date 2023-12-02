@@ -65,6 +65,14 @@
 #' name in German and English.
 #'
 #' @format A data.frame with 3 variables: \code{state_code}, \code{state_de}, and \code{state_en}
+#' \describe{
+#'   \item{state_code}{character, ISO 3166-2:DE code for all German states}
+#'   \item{state_de}{state name in German}
+#'   \item{state_en}{state name in English}
+#' }
+#'
+#'@examples
+#'german_states
 #'
 #' @source <https://www.iso.org/iso-3166-country-codes.html>
 #' @source <https://en.wikipedia.org/wiki/States_of_Germany>

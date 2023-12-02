@@ -43,7 +43,7 @@
 #'**Note**: The package supports nationwide, public holidays for Germany. Those
 #'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
 #'The optional argument `state_code` can take one of the following  ISO 3166-2
-#'state codes, see 'Examples' and <https://en.wikipedia.org/wiki/ISO_3166-2:DE> for more information on German states:
+#'state codes:
 #'
 #' - `DE-BB`: Brandenburg
 #' - `DE-BE`: Berlin
@@ -61,8 +61,6 @@
 #' - `DE-SN`: Saxony
 #' - `DE-ST`: Saxony-Anhalt
 #' - `DE-TH`: Thuringia
-#'
-#' The prefix "DE-" must not be provided for convenience, see 'Examples'.
 #'
 #' You can retrieve a dataset called `german_states` to get all 16 state codes
 #' and their respective name in German and English.

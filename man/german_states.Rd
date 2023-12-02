@@ -6,6 +6,11 @@
 \title{German state names}
 \format{
 A data.frame with 3 variables: \code{state_code}, \code{state_de}, and \code{state_en}
+\describe{
+\item{state_code}{character, ISO 3166-2:DE code for all German states}
+\item{state_de}{state name in German}
+\item{state_en}{state name in English}
+}
 }
 \source{
 \url{https://www.iso.org/iso-3166-country-codes.html}
@@ -19,5 +24,9 @@ german_states
 The Federal Republic of Germany, as a federal state, consists of 16 states.
 This dataset returns all 16 state codes in ISO 3166 standard and their respective
 name in German and English.
+}
+\examples{
+german_states
+
 }
 \keyword{datasets}
