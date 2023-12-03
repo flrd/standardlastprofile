@@ -11,10 +11,10 @@
 \url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
 }
 \usage{
-slp_generate(profile_id = "H0", start_date, end_date, state_code = NULL)
+slp_generate(profile_id, start_date, end_date, state_code = NULL)
 }
 \arguments{
-\item{profile_id}{load profile identifier, see 'Details'.}
+\item{profile_id}{load profile identifier, see 'Details', required}
 
 \item{start_date}{start date in ISO 8601 format, required}
 
@@ -36,10 +36,15 @@ Generate a standard load profile, normalized to an annual
 consumption of 1,000 kWh
 }
 \details{
+In regards to the electricity market in Germany, the term "Standard Load
+Profile" refers to a representative pattern of electricity consumption over
+a specific period, based on average consumption data. These profiles are used
+to depict the expected electricity consumption for various customer groups,
+such as households or businesses.
+
 For every day there are 96 x 1/4h measurements of electrical power for
-each combination of \code{profile_id}, \code{period} and \code{day}. For each profile
-identifier the measurements were normalized so that they correspond to an
-annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
+each combination of \code{profile_id}, \code{period} and \code{day}. Values are normalized
+so that they correspond to an annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
 consumption values for one year, the result is (approximately) 1,000 kWh/a,
 see 'Examples' and call \code{vignette("algorithm-step-by-step")} for more information.
 
@@ -70,8 +75,8 @@ if they are not a Sunday
 
 \strong{Note}: The package supports nationwide, public holidays for Germany. Those
 were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
-The optional argument \code{state_code} can take one of the following  ISO 3166-2
-state codes:
+Use the optional argument \code{state_code} to consider public holidays on a state
+level too. Possible values are:
 \itemize{
 \item \code{DE-BB}: Brandenburg
 \item \code{DE-BE}: Berlin
@@ -91,28 +96,35 @@ state codes:
 \item \code{DE-TH}: Thuringia
 }
 
-You can retrieve a dataset called \code{german_states} to get all 16 state codes
-and their respective name in German and English.
+The dataset \code{german_states} contains all 16 state codes and their respective names in German and English.
 
-\code{start_date} must be greater or equal to "1990-01-01", \code{end_date} must be smaller
-or equal to "2073-12-31". This is because public holidays in Germany would
-be ambitious before the reunification in 1990 (think of the state of Berlin),
-and 2073 is the highest year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
+\code{start_date} must be greater or equal to "1990-01-01". This is because public holidays in Germany would
+be ambitious before the reunification in 1990 (think of the state of Berlin in
+1989)
+
+\code{end_date} must be smaller or equal to "2073-12-31" because this is highest
+year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 }
 \examples{
 today <- Sys.Date()
+
+# mulitple profile IDs are supported
 L <- slp_generate(c("L0", "L1", "L2"), today, today + 1)
 head(L)
-
-# you can supply one of 16 states, with or without "DE-" prefix
-slp_generate("H0", "2024-01-01", "2024-12-31", state = "BE")
-slp_generate("H0", "2024-01-01", "2024-12-31", state = "DE-BE")
-slp_generate("H0", "2024-01-01", "2024-12-31", state_code = "de-be") # all Berlin
-
-# if no state code is provided then only nationwide public holidays are considered
-slp_generate("H0", "2024-01-01", "2024-12-31")
 
 # Electric power values are normalized to an annual consumption of 1,000 kWh
 H0_2024 <- slp_generate("H0", "2024-01-01", "2024-12-31")
 sum(H0_2024$watts / 4 / 1000)
+
+# you can supply one of 16 ISO 3166-2:DE state codes for each German state
+\dontrun{
+slp_generate("H0", "2024-01-01", "2024-12-31", state = "DE-BE")
+
+# with or without "DE-" prefix, case-insensitive
+slp_generate("H0", "2024-01-01", "2024-12-31", state = "BE")
+slp_generate("H0", "2024-01-01", "2024-12-31", state_code = "de-be") # all Berlin
+
+# if no state code is provided then only nationwide public holidays are considered
+slp_generate("H0", "2024-01-01", "2024-12-31")
+}
 }

@@ -6,7 +6,7 @@
 \alias{standardlastprofile-package}
 \title{standardlastprofile: R Data Package for Load Profiles for Electricity}
 \description{
-Data on standard load profiles from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The package also provides an interface to generate a load profile over a user specified period of time.
+Data on standard load profiles from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. This package also offers an interface for generating a standard load profile over a user-defined period.
 }
 \seealso{
 Useful links:

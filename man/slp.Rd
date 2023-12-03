@@ -40,10 +40,15 @@ profiles of low-voltage customers in Germany.
 For each profile identifier the measurements were normalized so that they
 correspond to an annual consumption of 1,000 kWh. So if we sum up all the
 quarter-hourly consumption values for one year, the result is (approximately)
-1,000 kWh/a. See \code{vignette("algorithm-step-by-step")} for more information.
+1,000 kWh/a.
 
-In total there are 11 representative, standard load profiles for 3 different
-customer groups:
+\strong{Note} The values given for profile H0 are only characteristic calculation
+values. Only through multiplication with the 4th order polynomial function do
+they become a representative and dynamized load profile for the group of
+household customers. This fact is taken care of in the function \code{slp_generate()},
+see \code{vignette("algorithm-step-by-step")} for more information.
+
+There are 11 standard load profiles for 3 different customer groups:
 \itemize{
 \item households: \code{H0}
 \item commercial: \code{G0}, \code{G1}, \code{G2}, \code{G3}, \code{G4}, \code{G5}, \code{G6}

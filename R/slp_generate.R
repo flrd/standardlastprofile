@@ -3,25 +3,32 @@
 #' Generate a standard load profile, normalized to an annual
 #' consumption of 1,000 kWh
 #'
-#' @param profile_id load profile identifier, see 'Details'.
+#' @param profile_id load profile identifier, see 'Details', required
 #' @param start_date start date in ISO 8601 format, required
 #' @param end_date end date in ISO 8601 format, required
 #' @param state_code identifier for one of 16 German states, see 'Details', optional
 #'
-#' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
-#' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
-#' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
+#' @return A data.frame with four variables:
+#' - `profile_id`, character, load profile identifier
+#' - `start_time`, POSIXct / POSIXlt, start time
+#' - `end_time`, POSIXct / POSIXlt, end time
+#' - `watts`, numeric, electric power
 #'
 #' @details
-#'For every day there are 96 x 1/4h measurements of electrical power for
-#'each combination of `profile_id`, `period` and `day`. For each profile
-#'identifier the measurements were normalized so that they correspond to an
-#'annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
-#'consumption values for one year, the result is (approximately) 1,000 kWh/a,
-#'see 'Examples' and call `vignette("algorithm-step-by-step")` for more information.
+#' In regards to the electricity market in Germany, the term "Standard Load
+#' Profile" refers to a representative pattern of electricity consumption over
+#' a specific period, based on average consumption data. These profiles are used
+#' to depict the expected electricity consumption for various customer groups,
+#' such as households or businesses.
 #'
-#'In total there are 11 representative, standard load profiles for 3 different
-#'customer groups:
+#' For every day there are 96 x 1/4h measurements of electrical power for
+#' each combination of `profile_id`, `period` and `day`. Values are normalized
+#' so that they correspond to an annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
+#' consumption values for one year, the result is (approximately) 1,000 kWh/a,
+#' see 'Examples' and call `vignette("algorithm-step-by-step")` for more information.
+#'
+#' In total there are 11 representative, standard load profiles for 3 different
+#' customer groups:
 #'
 #'- households: `H0`
 #'- commercial: `G0`, `G1`, `G2`, `G3`, `G4`, `G5`, `G6`
@@ -42,8 +49,8 @@
 #'
 #'**Note**: The package supports nationwide, public holidays for Germany. Those
 #'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
-#'The optional argument `state_code` can take one of the following  ISO 3166-2
-#'state codes:
+#'Use the optional argument `state_code` to consider public holidays on a state
+#'level too. Possible values are:
 #'
 #' - `DE-BB`: Brandenburg
 #' - `DE-BE`: Berlin
@@ -62,42 +69,51 @@
 #' - `DE-ST`: Saxony-Anhalt
 #' - `DE-TH`: Thuringia
 #'
-#' You can retrieve a dataset called `german_states` to get all 16 state codes
-#' and their respective name in German and English.
+#' The dataset `german_states` contains all 16 state codes and their respective names in German and English.
 #'
-#' `start_date` must be greater or equal to "1990-01-01", `end_date` must be smaller
-#' or equal to "2073-12-31". This is because public holidays in Germany would
-#' be ambitious before the reunification in 1990 (think of the state of Berlin),
-#' and 2073 is the highest year supported by the [nager.Date API](https://github.com/nager/Nager.Date).
+#' `start_date` must be greater or equal to "1990-01-01". This is because public holidays in Germany would
+#' be ambitious before the reunification in 1990 (think of the state of Berlin in
+#' 1989)
 #'
-#' @return A data.frame with four variables:
-#' - `profile_id`, character, load profile identifier
-#' - `start_time`, POSIXct / POSIXlt, start time
-#' - `end_time`, POSIXct / POSIXlt, end time
-#' - `watts`, numeric, electric power
+#' `end_date` must be smaller or equal to "2073-12-31" because this is highest
+#' year supported by the [nager.Date API](https://github.com/nager/Nager.Date).
+#'
+#' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
+#' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+#' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 #'
 #' @export
 #' @examples
 #' today <- Sys.Date()
+#'
+#' # mulitple profile IDs are supported
 #' L <- slp_generate(c("L0", "L1", "L2"), today, today + 1)
 #' head(L)
-#'
-#' # you can supply one of 16 states, with or without "DE-" prefix
-#' slp_generate("H0", "2024-01-01", "2024-12-31", state = "BE")
-#' slp_generate("H0", "2024-01-01", "2024-12-31", state = "DE-BE")
-#' slp_generate("H0", "2024-01-01", "2024-12-31", state_code = "de-be") # all Berlin
-#'
-#' # if no state code is provided then only nationwide public holidays are considered
-#' slp_generate("H0", "2024-01-01", "2024-12-31")
 #'
 #' # Electric power values are normalized to an annual consumption of 1,000 kWh
 #' H0_2024 <- slp_generate("H0", "2024-01-01", "2024-12-31")
 #' sum(H0_2024$watts / 4 / 1000)
+#'
+#' # you can supply one of 16 ISO 3166-2:DE state codes for each German state
+#' \dontrun{
+#' slp_generate("H0", "2024-01-01", "2024-12-31", state = "DE-BE")
+#'
+#' # with or without "DE-" prefix, case-insensitive
+#' slp_generate("H0", "2024-01-01", "2024-12-31", state = "BE")
+#' slp_generate("H0", "2024-01-01", "2024-12-31", state_code = "de-be") # all Berlin
+#'
+#' # if no state code is provided then only nationwide public holidays are considered
+#' slp_generate("H0", "2024-01-01", "2024-12-31")
+#' }
 slp_generate <- function(
-    profile_id = "H0",
+    profile_id,
     start_date,
     end_date,
     state_code = NULL) {
+
+  if(missing(profile_id)) {
+    stop("Please provide at least one value as 'profile_id'.")
+  }
 
   start <- as_date(start_date)
   end <- as_date(end_date)
@@ -106,7 +122,7 @@ slp_generate <- function(
     stop("Please provide a valid date in ISO 8601 format")
   }
 
-  if(start < as_date("1990-01-01") || end > as_date("2073-12-21")) {
+  if(start < as_date("1990-01-01") || end > as_date("2073-12-31")) {
     stop("Supported date range must be between 1990-01-01 and 2073-12-31.")
   }
 
@@ -124,11 +140,15 @@ slp_generate <- function(
     state_code <- toupper(state_code)
 
     # users can provide state code without leading "DE-", for convenience
-    if (state_code %in% sub("DE-", "", standardlastprofile::german_states$state_code)) {
+    if (state_code %in% c("BW", "BY", "ST", "BE", "MV", "SL", "RP", "NW", "HE", "SH", "NI", "BB", "HH", "HB", "SN", "TH")) {
       state_code <- standardise_state_names(state_code)
     }
 
-    state_code <- match.arg(state_code, choices = standardlastprofile::german_states$state_code)
+    state_code <- match.arg(
+      state_code,
+      # choices = standardlastprofile::german_states$state_code
+      choices = c("DE-BW", "DE-BY", "DE-ST", "DE-BE", "DE-MV", "DE-SL", "DE-RP", "DE-NW", "DE-HE", "DE-SH", "DE-NI", "DE-BB", "DE-HH", "DE-HB", "DE-SN", "DE-TH")
+      )
   }
 
   # returns vector of class 'Date'
@@ -155,10 +175,12 @@ slp_generate <- function(
     tmp_h0 <- vals[["H0"]]
 
     # get day of year as decimal number
-    days_decimal <- format_j(daily_seq) |> as.integer()
+    days_decimal <- as.integer(format_j(daily_seq))
 
     # multiply values for each day with
-    vals[["H0"]] <- suppressWarnings( tmp_h0 * rep(dynamization_fun(days_decimal), each = dim(tmp_h0)[[1]]))
+    vals[["H0"]] <- suppressWarnings(
+      tmp_h0 * rep(dynamization_fun(days_decimal), each = dim(tmp_h0)[[1]])
+      )
   }
 
   # timestamp for output
@@ -174,6 +196,3 @@ slp_generate <- function(
 
   out
 }
-
-
-

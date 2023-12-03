@@ -7,6 +7,8 @@
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
 \url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
+
+\url{https://www.bdew.de/media/documents/Zuordnung_der_VDEW-Lastprofile_zum_Kundengruppenschluessel.pdf}
 }
 \usage{
 slp_info(language = c("EN", "DE"))
