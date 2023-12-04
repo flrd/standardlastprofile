@@ -88,7 +88,7 @@ ggplot(slp,
 To install the development version of standardlastprofile from 
 [GitHub](https://github.com/), call:
 
-``` {r}
+``` {r eval=FALSE}
 # install.packages("devtools")
 devtools::install_github("flrd/standardlastprofile")
 ```
@@ -97,9 +97,9 @@ devtools::install_github("flrd/standardlastprofile")
 
 The following dataset and functions are implemented:
 
-- `slp` -- Dataset for BDEW Standard Load Profiles in Electricity
-- `slp_generate` --	Generate a standard load profile, normalized to an annual consumption of 1,000 kWh
-- `slp_info` -- Information and Examples of BDEW Standard Load Profiles
+- `slp` -- Dataset for BDEW standard load profiles in electricity
+- `slp_generate` --	Interface to generate a standard load profile, normalized to an annual consumption of 1,000 kWh
+- `slp_info` -- Information and examples of BDEW standard load profiles
 
 ## About the data
 The standardlastprofile package contains one dataset called `slp`. In total
