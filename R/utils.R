@@ -181,9 +181,10 @@ get_period <- function(x) {
 # see also: [ISO 3166-2:DE](https://en.wikipedia.org/wiki/ISO_3166-2:DE)
 standardise_state_names <- function(state) {
 
+  tmp <- c("DE-BW", "DE-BY", "DE-ST", "DE-BE", "DE-MV", "DE-SL", "DE-RP", "DE-NW", "DE-HE", "DE-SH", "DE-NI", "DE-BB", "DE-HH", "DE-HB", "DE-SN", "DE-TH")
   state <- match.arg(
     state,
-    sub("DE-", "", standardlastprofile::german_states$state_code))
+    sub("DE-", "", tmp))
   paste_dash("DE", state)
 }
 

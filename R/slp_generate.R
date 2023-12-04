@@ -1,12 +1,12 @@
 #' Generate a Standard Load Profile
 #'
 #' Generate a standard load profile, normalized to an annual
-#' consumption of 1,000 kWh
+#' consumption of 1,000 kWh.
 #'
-#' @param profile_id load profile identifier, see 'Details', required
+#' @param profile_id load profile identifier, required
 #' @param start_date start date in ISO 8601 format, required
 #' @param end_date end date in ISO 8601 format, required
-#' @param state_code identifier for one of 16 German states, see 'Details', optional
+#' @param state_code identifier for one of 16 German states, optional
 #'
 #' @return A data.frame with four variables:
 #' - `profile_id`, character, load profile identifier
@@ -21,36 +21,37 @@
 #' to depict the expected electricity consumption for various customer groups,
 #' such as households or businesses.
 #'
-#' For every day there are 96 x 1/4h measurements of electrical power for
-#' each combination of `profile_id`, `period` and `day`. Values are normalized
-#' so that they correspond to an annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
-#' consumption values for one year, the result is (approximately) 1,000 kWh/a,
-#' see 'Examples' and call `vignette("algorithm-step-by-step")` for more information.
+#' For every day, there are 96 x 1/4 hour measurements of electrical power for
+#' each distinct combination of `profile_id`, `period` and `day`. Values are
+#' normalized so that they correspond to an annual consumption of 1,000 kWh.
+#' Summing up all the quarter-hourly consumption values for one year yields
+#' an approximate total of 1,000 kWh/a; for more information, refer to the
+#' 'Examples' section and call `vignette("algorithm-step-by-step")`.
 #'
-#' In total there are 11 representative, standard load profiles for 3 different
-#' customer groups:
+#' In total there are 11 representative, standard load profiles for three
+#' different customer groups:
 #'
-#'- households: `H0`
-#'- commercial: `G0`, `G1`, `G2`, `G3`, `G4`, `G5`, `G6`
-#'- agriculture: `L0`, `L1`, `L2`
+#'- Households: `H0`
+#'- Commercial: `G0`, `G1`, `G2`, `G3`, `G4`, `G5`, `G6`
+#'- Agriculture: `L0`, `L1`, `L2`
 #'
-#'Call [slp_info()] to for more information and examples.
+#'For more information and examples, call [slp_info()].
 #'
-#'Definition of periods:
+#'Period definitions:
 #'- `summer`: May 15 to September 14
 #'- `winter`: November 1 to March 20
 #'- `transition`: March 21 to May 14, and September 15 to October 31
 #'
-#'Definition of characteristic days:
-#'- `saturday`: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
-#'if they are not a Sunday
-#'- `sunday`: Sundays and all public holidays
-#'- `workday`: Monday to Friday
+#'Characteristic day definitions:
+#'- `saturday`: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+#'if they are not a Sunday.
+#'- `sunday`: Sundays and all public holidays.
+#'- `workday`: Monday to Friday.
 #'
-#'**Note**: The package supports nationwide, public holidays for Germany. Those
-#'were retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
+#'**Note**: The package supports nationwide public holidays for Germany,
+#'retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
 #'Use the optional argument `state_code` to consider public holidays on a state
-#'level too. Possible values are:
+#'level too. Possible values are listed below:
 #'
 #' - `DE-BB`: Brandenburg
 #' - `DE-BE`: Berlin
@@ -69,13 +70,11 @@
 #' - `DE-ST`: Saxony-Anhalt
 #' - `DE-TH`: Thuringia
 #'
-#' The dataset `german_states` contains all 16 state codes and their respective names in German and English.
+#' `start_date` must be greater or equal to "1990-01-01". This is because public
+#'  holidays in Germany would be ambitious before the reunification in 1990
+#'  (think of the state of Berlin in 1989 and before).
 #'
-#' `start_date` must be greater or equal to "1990-01-01". This is because public holidays in Germany would
-#' be ambitious before the reunification in 1990 (think of the state of Berlin in
-#' 1989)
-#'
-#' `end_date` must be smaller or equal to "2073-12-31" because this is highest
+#' `end_date` must be smaller or equal to "2073-12-31" because this is last
 #' year supported by the [nager.Date API](https://github.com/nager/Nager.Date).
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
@@ -146,7 +145,6 @@ slp_generate <- function(
 
     state_code <- match.arg(
       state_code,
-      # choices = standardlastprofile::german_states$state_code
       choices = c("DE-BW", "DE-BY", "DE-ST", "DE-BE", "DE-MV", "DE-SL", "DE-RP", "DE-NW", "DE-HE", "DE-SH", "DE-NI", "DE-BB", "DE-HH", "DE-HB", "DE-SN", "DE-TH")
       )
   }
