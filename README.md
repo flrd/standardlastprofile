@@ -31,7 +31,18 @@ To install the development version of standardlastprofile from
 ``` r
 # install.packages("devtools")
 devtools::install_github("flrd/standardlastprofile")
+#> Skipping install of 'standardlastprofile' from a github remote, the SHA1 (a5229a4c) has not changed since last install.
+#>   Use `force = TRUE` to force installation
 ```
+
+## What will you get
+
+The following dataset and functions are implemented:
+
+- `slp` – Dataset for BDEW Standard Load Profiles in Electricity
+- `slp_generate` – Generate a standard load profile, normalized to an
+  annual consumption of 1,000 kWh
+- `slp_info` – Information and Examples of BDEW Standard Load Profiles
 
 ## About the data
 

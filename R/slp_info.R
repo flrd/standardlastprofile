@@ -1,4 +1,4 @@
-#' Details and Examples of standard load profiles
+#' Information and Examples of BDEW Standard Load Profiles
 #'
 #' @return A data.frame
 #'
