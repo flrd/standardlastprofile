@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   algorithm-step-by-step: algorithm-step-by-step.html
-last_built: 2023-12-04T20:17Z
+last_built: 2023-12-04T20:44Z
 urls:
   reference: https://flrd.github.io/standardlastprofile/reference
   article: https://flrd.github.io/standardlastprofile/articles
