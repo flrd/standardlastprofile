@@ -38,14 +38,17 @@ devtools::install_github("flrd/standardlastprofile")
 The following dataset and functions are implemented:
 
 - `slp` – Dataset for BDEW standard load profiles in electricity
-- `slp_generate` – Interface to generate a standard load profile,
+- `slp_generate()` – Interface to generate a standard load profile,
   normalized to an annual consumption of 1,000 kWh
-- `slp_info` – Information and examples of BDEW standard load profiles
+- `slp_info()` – Retrieve information and examples of BDEW standard load
+  profiles
 
 ## About the data
 
-The standardlastprofile package contains one dataset called `slp`. In
-total there are 9,504 observations of 5 variables:
+The standardlastprofile package contains one dataset called `slp`. The
+data was published in 1999. They are based on an analysis of 1,209 load
+profiles of low-voltage consumers in Germany.[^1] In total there are
+9,504 observations of 5 variables:
 
 - `profile_id`: identifier of standard load profile
 - `period`: one of “summer”, “winter”, “transition”
@@ -130,3 +133,6 @@ the BDEW: <https://www.bdew.de/energie/standardlastprofile-strom/>
 Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/flrd/standardlastprofile/blob/main/CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
+
+[^1]: More information on the data and methodology can be found
+    [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).

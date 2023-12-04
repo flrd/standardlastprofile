@@ -25,17 +25,17 @@ for electricity generation and distribution. Additionally, they serve as the fou
 market. For smaller consumers, the financial expense of continuous consumption measurement is often unreasonable. Energy supply companies can therefore use a standard load profile as the basis for creating a consumption forecast.
 
 The aim of this vignette is to show how the algorithm of the `slp_generate()` 
-function works.[^bdew-2] The data in the `slp` dataset forms the basis for all subsequent steps. 
+function works.[^bdew-1] The data in the `slp` dataset forms the basis for all subsequent steps. 
 
-  [^bdew-2]: More detail on the algorithm can be found [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf)
+  [^bdew-1]: More information on the algorithm can be found [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf)
 
 ``` {r, message=FALSE}
 head(slp)
 ```
 
-There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The data was collected and analyzed in 1999 on the basis of 1,209 measured load profiles of low-voltage customers in Germany and is provided by German Association of Energy and Water Industries[^bdew-1] (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.).
+There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The data was collected and analyzed in 1999 on the basis of 1,209 measured load profiles of low-voltage customers in Germany and is provided by German Association of Energy and Water Industries[^bdew-2] (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.).
 
-  [^bdew-1]: More detail on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
+  [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
   
 ```{r small_multiples_vignette, echo = FALSE, fig.asp = 1.4, fig.retina=2}
 #| fig.alt = "Small multiple line chart of 11 standard load profiles
