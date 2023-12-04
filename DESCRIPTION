@@ -1,10 +1,10 @@
 Package: standardlastprofile
-Title: R Data Package for Load Profiles for Electricity
+Title: R Data Package for BDEW Standard Load Profiles in Electricity
 Description: Data on standard load profiles from the German Association of 
   Energy and Water Industries (BDEW Bundesverband der Energie- und 
-  Wasserwirtschaft e.V.) in a tidy format. The package also provides an
-  interface to generate a load profile over a user specified period of time. 
-Version: 0.0.0.9000
+  Wasserwirtschaft e.V.) in a tidy format. This package also offers an interface
+  for generating a standard load profile over a user-defined period.
+Version: 1.0.0
 Authors@R: 
     person(given = "Markus", family = "Döring", email = "m4rkus.doering@gmail.com", role = c("aut", "cre", "cph"))
 License: CC0

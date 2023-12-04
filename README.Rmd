@@ -17,13 +17,13 @@ knitr::opts_chunk$set(
 # standardlastprofile
 
 <!-- badges: start -->
-[![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
-[![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+<!-- [![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
+<!-- [![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
-[![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://codecov.io/gh/flrd/standardlastprofile)
+[![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
 <!-- badges: end -->
 
-This package provides data about representative, standard load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
+This package provides data on representative, standard load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
 
 ``` {r, message=FALSE, include = FALSE}
 library(standardlastprofile)
@@ -64,7 +64,7 @@ ggplot(slp,
                        "transition" = "#0CC792"
                        )) +
   labs(title = "Standard Load Profiles",
-       subtitle = "96 x 1/4h-measurements a day [in watts], based on consumption of 1,000 kWh/a",
+       subtitle = "96 x 1/4h measurements a day [in watts], based on consumption of 1,000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -85,7 +85,8 @@ ggplot(slp,
 <!-- install.packages("standardlastprofile") -->
 <!-- ``` -->
 
-To install the development version of standardlastprofile from [GitHub](https://github.com/) call:
+To install the development version of standardlastprofile from 
+[GitHub](https://github.com/), call:
 
 ``` r
 # install.packages("devtools")
@@ -93,7 +94,8 @@ devtools::install_github("flrd/standardlastprofile")
 ```
 
 ## About the data
-The standardlastprofile package contains one dataset called `slp`. In total there are 9,504 observations of 5 variables:
+The standardlastprofile package contains one dataset called `slp`. In total
+there are 9,504 observations of 5 variables:
 
 - `profile_id`: identifier of standard load profile
 - `period`: one of "summer", "winter", "transition"
@@ -105,15 +107,17 @@ The standardlastprofile package contains one dataset called `slp`. In total ther
 str(slp)
 ```
 
-A standard load profile can be used as a basis for energy utilities to create an annual consumption forecast for their customers. It is a simplification that does not necessarily correspond to the consumption profile of an individual customer, but represents a valid approximation for a larger group of similar customers. 
+In the context of the German electricity market, the term 'Standard Load Profile' denotes a representative pattern of electricity consumption over a specific period. These profiles portray anticipated electricity consumption for diverse customer groups, like households or businesses. While not an exact match for an individual customer's consumption profile, they serve as a valid approximation for larger groups of similar customers.
 
-For each combination of `profile_id`, `period` and `day` there are 96 x 1/4h-measurements in watts. If you have no idea what `H0` stands for, you are not alone.
+For each unique combination of `profile_id`, `period` and `day` there are 
+96 x 1/4 hour measurements in watts. If `H0` keeps you puzzled,
+you are not alone:
 
 - `H0`: households (German: "Haushalte")
 - `G0` to `G6`: commerce ("Gewerbe")
 - `L0` to `L2`: agriculture ("Landwirtschaft")
 
-Call `slp_info()` for more information.
+For more details, call the `slp_info()` function.
 
 ``` {r, message=FALSE, echo=TRUE}
 slp_info(language = "EN")$H0
@@ -121,7 +125,7 @@ slp_info(language = "EN")$H0
 
 ### Generate a standard load profile
 
-Use the function `slp_generate()` to generate a standard load profile for a given period of time:
+Generate a standard load profile for a user-defined period of time using the `slp_generate()` function:
 
 ``` {r, G5_data_readme, message=FALSE, echo=TRUE}
 G5 <- slp_generate(
@@ -138,7 +142,7 @@ head(G5)
 #|  with a bakehouse) based on data from the German Association of Energy
 #|  and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft
 #|  e.V.) from December 22nd to December 27th 2023; values 
-#|  are normalized to an annual consumption of 1,000kWh."
+#|  are normalized to an annual consumption of 1,000 kWh."
 ggplot(G5, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
   scale_x_datetime(
@@ -165,4 +169,5 @@ Data and information about the methodology can be found on website of the BDEW: 
 
 ## Code of Conduct
 
-Please note that this project is released with a [Contributor Code of Conduct](https://github.com/flrd/standardlastprofile/blob/master/conduct.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Contributor Code of Conduct](https://github.com/flrd/standardlastprofile/blob/master/conduct.md). 
+By participating in this project you agree to abide by its terms.

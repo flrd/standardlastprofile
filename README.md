@@ -4,17 +4,17 @@
 # standardlastprofile
 
 <!-- badges: start -->
+<!-- [![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
+<!-- [![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
 
-[![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
-[![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
-[![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://codecov.io/gh/flrd/standardlastprofile)
+[![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
 <!-- badges: end -->
 
-This package provides data about representative, standard load profiles
-for electricity from the German Association of Energy and Water
-Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
-in a tidy format.
+This package provides data on representative, standard load profiles for
+electricity from the German Association of Energy and Water Industries
+(BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy
+format.
 
 <img src="man/figures/README-small_multiples-1.png" alt="Small multiple line chart of 11 standard load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="90%" style="display: block; margin: auto;" />
 
@@ -26,7 +26,7 @@ in a tidy format.
 <!-- ``` -->
 
 To install the development version of standardlastprofile from
-[GitHub](https://github.com/) call:
+[GitHub](https://github.com/), call:
 
 ``` r
 # install.packages("devtools")
@@ -54,21 +54,23 @@ str(slp)
 #>  $ watts     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
 ```
 
-A standard load profile can be used as a basis for energy utilities to
-create an annual consumption forecast for their customers. It is a
-simplification that does not necessarily correspond to the consumption
-profile of an individual customer, but represents a valid approximation
-for a larger group of similar customers.
+In the context of the German electricity market, the term ‘Standard Load
+Profile’ denotes a representative pattern of electricity consumption
+over a specific period. These profiles portray anticipated electricity
+consumption for diverse customer groups, like households or businesses.
+While not an exact match for an individual customer’s consumption
+profile, they serve as a valid approximation for larger groups of
+similar customers.
 
-For each combination of `profile_id`, `period` and `day` there are 96 x
-1/4h-measurements in watts. If you have no idea what `H0` stands for,
-you are not alone.
+For each unique combination of `profile_id`, `period` and `day` there
+are 96 x 1/4 hour measurements in watts. If `H0` keeps you puzzled, you
+are not alone:
 
 - `H0`: households (German: “Haushalte”)
 - `G0` to `G6`: commerce (“Gewerbe”)
 - `L0` to `L2`: agriculture (“Landwirtschaft”)
 
-Call `slp_info()` for more information.
+For more details, call the `slp_info()` function.
 
 ``` r
 slp_info(language = "EN")$H0
@@ -84,8 +86,8 @@ slp_info(language = "EN")$H0
 
 ### Generate a standard load profile
 
-Use the function `slp_generate()` to generate a standard load profile
-for a given period of time:
+Generate a standard load profile for a user-defined period of time using
+the `slp_generate()` function:
 
 ``` r
 G5 <- slp_generate(
@@ -103,7 +105,7 @@ head(G5)
 #> 6         G5 2023-12-22 01:15:00 2023-12-22 01:30:00  43.8
 ```
 
-<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000kWh." width="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000 kWh." width="90%" style="display: block; margin: auto;" />
 
 See
 [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
