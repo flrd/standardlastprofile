@@ -27,7 +27,7 @@ p1 <- ggplot2::ggplot(slp,
                        "transition" = "#0CC792"
                      )) +
   ggplot2::labs(title = "Standard Load Profiles",
-       subtitle = "96 x 1/4h-measurements each day [in watts], based on consumption of 1,000 kWh/a",
+       subtitle = "96 x 1/4h measurements each day [in watts], based on consumption of 1,000 kWh/a",
        caption = "data: www.bdew.de") +
   ggplot2::theme_minimal() +
   ggplot2::theme(legend.position = "top") +
