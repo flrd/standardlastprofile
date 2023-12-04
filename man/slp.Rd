@@ -75,9 +75,5 @@ if they are not a Sunday
 \examples{
 head(slp)
 
-# There are 96 observations for each combination of profile_id, period and day
-tmp <- subset(slp, profile_id == "L0" & period == "summer" & day == "workday")
-dim(tmp)
-
 }
 \keyword{datasets}

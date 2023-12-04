@@ -14,13 +14,13 @@
 slp_generate(profile_id, start_date, end_date, state_code = NULL)
 }
 \arguments{
-\item{profile_id}{load profile identifier, see 'Details', required}
+\item{profile_id}{load profile identifier, required}
 
 \item{start_date}{start date in ISO 8601 format, required}
 
 \item{end_date}{end date in ISO 8601 format, required}
 
-\item{state_code}{identifier for one of 16 German states, see 'Details', optional}
+\item{state_code}{identifier for one of 16 German states, optional}
 }
 \value{
 A data.frame with four variables:
@@ -33,7 +33,7 @@ A data.frame with four variables:
 }
 \description{
 Generate a standard load profile, normalized to an annual
-consumption of 1,000 kWh
+consumption of 1,000 kWh.
 }
 \details{
 In regards to the electricity market in Germany, the term "Standard Load
@@ -42,41 +42,42 @@ a specific period, based on average consumption data. These profiles are used
 to depict the expected electricity consumption for various customer groups,
 such as households or businesses.
 
-For every day there are 96 x 1/4h measurements of electrical power for
-each combination of \code{profile_id}, \code{period} and \code{day}. Values are normalized
-so that they correspond to an annual consumption of 1,000 kWh. So if we sum up all the quarter-hourly
-consumption values for one year, the result is (approximately) 1,000 kWh/a,
-see 'Examples' and call \code{vignette("algorithm-step-by-step")} for more information.
+For every day, there are 96 x 1/4 hour measurements of electrical power for
+each distinct combination of \code{profile_id}, \code{period} and \code{day}. Values are
+normalized so that they correspond to an annual consumption of 1,000 kWh.
+Summing up all the quarter-hourly consumption values for one year yields
+an approximate total of 1,000 kWh/a; for more information, refer to the
+'Examples' section and call \code{vignette("algorithm-step-by-step")}.
 
-In total there are 11 representative, standard load profiles for 3 different
-customer groups:
+In total there are 11 representative, standard load profiles for three
+different customer groups:
 \itemize{
-\item households: \code{H0}
-\item commercial: \code{G0}, \code{G1}, \code{G2}, \code{G3}, \code{G4}, \code{G5}, \code{G6}
-\item agriculture: \code{L0}, \code{L1}, \code{L2}
+\item Households: \code{H0}
+\item Commercial: \code{G0}, \code{G1}, \code{G2}, \code{G3}, \code{G4}, \code{G5}, \code{G6}
+\item Agriculture: \code{L0}, \code{L1}, \code{L2}
 }
 
-Call \code{\link[=slp_info]{slp_info()}} to for more information and examples.
+For more information and examples, call \code{\link[=slp_info]{slp_info()}}.
 
-Definition of periods:
+Period definitions:
 \itemize{
 \item \code{summer}: May 15 to September 14
 \item \code{winter}: November 1 to March 20
 \item \code{transition}: March 21 to May 14, and September 15 to October 31
 }
 
-Definition of characteristic days:
+Characteristic day definitions:
 \itemize{
-\item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
-if they are not a Sunday
-\item \code{sunday}: Sundays and all public holidays
-\item \code{workday}: Monday to Friday
+\item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+if they are not a Sunday.
+\item \code{sunday}: Sundays and all public holidays.
+\item \code{workday}: Monday to Friday.
 }
 
-\strong{Note}: The package supports nationwide, public holidays for Germany. Those
-were retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
+\strong{Note}: The package supports nationwide public holidays for Germany,
+retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 Use the optional argument \code{state_code} to consider public holidays on a state
-level too. Possible values are:
+level too. Possible values are listed below:
 \itemize{
 \item \code{DE-BB}: Brandenburg
 \item \code{DE-BE}: Berlin
@@ -96,13 +97,11 @@ level too. Possible values are:
 \item \code{DE-TH}: Thuringia
 }
 
-The dataset \code{german_states} contains all 16 state codes and their respective names in German and English.
+\code{start_date} must be greater or equal to "1990-01-01". This is because public
+holidays in Germany would be ambitious before the reunification in 1990
+(think of the state of Berlin in 1989 and before).
 
-\code{start_date} must be greater or equal to "1990-01-01". This is because public holidays in Germany would
-be ambitious before the reunification in 1990 (think of the state of Berlin in
-1989)
-
-\code{end_date} must be smaller or equal to "2073-12-31" because this is highest
+\code{end_date} must be smaller or equal to "2073-12-31" because this is last
 year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 }
 \examples{

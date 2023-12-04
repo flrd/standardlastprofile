@@ -58,3 +58,8 @@ test_that("user can supply 'BE' and 'DE-BE' as state_code", {
     )
   )
 })
+
+test_that("profile_id is required", {
+  expect_error(slp_generate(start_date = Sys.Date(), end_date = Sys.Date() + 1),
+               "Please provide at least one value as 'profile_id'.")
+})
