@@ -38,9 +38,9 @@ devtools::install_github("flrd/standardlastprofile")
 The following dataset and functions are implemented:
 
 - `slp` – Dataset for BDEW standard load profiles in electricity
-- `slp_generate()` – Interface to generate a standard load profile,
-  normalized to an annual consumption of 1,000 kWh
-- `slp_info()` – Retrieve information and examples of BDEW standard load
+- `slp_generate()` – Interface to generate a standard load profile for a
+  user-defined period of time
+- `slp_info()` – Function to retrieve details of BDEW standard load
   profiles
 
 ## About the data
