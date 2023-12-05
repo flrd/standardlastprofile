@@ -33,7 +33,7 @@ function works.[^bdew-1] The data in the `slp` dataset forms the basis for all s
 head(slp)
 ```
 
-There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The data was collected and analyzed in 1999 on the basis of 1,209 measured load profiles of low-voltage customers in Germany and is provided by German Association of Energy and Water Industries[^bdew-2] (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.).
+There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The data was collected and analyzed in 1999 on the basis of 1,209 measured load profiles of low-voltage customers in Germany[^bdew-2] and is provided by German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.).
 
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
   
