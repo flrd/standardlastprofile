@@ -21,9 +21,9 @@ slp_info <- function(profile_id, language = c("EN", "DE")) {
   language <- match.arg(language)
 
   if (language == "EN") {
-    out <- infos_EN[[profile_id]]
+    out <- infos_EN[profile_id]
   } else {
-    out <- infos_DE[[profile_id]]
+    out <- infos_DE[profile_id]
   }
   out
 }

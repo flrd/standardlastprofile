@@ -142,6 +142,7 @@ G5 <- slp_generate(
   start_date = "2023-12-22",
   end_date = "2023-12-27"
   )
+
 head(G5)
 ```
 

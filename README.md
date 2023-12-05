@@ -86,13 +86,14 @@ For more details, call the `slp_info()` function.
 
 ``` r
 slp_info(profile_id = "H0", language = "EN")
-#> $profile
+#> $H0
+#> $H0$profile
 #> [1] "H0"
 #> 
-#> $description
+#> $H0$description
 #> [1] "household"
 #> 
-#> $details
+#> $H0$details
 #> [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps."
 ```
 
@@ -107,6 +108,7 @@ G5 <- slp_generate(
   start_date = "2023-12-22",
   end_date = "2023-12-27"
   )
+
 head(G5)
 #>   profile_id          start_time            end_time watts
 #> 1         G5 2023-12-22 00:00:00 2023-12-22 00:15:00  50.1
