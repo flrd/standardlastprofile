@@ -38,16 +38,8 @@ consumption of 1,000 kWh.
 \details{
 In regards to the electricity market in Germany, the term "Standard Load
 Profile" refers to a representative pattern of electricity consumption over
-a specific period, based on average consumption data. These profiles are used
-to depict the expected electricity consumption for various customer groups,
-such as households or businesses.
-
-For every day, there are 96 x 1/4 hour measurements of electrical power for
-each distinct combination of \code{profile_id}, \code{period} and \code{day}. Values are
-normalized so that they correspond to an annual consumption of 1,000 kWh.
-Summing up all the quarter-hourly consumption values for one year yields
-an approximate total of 1,000 kWh/a; for more information, refer to the
-'Examples' section and call \code{vignette("algorithm-step-by-step")}.
+a specific period. These profiles are used to depict the expected electricity
+consumption for various customer groups, such as households or businesses.
 
 In total there are 11 representative, standard load profiles for three
 different customer groups:
@@ -59,6 +51,13 @@ different customer groups:
 
 For more information and examples, call \code{\link[=slp_info]{slp_info()}}.
 
+For each distinct combination of \code{profile_id}, \code{period}, and \code{day}, there
+are 96 x 1/4 hour measurements of electrical power. Values are normalized so
+that they correspond to an annual consumption of 1,000 kWh. Summing up all
+the quarter-hourly consumption values for one year yields an approximate
+total of 1,000 kWh/a; for more information, refer to the 'Examples' section,
+or call \code{vignette("algorithm-step-by-step")}.
+
 Period definitions:
 \itemize{
 \item \code{summer}: May 15 to September 14
@@ -66,7 +65,7 @@ Period definitions:
 \item \code{transition}: March 21 to May 14, and September 15 to October 31
 }
 
-Characteristic day definitions:
+Day definitions:
 \itemize{
 \item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
 if they are not a Sunday.
@@ -74,10 +73,10 @@ if they are not a Sunday.
 \item \code{workday}: Monday to Friday.
 }
 
-\strong{Note}: The package supports nationwide public holidays for Germany,
+\strong{Note}: The package supports public holidays for Germany,
 retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 Use the optional argument \code{state_code} to consider public holidays on a state
-level too. Possible values are listed below:
+level too. Allowed values are listed below:
 \itemize{
 \item \code{DE-BB}: Brandenburg
 \item \code{DE-BE}: Berlin
@@ -99,7 +98,7 @@ level too. Possible values are listed below:
 
 \code{start_date} must be greater or equal to "1990-01-01". This is because public
 holidays in Germany would be ambitious before the reunification in 1990
-(think of the state of Berlin in 1989 and before).
+(think of the state of Berlin in 1989 and earlier).
 
 \code{end_date} must be smaller or equal to "2073-12-31" because this is last
 year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.

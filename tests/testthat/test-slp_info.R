@@ -43,9 +43,13 @@ EN <- list(H0 = list(profile = "H0", description = "household", details = "This 
                      details = "Traditionally, most West German companies have a combination of household and production. This average profile should be applied to such farms. If production on a farm is largely independent of the time of day (e.g. animal production facilities in in eastern Germany), the appropriate commercial profile should be selected."))
 
 test_that("info in English as expected", {
-  expect_equal(slp_info(language = "EN"), EN)
+  expect_equal(EN[["H0"]], slp_info("H0", language = "EN"))
 })
 
 test_that("info in English as expected", {
-  expect_equal(slp_info(language = "DE"), DE)
+  expect_equal(DE[["H0"]], slp_info("H0", language = "DE"))
+})
+
+test_that("info in English as expected", {
+  expect_error(slp_info("ABC"), "'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2'.")
 })

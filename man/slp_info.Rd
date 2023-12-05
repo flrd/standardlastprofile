@@ -11,19 +11,20 @@
 \url{https://www.bdew.de/media/documents/Zuordnung_der_VDEW-Lastprofile_zum_Kundengruppenschluessel.pdf}
 }
 \usage{
-slp_info(language = c("EN", "DE"))
+slp_info(profile_id, language = c("EN", "DE"))
 }
 \arguments{
+\item{profile_id}{load profile identifier, required}
+
 \item{language}{one of 'EN' (English), 'DE' (German)}
 }
 \value{
-A data.frame
+A list
 }
 \description{
 Information and Examples of BDEW Standard Load Profiles
 }
 \examples{
-slp_info(language = "EN")$G6
-slp_info(language = "DE")$G6
+slp_info("G5", language = "DE")
 
 }

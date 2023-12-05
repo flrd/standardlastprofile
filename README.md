@@ -85,7 +85,7 @@ are not alone:
 For more details, call the `slp_info()` function.
 
 ``` r
-slp_info(language = "EN")$H0
+slp_info(profile_id = "H0", language = "EN")
 #> $profile
 #> [1] "H0"
 #> 

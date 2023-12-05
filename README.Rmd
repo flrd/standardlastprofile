@@ -129,7 +129,7 @@ you are not alone:
 For more details, call the `slp_info()` function.
 
 ``` {r, message=FALSE, echo=TRUE}
-slp_info(language = "EN")$H0
+slp_info(profile_id = "H0", language = "EN")
 ```
 
 ### Generate a standard load profile

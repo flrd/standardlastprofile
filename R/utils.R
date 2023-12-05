@@ -175,6 +175,39 @@ get_period <- function(x) {
 
 }
 
+
+# check for valid profile_id ----------------------------------------------
+
+# helper to check if profile_id is valid
+match_profile <- function(profile_id) {
+
+  if(missing(profile_id)) {
+    stop("Please provide at least one value as 'profile_id'.")
+  }
+
+  profile_id <- toupper(profile_id)
+  profile_id <- unique(profile_id)
+
+  out <- tryCatch(
+    expr = {
+      match.arg(arg = profile_id,
+                choices = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
+                several.ok = TRUE)
+    },
+    error = function(e) {
+      # return value in case of error
+      return(NA_character_)
+    }
+  )
+
+  if(anyNA(out)) {
+    stop("'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2'.")
+  }
+
+  out
+
+}
+
 # helper to concatenate weekday and period --------------------------------
 
 # This function adds "DE-" as prefixe to state codes if a user did not provide it,
