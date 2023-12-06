@@ -27,4 +27,6 @@ Information and Examples of BDEW Standard Load Profiles
 \examples{
 slp_info("G5", language = "DE")
 
+# multiple profile IDs are supported
+slp_info(c("G0", "G5"))
 }

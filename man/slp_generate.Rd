@@ -104,25 +104,27 @@ holidays in Germany would be ambitious before the reunification in 1990
 year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
 }
 \examples{
-today <- Sys.Date()
+start <- "2024-01-01"
+end <- "2024-12-31"
 
-# mulitple profile IDs are supported
-L <- slp_generate(c("L0", "L1", "L2"), today, today + 1)
+# multiple profile IDs are supported
+L <- slp_generate(c("L0", "L1", "L2"), start, end)
 head(L)
 
-# Electric power values are normalized to an annual consumption of 1,000 kWh
-H0_2024 <- slp_generate("H0", "2024-01-01", "2024-12-31")
+# you can specify one of the 16 ISO 3166-2:DE codes to take into
+# account holidays determined at the level of the federal states
+berlin <- slp_generate("H0", start, end, state_code = "DE-BE")
+
+# for convenience, the codes can be specified without the prefix "DE-"
+identical(berlin, slp_generate("H0", start, end, state_code = "BE"))
+
+# state codes are not case-sensitive
+identical(berlin, slp_generate("H0", start, end, state_code = "de-be"))
+
+# consider only nationwide public holidays
+H0_2024 <- slp_generate("H0", start, end)
+
+# electric power values are normalized to consumption of ~1,000 kWh/a
 sum(H0_2024$watts / 4 / 1000)
 
-# you can supply one of 16 ISO 3166-2:DE state codes for each German state
-\dontrun{
-slp_generate("H0", "2024-01-01", "2024-12-31", state = "DE-BE")
-
-# with or without "DE-" prefix, case-insensitive
-slp_generate("H0", "2024-01-01", "2024-12-31", state = "BE")
-slp_generate("H0", "2024-01-01", "2024-12-31", state_code = "de-be") # all Berlin
-
-# if no state code is provided then only nationwide public holidays are considered
-slp_generate("H0", "2024-01-01", "2024-12-31")
-}
 }
