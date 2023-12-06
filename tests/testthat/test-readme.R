@@ -10,6 +10,9 @@ label_names <- c(
 
 label_fun <- function(x) label_names[[x]]
 
+# reorder facets
+slp$day <- factor(slp$day, levels = c("workday", "saturday", "sunday"))
+
 # plot
 p1 <- ggplot2::ggplot(slp,
                       ggplot2::aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),

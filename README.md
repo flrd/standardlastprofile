@@ -35,12 +35,10 @@ devtools::install_github("flrd/standardlastprofile")
 
 ## What will you get
 
-The following dataset and functions are implemented:
-
-- `slp` – Dataset for BDEW standard load profiles in electricity
-- `slp_generate()` – Interface to generate a standard load profile for a
+- `slp` – dataset for BDEW standard load profiles in electricity
+- `slp_generate()` – interface to generate a standard load profile for a
   user-defined period of time
-- `slp_info()` – Function to retrieve details of BDEW standard load
+- `slp_info()` – function for retrieving details of standard load
   profiles
 
 ## About the data
@@ -61,7 +59,7 @@ str(slp)
 #> 'data.frame':    9504 obs. of  5 variables:
 #>  $ profile_id: chr  "H0" "H0" "H0" "H0" ...
 #>  $ period    : chr  "winter" "winter" "winter" "winter" ...
-#>  $ day       : chr  "saturday" "saturday" "saturday" "saturday" ...
+#>  $ day       : Factor w/ 3 levels "workday","saturday",..: 2 2 2 2 2 2 2 2 2 2 ...
 #>  $ timestamp : chr  "00:00" "00:15" "00:30" "00:45" ...
 #>  $ watts     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
 ```
@@ -120,10 +118,9 @@ head(G5)
 ```
 
 <img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000 kWh." width="90%" style="display: block; margin: auto;" />
-
-See
-[`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
-for a detailed explanation of the algorithm.
+For more information, details about the data, and an explanation of the
+algorithm, refer to the vignette
+[`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
 
 ## Source
 

@@ -47,6 +47,9 @@ label_names <- c(
 
 label_fun <- function(x) label_names[[x]]
 
+# reorder facets
+slp$day <- factor(slp$day, levels = c("workday", "saturday", "sunday"))
+
 # plot
 ggplot(slp,
        aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
@@ -95,11 +98,9 @@ devtools::install_github("flrd/standardlastprofile")
 
 ## What will you get
 
-The following dataset and functions are implemented:
-
-- `slp` -- Dataset for BDEW standard load profiles in electricity
-- `slp_generate()` --	Interface to generate a standard load profile for a user-defined period of time
-- `slp_info()` -- Function to retrieve details of BDEW standard load profiles
+- `slp` -- dataset for BDEW standard load profiles in electricity
+- `slp_generate()` --	interface to generate a standard load profile for a user-defined period of time
+- `slp_info()` -- function for retrieving details of standard load profiles
 
 ## About the data
 The standardlastprofile package contains one dataset called `slp`. The data was published in 1999. They are based on an analysis of 1,209 load profiles of low-voltage consumers in Germany.[^bdew-2] In total there are 9,504 observations of 5 variables:
@@ -171,8 +172,7 @@ ggplot(G5, aes(start_time, watts)) +
   ) +
   NULL
 ```
-
-See [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html) for a detailed explanation of the algorithm.
+For more information, details about the data, and an explanation of the algorithm, refer to the vignette [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
 
 ## Source
 Data and information about the methodology can be found on website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
