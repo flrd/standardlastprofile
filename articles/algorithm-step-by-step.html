@@ -103,11 +103,15 @@ profile as the basis for creating a consumption forecast.</p>
 <p>There are 96 x 1/4 hour measurements of electrical power for each
 unique combination of <code>profile_id</code>, <code>period</code> and
 <code>day</code>, which we refer to as the “standard load profile”. The
-data was collected and analyzed in 1999 on the basis of 1,209 measured
-load profiles of low-voltage customers in Germany<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the data and methodology can be
-found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>2</sup></a> and is provided by
-German Association of Energy and Water Industries (BDEW Bundesverband
-der Energie- und Wasserwirtschaft e.V.).</p>
+value for “00:00” indicates the average work done in the morning between
+00:00 and 00:15. The data was collected and analyzed in 1999 by the
+Association of the Electricity Industry<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;VDEW, which once represented approximately 750 German
+energy supply companies, advocated for their interests with both
+politicians and consumers. In 2007, VDEW merged into the BDEW.&lt;/p&gt;"><sup>2</sup></a> (VDEW) on the basis of
+1,209 measured load profiles of low-voltage customers in Germany<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the data and methodology can be
+found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>3</sup></a> and is
+provided by German Association of Energy and Water Industries (BDEW
+Bundesverband der Energie- und Wasserwirtschaft e.V.).</p>
 <p><img src="algorithm-step-by-step_files/figure-html/small_multiples_vignette-1.png" alt="Small multiple line chart of 11 standard load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="700"></p>
 <p>Those measurements are normalized to an annual consumption of 1,000
 kWh. So, if we sum up all the quarter-hour consumption values for a
@@ -145,7 +149,7 @@ that are then performed:</p>
 <code>period</code>.</p></li>
 <li><p>Use result from 2nd step to extract values from
 <code>slp</code>.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;That is actually a lie. There is an internal data object
-from which the data is extracted for effiecency.&lt;/p&gt;"><sup>3</sup></a></p></li>
+from which the data is extracted for effiecency.&lt;/p&gt;"><sup>4</sup></a></p></li>
 <li><p>Apply polynomial function to values of profile identifier
 <code>H0</code>.</p></li>
 <li><p>Return data.</p></li>
@@ -278,37 +282,53 @@ December 25 and 26 (both public holidays) are identical.</p>
 <p>In contrast to most commercial and agricultural businesses, which
 have a relatively even and constant electricity consumption throughout
 the year, household electricity consumption decreases from winter to
-summer and vice versa (at least in Germany). This is taken into account
-when you call <code><a href="../reference/slp_generate.html">slp_generate()</a></code>. The study suggested the
-application of a 4th order polynomial function to the electric power
-values of profile identifier <code>H0</code>.</p>
+summer and vice versa (at least in Germany). Because of the distinctive
+annual load profile characteristics of household customers, we contend
+that these customers cannot be adequately described through a static
+representation using 3x3 characteristic days, as is done for commercial
+or agricultural customers during the respective periods. Consequently,
+the values provided in the <code>slp</code> dataset are not directly
+comparable with the representative 1/4h values of commercial and
+agricultural profiles. In the context of the <code>slp</code> dataset,
+the term ‘static’ is somewhat inappropriate when applied to household
+profiles. The values for H0 within the <code>slp</code> dataset are
+primarily mathematical auxiliary values intended for multiplication with
+a dynamization factor.</p>
+<p>This is taken into account when you call <code><a href="../reference/slp_generate.html">slp_generate()</a></code>.
+The study suggested the application of a 4th order polynomial function
+to the values of standard load profile <code>H0</code>.</p>
 <p><span class="math display">\[
-x = x_0 \times(-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7}
+w = w_0 \times(-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7}
 \times  d^3 - 7.02\mathrm{e}{-5} \times d^2 + 2.10\mathrm{e}{-3} \times
 d + 1.24)
 \]</span> Where:</p>
 <ul>
 <li>
-<span class="math inline">\(x\)</span> is the resulting ‘dynamic’
+<span class="math inline">\(w\)</span> is the resulting ‘dynamic’
 quarter-hour value</li>
 <li>
-<span class="math inline">\(x_0\)</span> is the static
+<span class="math inline">\(w_0\)</span> is the static
 quarter-hourly value</li>
 <li>
 <span class="math inline">\(d\)</span> is the day of the year as
 integer, starting at 1 on January 1st</li>
 </ul>
-<p>The values given for profile H0 are only characteristic calculation
-values. Only through multiplication with the 4th order polynomial
-function does it become a representative and - as it is called in the
-study - dynamized load profile for the group of household customers.</p>
 <p>The following plot shows how the electrical power develops over the
-year for the profile identifier <code>H0</code>; for a clearer picture,
-the values are aggregated at daily level:</p>
+year for profile <code>H0</code>; for a clearer picture, the values are
+aggregated at daily level:</p>
 <p><img src="algorithm-step-by-step_files/figure-html/H0_2024_plot-1.png" alt="Line plot of standard load profile 'H0' (households) aggregated by day from January 1st to December 31st, 2023. The plot shows that households have a continuously decreasing load from winter to summer and vice versa." width="700"></p>
+<p>This multiplication process aims to generate a representative,
+dynamic load profile.Finally, the following chart compares the static
+values with their dynamic counterparts.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Refer to page 9 in &lt;a href="https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf" class="external-link"&gt;Anwendung
+der Repräsentativen VDEW-Lastprofile step-by-step&lt;/a&gt;.&lt;/p&gt;'><sup>5</sup></a></p>
+<p><img src="algorithm-step-by-step_files/figure-html/H0_dynamic-1.png" width="700"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="final-words">Final words<a class="anchor" aria-label="anchor" href="#final-words"></a>
+</h2>
 <p>Use data at your own caution. Feel free to <a href="https://github.com/flrd/standardlastprofile/issues" class="external-link">create an
 issues</a> and suggest improvements.</p>
-</div>
 </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
