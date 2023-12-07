@@ -2,7 +2,7 @@
 % Please edit documentation in R/slp_info.R
 \name{slp_info}
 \alias{slp_info}
-\title{Information and Examples of BDEW Standard Load Profiles}
+\title{Retrieve information on standard load profiles}
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
@@ -22,7 +22,9 @@ slp_info(profile_id, language = c("EN", "DE"))
 A list
 }
 \description{
-Information and Examples of BDEW Standard Load Profiles
+Information and examples on standard load profiles from the
+German Association of Energy and Water Industries (BDEW
+Bundesverband der Energie- und Wasserwirtschaft e.V.)
 }
 \examples{
 slp_info("G5", language = "DE")

@@ -10,7 +10,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  out.width = "95%",
+  fig.align = "center"
 )
 ```
 
@@ -40,7 +42,7 @@ The data was collected and analyzed in 1999 by the Association of the Electricit
   
   [^vdew-1]: VDEW, which once represented approximately 750 German energy supply companies, advocated for their interests with both politicians and consumers. In 2007, VDEW merged into the BDEW.
   
-```{r small_multiples_vignette, echo = FALSE, fig.asp = 1.4, fig.retina=2}
+```{r small_multiples_vignette, echo = FALSE, fig.asp = 1.6, fig.retina=2}
 #| fig.alt = "Small multiple line chart of 11 standard load profiles
 #|  published by the German Association of Energy and Water Industries (BDEW 
 #|  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
@@ -396,6 +398,6 @@ ggplot(H0_plot,
 
 ## Final words
 
-Use data at your own caution. Feel free to 
+Use data with caution. Feel free to 
 [create an issues](https://github.com/flrd/standardlastprofile/issues) and 
 suggest improvements.

@@ -1,4 +1,8 @@
-#' Information and Examples of BDEW Standard Load Profiles
+#' Retrieve information on standard load profiles
+#'
+#' Information and examples on standard load profiles from the
+#' German Association of Energy and Water Industries (BDEW
+#' Bundesverband der Energie- und Wasserwirtschaft e.V.)
 #'
 #' @return A list
 #'

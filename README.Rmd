@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "90%",
+  out.width = "95%",
   fig.align = "center"
 )
 ```
@@ -31,7 +31,7 @@ library(ggplot2)
 ```
 
 
-```{r small_multiples, echo = FALSE, fig.asp = 1.4, fig.retina=2}
+```{r small_multiples, echo = FALSE, fig.asp = 1.6, fig.retina=2}
 #| fig.alt = "Small multiple line chart of 11 standard load profiles
 #|  published by the German Association of Energy and Water Industries (BDEW 
 #|  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
@@ -48,17 +48,18 @@ label_names <- c(
 label_fun <- function(x) label_names[[x]]
 
 # reorder facets
-slp$day <- factor(slp$day, levels = c("workday", "saturday", "sunday"))
+tmp <- slp
+tmp$day <- factor(slp$day, levels = c("workday", "saturday", "sunday"))
 
 # plot
-ggplot(slp,
+ggplot(tmp,
        aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
            y = watts,
            color = period)) +
   geom_line() +
   facet_grid(profile_id ~ day, scales = "free_y",
              labeller = labeller(day = as_labeller(label_names))) +
-  scale_x_datetime(NULL, date_labels = "%H") +
+  scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
   scale_y_continuous(NULL) +
   scale_color_manual(name = NULL,
                      values = c(
@@ -73,11 +74,9 @@ ggplot(slp,
   theme(legend.position = "top") +
   theme(strip.text.y.right = element_text(angle = 0)) + 
   theme(
-      panel.grid.major.x = element_blank(),
-      panel.grid.major.y = element_blank()
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank()
   ) +
-  theme(axis.text.x = element_blank()) +
-  theme(axis.text.y = element_blank()) +
   NULL
 ```
 
@@ -103,7 +102,7 @@ devtools::install_github("flrd/standardlastprofile")
 - `slp_info()` -- function for retrieving details of standard load profiles
 
 ## About the data
-The standardlastprofile package contains one dataset called `slp`. The data was published in 1999. They are based on an analysis of 1,209 load profiles of low-voltage consumers in Germany.[^bdew-2] In total there are 9,504 observations of 5 variables:
+The standardlastprofile package contains one dataset called `slp`. The data was published in 1999. It is based on an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany.[^bdew-2] In total there are 9,504 observations of 5 variables:
 
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
@@ -135,7 +134,7 @@ slp_info(profile_id = "H0", language = "EN")
 
 ### Generate a standard load profile
 
-Generate a standard load profile for a user-defined period of time using the `slp_generate()` function:
+To create a standard load profile for a specified time period, utilize the `slp_generate()` function:
 
 ``` {r, G5_data_readme, message=FALSE, echo=TRUE}
 G5 <- slp_generate(
@@ -172,7 +171,9 @@ ggplot(G5, aes(start_time, watts)) +
   ) +
   NULL
 ```
-For more information, details about the data, and an explanation of the algorithm, refer to the vignette [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
+
+For more information, details about the data, and an explanation of the algorithm, 
+call [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
 
 ## Source
 Data and information about the methodology can be found on website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/

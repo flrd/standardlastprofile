@@ -6,7 +6,7 @@
 \alias{standardlastprofile-package}
 \title{standardlastprofile: Data Package for BDEW Standard Load Profiles in Electricity}
 \description{
-Data on standard load profiles from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. This package also offers an interface for generating a standard load profile over a user-defined period. The data and methodology are described in VDEW (1999), 'Repräsentative VDEW-Lastprofile', \url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}. For the alogrithm to generate a standard load profile, see VDEW (2000), 'Anwendung der Repräsentativen VDEW-Lastprofile step-by-step', \url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}.
+Data on standard load profiles from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. This package also offers an interface for generating a standard load profile over a user-defined period. The data and methodology are described in VDEW (1999), "Repräsentative VDEW-Lastprofile", \url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}. For the algorithm to generate a standard load profile, see VDEW (2000), "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step", \url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}.
 }
 \seealso{
 Useful links:

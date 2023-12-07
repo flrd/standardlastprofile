@@ -16,7 +16,7 @@ electricity from the German Association of Energy and Water Industries
 (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy
 format.
 
-<img src="man/figures/README-small_multiples-1.png" alt="Small multiple line chart of 11 standard load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-small_multiples-1.png" alt="Small multiple line chart of 11 standard load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="95%" style="display: block; margin: auto;" />
 
 ## Installation
 
@@ -44,9 +44,9 @@ devtools::install_github("flrd/standardlastprofile")
 ## About the data
 
 The standardlastprofile package contains one dataset called `slp`. The
-data was published in 1999. They are based on an analysis of 1,209 load
-profiles of low-voltage consumers in Germany.[^1] In total there are
-9,504 observations of 5 variables:
+data was published in 1999. It is based on an analysis of 1,209 load
+profiles of low-voltage electricity consumers in Germany.[^1] In total
+there are 9,504 observations of 5 variables:
 
 - `profile_id`: identifier of standard load profile
 - `period`: one of “summer”, “winter”, “transition”
@@ -59,7 +59,7 @@ str(slp)
 #> 'data.frame':    9504 obs. of  5 variables:
 #>  $ profile_id: chr  "H0" "H0" "H0" "H0" ...
 #>  $ period    : chr  "winter" "winter" "winter" "winter" ...
-#>  $ day       : Factor w/ 3 levels "workday","saturday",..: 2 2 2 2 2 2 2 2 2 2 ...
+#>  $ day       : chr  "saturday" "saturday" "saturday" "saturday" ...
 #>  $ timestamp : chr  "00:00" "00:15" "00:30" "00:45" ...
 #>  $ watts     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
 ```
@@ -97,7 +97,7 @@ slp_info(profile_id = "H0", language = "EN")
 
 ### Generate a standard load profile
 
-Generate a standard load profile for a user-defined period of time using
+To create a standard load profile for a specified time period, utilize
 the `slp_generate()` function:
 
 ``` r
@@ -117,9 +117,10 @@ head(G5)
 #> 6         G5 2023-12-22 01:15:00 2023-12-22 01:30:00  43.8
 ```
 
-<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000 kWh." width="90%" style="display: block; margin: auto;" />
+<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000 kWh." width="95%" style="display: block; margin: auto;" />
+
 For more information, details about the data, and an explanation of the
-algorithm, refer to the vignette
+algorithm, call
 [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
 
 ## Source
