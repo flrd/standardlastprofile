@@ -20,12 +20,12 @@ format.
 
 ## Installation
 
-<!-- You can install the released version of standardlastprofile from CRAN with: -->
+<!-- You can install standardlastprofile from CRAN with: -->
 <!-- ```{r eval=FALSE} -->
 <!-- install.packages("standardlastprofile") -->
 <!-- ``` -->
 
-To install the development version of standardlastprofile from
+You can install the development version of standardlastprofile from
 [GitHub](https://github.com/), call:
 
 ``` r
@@ -33,24 +33,25 @@ To install the development version of standardlastprofile from
 devtools::install_github("flrd/standardlastprofile")
 ```
 
-## What will you get
+## Included Features
 
-- `slp` – dataset for BDEW standard load profiles in electricity
-- `slp_generate()` – interface to generate a standard load profile for a
-  user-defined period of time
-- `slp_info()` – function for retrieving details of standard load
-  profiles
+- `slp` – A dataset containing BDEW standard load profiles for
+  electricity.
+- `slp_generate()` – An interface for generating a standard load profile
+  for a user-defined time period.
+- `slp_info()` – A function for retrieving details of standard load
+  profiles.
 
 ## About the data
 
-The standardlastprofile package contains one dataset called `slp`. The
-data was published in 1999. It is based on an analysis of 1,209 load
-profiles of low-voltage electricity consumers in Germany.[^1] In total
-there are 9,504 observations of 5 variables:
+The standardlastprofile package encompasses a dataset named slp. This
+dataset results from an analysis of 1,209 load profiles of low-voltage
+electricity consumers in Germany, published in 1999.[^1] It comprises a
+total of 9,504 observations across 5 variables:
 
-- `profile_id`: identifier of standard load profile
+- `profile_id`: identifier of a standard load profile
 - `period`: one of “summer”, “winter”, “transition”
-- `day`: one of “saturday”, “sunday”, “workday”
+- `day`: one of “workday”, “saturday”, “sunday”
 - `timestamp`: format “%H:%M”
 - `watts`: electric power
 
@@ -73,8 +74,8 @@ profile, they serve as a valid approximation for larger groups of
 similar customers.
 
 For each unique combination of `profile_id`, `period` and `day` there
-are 96 x 1/4 hour measurements in watts. If `H0` keeps you puzzled, you
-are not alone:
+are 96 x 1/4 hour measurements in watts. If you have no idea what `H0`
+means, you are not alone:
 
 - `H0`: households (German: “Haushalte”)
 - `G0` to `G6`: commerce (“Gewerbe”)
@@ -83,22 +84,22 @@ are not alone:
 For more details, call the `slp_info()` function.
 
 ``` r
-slp_info(profile_id = "H0", language = "EN")
+slp_info(profile_id = "H0", language = "DE")
 #> $H0
 #> $H0$profile
 #> [1] "H0"
 #> 
 #> $H0$description
-#> [1] "household"
+#> [1] "Haushalt"
 #> 
 #> $H0$details
-#> [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps."
+#> [1] "In dieses Profil werden alle Haushalte mit ausschließlichem und überwiegendem Privatverbrauch eingeordnet. Haushalte mit überwiegend privatem elektrischen Verbrauch, d.h. auch mit geringfügigem gewerblichen Bedarf sind z.B. Handelsvertreter, Heimarbeiter u.ä. mit Büro im Haushalt. Das Profil Haushalt ist nicht anwendbar bei Sonderanwendungen wie z.B. elektrischen Speicherheizungen oder Wärmepumpen."
 ```
 
 ### Generate a standard load profile
 
-To create a standard load profile for a specified time period, utilize
-the `slp_generate()` function:
+To create a standard load profile for a specified time period, call the
+`slp_generate()` function:
 
 ``` r
 G5 <- slp_generate(
@@ -125,8 +126,9 @@ algorithm, call
 
 ## Source
 
-Data and information about the methodology can be found on website of
-the BDEW: <https://www.bdew.de/energie/standardlastprofile-strom/>
+You can access the studies and data on standard load profiles for
+electricity by downloading them from the BDEW website:
+<https://www.bdew.de/energie/standardlastprofile-strom/>
 
 ## Code of Conduct
 

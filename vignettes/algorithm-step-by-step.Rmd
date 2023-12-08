@@ -35,12 +35,9 @@ function works.[^bdew-1] The data in the `slp` dataset forms the basis for all s
 head(slp)
 ```
 
-There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The value for "00:00" indicates the average work done in the morning between 00:00 and 00:15. 
-The data was collected and analyzed in 1999 by the Association of the Electricity Industry[^vdew-1] (VDEW) on the basis of 1,209 measured load profiles of low-voltage customers in Germany[^bdew-2] and is provided by German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.).
+There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The value for "00:00" indicates the average work done in the morning between 00:00 and 00:15. The data was collected and analyzed in 1999 and is provided by German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.).[^bdew-2] 
 
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
-  
-  [^vdew-1]: VDEW, which once represented approximately 750 German energy supply companies, advocated for their interests with both politicians and consumers. In 2007, VDEW merged into the BDEW.
   
 ```{r small_multiples_vignette, echo = FALSE, fig.asp = 1.6, fig.retina=2}
 #| fig.alt = "Small multiple line chart of 11 standard load profiles
@@ -59,19 +56,20 @@ label_names <- c(
 label_fun <- function(x) label_names[[x]]
 
 # reorder facets
-slp$day <- factor(slp$day, levels = c("workday", "saturday", "sunday"))
+tmp <- slp
+tmp$day <- factor(slp$day, levels = c("workday", "saturday", "sunday"))
 
 # plot
-ggplot(slp,
+ggplot(tmp,
        aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
            y = watts,
            color = period)) +
   geom_line() +
-  facet_grid(profile_id ~ day,
+  facet_grid(profile_id ~ day, 
              scales = "free_y",
              labeller = labeller(day = as_labeller(label_names))) +
   scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
-  scale_y_continuous(NULL, n.breaks = 3) +
+  scale_y_continuous(NULL, n.breaks = 3, limits = c(0, NA)) +
   scale_color_manual(name = NULL,
                      values = c(
                        "winter" = "#961BFA",
@@ -79,19 +77,22 @@ ggplot(slp,
                        "transition" = "#0CC792"
                        )) +
   labs(title = "Standard Load Profiles",
-       subtitle = "96 x 1/4h measurements a day [in watts], based on consumption of 1,000 kWh/a",
+       subtitle = "96 x 1/4h measurements [in watts], based on consumption of 1,000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
   theme(strip.text.y.right = element_text(angle = 0)) + 
   theme(
-      panel.grid.minor.x = element_blank(),
-      panel.grid.minor.y = element_blank()
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+      )
   ) +
-  # theme(axis.text.y = element_blank()) +
   NULL
 ```
-
 
 Those measurements are normalized to an annual consumption of 1,000 kWh. So, if we sum up all the quarter-hour consumption values for a year, the result is (approximately) 1,000 kWh/year.
 
@@ -108,7 +109,7 @@ H0_2024 <- slp_generate(
 sum(H0_2024$watts)
 ```
 
-'Hold on - didn't you just say 1,000?!' you might be thinking. Yes, you are correct; we must [convert power units into energy units](https://en.wikipedia.org/wiki/Watt#Distinction_between_watts_and_watt-hours). The values returned are 1/4-hour measurements in watts. To convert the values to watt-hours, we must, therefore, divide them by 4. Since one watt-hour is equal to 1/1000 kilowatt-hour, we also divide by 1,000:
+'Hold on - didn't you just say 1,000?!', you might be thinking. Yes, you are correct; we must [convert power units into energy units](https://en.wikipedia.org/wiki/Watt#Distinction_between_watts_and_watt-hours). The values returned are 1/4-hour measurements in watts. To convert the values to watt-hours, we must, therefore, divide them by 4. Since one watt-hour is equal to 1/1000 kilowatt-hour, we also divide by 1,000:
 
 ```{r normalization-2, message=FALSE}
 sum(H0_2024$watts / 4 / 1000)
@@ -116,13 +117,13 @@ sum(H0_2024$watts / 4 / 1000)
 
 ## Algorithm step by step
 
-When you call `slp_generate()`, you (surprise!) generate a standard load profile given a profile identifier, whereby several profile identifiers are supported simultaneously. These are the steps that are then performed:
+When you call `slp_generate()`, you generate (surprise!) a standard load profile. These are the steps that are then performed:
 
 1. Generate a date sequence from `start_date` to `end_date`.
 2. Map each day to combination of `day` and `period`.
 3. Use result from 2nd step to extract values from `slp`.[^data-1]
 
-    [^data-1]: That is actually a lie. There is an internal data object from which the data is extracted for effiecency.
+    [^data-1]: That is actually a lie. There is an internal data object from which the data is extracted for efficiency.
 
 4. Apply polynomial function to values of profile identifier `H0`.
 5. Return data.
@@ -218,14 +219,19 @@ ggplot(G5, aes(start_time, watts)) +
     date_labels = "%b %d") +
   labs(
     title = "'G5': bakery with bakehouse",
-    subtitle = "1/4h-measurements, based on consumption of 1,000 kWh/a",
+    subtitle = "1/4h measurements, based on consumption of 1,000 kWh/a",
     caption = "data: www.bdew.de",
     x = NULL,
     y = "[watts]") +
   theme_minimal() +
   theme(
-      panel.grid.minor.x = element_blank(),
-      panel.grid.minor.y = element_blank()
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+      )
   ) +
   NULL
 ```
@@ -254,12 +260,12 @@ the application of a 4th order polynomial function to the values of standard
 load profile `H0`. 
 
 $$
-w = w_0 \times(-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7} \times  d^3 - 7.02\mathrm{e}{-5} \times d^2 + 2.10\mathrm{e}{-3} \times d + 1.24)
+w_d = w_s \times(-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7} \times  d^3 - 7.02\mathrm{e}{-5} \times d^2 + 2.10\mathrm{e}{-3} \times d + 1.24)
 $$
 Where:
 
-* $w$ is the resulting 'dynamic' quarter-hour value
-* $w_0$ is the static quarter-hourly value
+* $w_d$ is the resulting 'dynamic' quarter-hour value
+* $w_s$ is the static quarter-hourly value
 * $d$ is the day of the year as integer, starting at 1 on January 1st
 
 The following plot shows how the electrical power develops over the year for 
@@ -285,7 +291,7 @@ H0_2024_daily <- do.call(rbind, args = H0_2024_daily)
 #|  to summer and vice versa."
 ggplot(H0_2024_daily, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
-  labs(title = "Profile 'H0': Households",
+  labs(title = "Dynamic Load Profile 'H0': Households",
        subtitle = "Electrical power per day",
        caption = "data: www.bdew.de",
        x = NULL,
@@ -293,40 +299,50 @@ ggplot(H0_2024_daily, aes(start_time, watts)) +
   theme_minimal() +
   theme(
     panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank()
-  ) +
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+      )
+    ) +
   NULL
 ```
 
 This multiplication process aims to generate a representative, dynamic load
-profile.Finally, the following chart compares the static values with their
-dynamic counterparts.[^bdew-3]
+profile. Finally, the following chart compares the dynamic values with their
+static counterparts.[^bdew-3]
 
   [^bdew-3]: Refer to page 9 in [Anwendung der Repräsentativen VDEW-Lastprofile step-by-step](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).
 
-```{r H0_dynamic, echo=FALSE, message=FALSE, fig.retina=2}
-# helper
-paste_dash <- function(...) paste(..., sep = "-")
-lst <- list(
-  winter = paste_dash("1997-01", 17:19),
-  summer = paste_dash("1996-07", 19:21),
-  transition = paste_dash("1997-04", 18:20)
-)
+```{r H0_dynamic, echo=FALSE, message=FALSE, fig.asp=0.8, fig.retina=2}
+#| fig.alt = "A plot of standard load profile 'H0' (households)
+#|  that shows a comparision between the static values, and their
+#|  dynamic counterparts."
+
+# why these days? refer to page 9 in:
+# https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
+lst <- Map(paste,
+  list("1997-01", "1996-07", "1997-04"),
+  list(17:19, 19:21, 18:20),
+  sep = "-")
 
 periods <- c("winter", "summer", "transition")
-
 names(lst) <- periods
 
 days <- c("workday", "saturday", "sunday")
 lst <- lapply(lst, setNames, days)
 
+# list to be populated
 out <- vector("list", length(periods))
 names(out) <- periods
 
+# generates slp/s given params in lst
 for(i in periods) {
   out[[i]] <- slp_generate("H0", lst[[i]][[1]], lst[[i]][[3]])
 }
 
+# add day column
 out <- lapply(out, function(x) {
   tmp <- format.Date(x$start_time, "%A")
   tmp <- replace(tmp, tmp == "Friday", "workday")
@@ -334,9 +350,11 @@ out <- lapply(out, function(x) {
   cbind(x, data.frame(day = tolower(tmp)))
 })
 
+# adds period column
 H0 <- lapply(names(out), function(x) {
   cbind(out[[x]], data.frame(period = x))
 })
+
 H0 <- do.call(rbind, H0)
 
 # remove date from start_time to make it "%H:%M"
@@ -345,7 +363,7 @@ H0$timestamp <- format(H0$start_time, "%H:%M")
 # reorder, remove columns we do not need
 H0 <- H0[, names(slp)]
 
-# create variable for facetting
+# create variable for faceting
 H0$type <- "dynamic"
 
 # rbind with subset of H0 from slp
@@ -373,7 +391,7 @@ ggplot(H0_plot,
            y = watts,
            color = period)) +
   geom_line() +
-  facet_grid(type ~ day,
+  facet_grid(day ~ type,
              labeller = labeller(day = as_labeller(label_names))) +
   scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
   scale_y_continuous("[watts]") +
@@ -383,21 +401,20 @@ ggplot(H0_plot,
                        "summer" = "#FA9529",
                        "transition" = "#0CC792"
                      )) +
-  labs(title = "Standard Load Profile 'H0' - dynamic versus static",
-       subtitle = "96 x 1/4h measurements a day, based on consumption of 1,000 kWh/a",
+  labs(title = "Dynamic vs. Static Standard Load Profile 'H0'",
+       subtitle = "96 x 1/4h measurements, based on consumption of 1,000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
   theme(strip.text.y.right = element_text(angle = 0)) + 
   theme(
     panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank()
+    panel.grid.minor.y = element_blank(),
+      panel.grid = element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+      )
   ) +
   NULL
 ```
-
-## Final words
-
-Use data with caution. Feel free to 
-[create an issues](https://github.com/flrd/standardlastprofile/issues) and 
-suggest improvements.

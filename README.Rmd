@@ -57,10 +57,11 @@ ggplot(tmp,
            y = watts,
            color = period)) +
   geom_line() +
-  facet_grid(profile_id ~ day, scales = "free_y",
+  facet_grid(profile_id ~ day, 
+             scales = "free_y",
              labeller = labeller(day = as_labeller(label_names))) +
   scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
-  scale_y_continuous(NULL) +
+  scale_y_continuous(NULL, n.breaks = 3, limits = c(0, NA)) +
   scale_color_manual(name = NULL,
                      values = c(
                        "winter" = "#961BFA",
@@ -68,26 +69,31 @@ ggplot(tmp,
                        "transition" = "#0CC792"
                        )) +
   labs(title = "Standard Load Profiles",
-       subtitle = "96 x 1/4h measurements a day [in watts], based on consumption of 1,000 kWh/a",
+       subtitle = "96 x 1/4h measurements [in watts], based on consumption of 1,000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
   theme(strip.text.y.right = element_text(angle = 0)) + 
   theme(
     panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank()
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(
+      linetype = "12",
+      lineend = "round", 
+      colour = "#FAF6F4")
   ) +
   NULL
 ```
 
 ## Installation
 
-<!-- You can install the released version of standardlastprofile from CRAN with: -->
+<!-- You can install standardlastprofile from CRAN with: -->
+
 <!-- ```{r eval=FALSE} -->
 <!-- install.packages("standardlastprofile") -->
 <!-- ``` -->
 
-To install the development version of standardlastprofile from 
+You can install the development version of standardlastprofile from 
 [GitHub](https://github.com/), call:
 
 ``` {r eval=FALSE}
@@ -95,20 +101,20 @@ To install the development version of standardlastprofile from
 devtools::install_github("flrd/standardlastprofile")
 ```
 
-## What will you get
+## Included Features
 
-- `slp` -- dataset for BDEW standard load profiles in electricity
-- `slp_generate()` --	interface to generate a standard load profile for a user-defined period of time
-- `slp_info()` -- function for retrieving details of standard load profiles
+- `slp` -- A dataset containing BDEW standard load profiles for electricity.
+- `slp_generate()` --	An interface for generating a standard load profile for a user-defined time period.
+- `slp_info()` -- A function for retrieving details of standard load profiles.
 
 ## About the data
-The standardlastprofile package contains one dataset called `slp`. The data was published in 1999. It is based on an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany.[^bdew-2] In total there are 9,504 observations of 5 variables:
+The standardlastprofile package encompasses a dataset named slp. This dataset results from an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany, published in 1999.[^bdew-2] It comprises a total of 9,504 observations across 5 variables:
 
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
-- `profile_id`: identifier of standard load profile
+- `profile_id`: identifier of a standard load profile
 - `period`: one of "summer", "winter", "transition"
-- `day`: one of "saturday", "sunday", "workday"
+- `day`: one of "workday", "saturday", "sunday"
 - `timestamp`: format "%H:%M"
 - `watts`: electric power
 
@@ -119,7 +125,7 @@ str(slp)
 In the context of the German electricity market, the term 'Standard Load Profile' denotes a representative pattern of electricity consumption over a specific period. These profiles portray anticipated electricity consumption for diverse customer groups, like households or businesses. While not an exact match for an individual customer's consumption profile, they serve as a valid approximation for larger groups of similar customers.
 
 For each unique combination of `profile_id`, `period` and `day` there are 
-96 x 1/4 hour measurements in watts. If `H0` keeps you puzzled,
+96 x 1/4 hour measurements in watts. If you have no idea what `H0` means, 
 you are not alone:
 
 - `H0`: households (German: "Haushalte")
@@ -129,12 +135,12 @@ you are not alone:
 For more details, call the `slp_info()` function.
 
 ``` {r, message=FALSE, echo=TRUE}
-slp_info(profile_id = "H0", language = "EN")
+slp_info(profile_id = "H0", language = "DE")
 ```
 
 ### Generate a standard load profile
 
-To create a standard load profile for a specified time period, utilize the `slp_generate()` function:
+To create a standard load profile for a specified time period, call the `slp_generate()` function:
 
 ``` {r, G5_data_readme, message=FALSE, echo=TRUE}
 G5 <- slp_generate(
@@ -160,14 +166,19 @@ ggplot(G5, aes(start_time, watts)) +
     date_labels = "%b %d") +
   labs(
     title = "'G5': bakery with bakehouse",
-    subtitle = "1/4h-measurements, based on consumption of 1,000 kWh/a",
+    subtitle = "1/4h measurements, based on consumption of 1,000 kWh/a",
     caption = "data: www.bdew.de",
     x = NULL,
     y = "[watts]") +
   theme_minimal() +
   theme(
       panel.grid.minor.x = element_blank(),
-      panel.grid.minor.y = element_blank()
+      panel.grid.minor.y = element_blank(),
+      panel.grid = element_line(
+        linetype = "12",
+        lineend = "round",
+        colour = "#FAF6F4"
+        )
   ) +
   NULL
 ```
@@ -176,9 +187,8 @@ For more information, details about the data, and an explanation of the algorith
 call [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
 
 ## Source
-Data and information about the methodology can be found on website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
+You can access the studies and data on standard load profiles for electricity by downloading them from the BDEW website: https://www.bdew.de/energie/standardlastprofile-strom/
 
 ## Code of Conduct
-
 Please note that this project is released with a [Contributor Code of Conduct](https://github.com/flrd/standardlastprofile/blob/main/CODE_OF_CONDUCT.md). 
 By participating in this project you agree to abide by its terms.

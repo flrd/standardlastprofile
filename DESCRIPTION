@@ -2,12 +2,11 @@ Package: standardlastprofile
 Title: Data Package for BDEW Standard Load Profiles in Electricity
 Description: Data on standard load profiles from the German Association of 
   Energy and Water Industries (BDEW Bundesverband der Energie- und 
-  Wasserwirtschaft e.V.) in a tidy format. This package also offers an interface
-  for generating a standard load profile over a user-defined period. The data 
-  and methodology are described in VDEW (1999), "Repräsentative 
-  VDEW-Lastprofile", 
+  Wasserwirtschaft e.V.) in a tidy format. The data and methodology are 
+  described in VDEW (1999), "Repräsentative VDEW-Lastprofile", 
   <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>.
-  For the algorithm to generate a standard load profile, see VDEW (2000), 
+  The package also offers an interface for generating a standard load profile 
+  over a user-defined period. For the algorithm, see VDEW (2000), 
   "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step",
   <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>.
 Version: 1.0.0
@@ -16,7 +15,7 @@ Authors@R:
     given = "Markus",
     family = "Döring",
     email = "m4rkus.doering@gmail.com", 
-    role = c("aut", "cre", "cph")
+    role = c("aut", "cre", cph)
     )
 License: CC0
 Encoding: UTF-8
