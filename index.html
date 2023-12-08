@@ -7,12 +7,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content='Data on standard load profiles from the German Association of 
   Energy and Water Industries (BDEW Bundesverband der Energie- und 
-  Wasserwirtschaft e.V.) in a tidy format. This package also offers an interface
-  for generating a standard load profile over a user-defined period. The data 
-  and methodology are described in VDEW (1999), "Repräsentative 
-  VDEW-Lastprofile", 
+  Wasserwirtschaft e.V.) in a tidy format. The data and methodology are 
+  described in VDEW (1999), "Repräsentative VDEW-Lastprofile", 
   &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;.
-  For the algorithm to generate a standard load profile, see VDEW (2000), 
+  The package also offers an interface for generating a standard load profile 
+  over a user-defined period. For the algorithm, see VDEW (2000), 
   "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step",
   &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;.'>
 <title>Data Package for BDEW Standard Load Profiles in Electricity • standardlastprofile</title>
@@ -23,12 +22,11 @@
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Data Package for BDEW Standard Load Profiles in Electricity">
 <meta property="og:description" content='Data on standard load profiles from the German Association of 
   Energy and Water Industries (BDEW Bundesverband der Energie- und 
-  Wasserwirtschaft e.V.) in a tidy format. This package also offers an interface
-  for generating a standard load profile over a user-defined period. The data 
-  and methodology are described in VDEW (1999), "Repräsentative 
-  VDEW-Lastprofile", 
+  Wasserwirtschaft e.V.) in a tidy format. The data and methodology are 
+  described in VDEW (1999), "Repräsentative VDEW-Lastprofile", 
   &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;.
-  For the algorithm to generate a standard load profile, see VDEW (2000), 
+  The package also offers an interface for generating a standard load profile 
+  over a user-defined period. For the algorithm, see VDEW (2000), 
   "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step",
   &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;.'>
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -96,38 +94,38 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<!-- You can install the released version of standardlastprofile from CRAN with: -->
+<!-- You can install standardlastprofile from CRAN with: -->
 <!-- ```{r eval=FALSE} -->
 <!-- install.packages("standardlastprofile") -->
 <!-- ``` -->
-<p>To install the development version of standardlastprofile from <a href="https://github.com/" class="external-link">GitHub</a>, call:</p>
+<p>You can install the development version of standardlastprofile from <a href="https://github.com/" class="external-link">GitHub</a>, call:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"flrd/standardlastprofile"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="what-will-you-get">What will you get<a class="anchor" aria-label="anchor" href="#what-will-you-get"></a>
+<h2 id="included-features">Included Features<a class="anchor" aria-label="anchor" href="#included-features"></a>
 </h2>
 <ul>
 <li>
-<code>slp</code> – dataset for BDEW standard load profiles in electricity</li>
+<code>slp</code> – A dataset containing BDEW standard load profiles for electricity.</li>
 <li>
-<code><a href="reference/slp_generate.html">slp_generate()</a></code> – interface to generate a standard load profile for a user-defined period of time</li>
+<code><a href="reference/slp_generate.html">slp_generate()</a></code> – An interface for generating a standard load profile for a user-defined time period.</li>
 <li>
-<code><a href="reference/slp_info.html">slp_info()</a></code> – function for retrieving details of standard load profiles</li>
+<code><a href="reference/slp_info.html">slp_info()</a></code> – A function for retrieving details of standard load profiles.</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="about-the-data">About the data<a class="anchor" aria-label="anchor" href="#about-the-data"></a>
 </h2>
-<p>The standardlastprofile package contains one dataset called <code>slp</code>. The data was published in 1999. It is based on an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the data and methodology can be found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>1</sup></a> In total there are 9,504 observations of 5 variables:</p>
+<p>The standardlastprofile package encompasses a dataset named slp. This dataset results from an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany, published in 1999.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the data and methodology can be found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>1</sup></a> It comprises a total of 9,504 observations across 5 variables:</p>
 <ul>
 <li>
-<code>profile_id</code>: identifier of standard load profile</li>
+<code>profile_id</code>: identifier of a standard load profile</li>
 <li>
 <code>period</code>: one of “summer”, “winter”, “transition”</li>
 <li>
-<code>day</code>: one of “saturday”, “sunday”, “workday”</li>
+<code>day</code>: one of “workday”, “saturday”, “sunday”</li>
 <li>
 <code>timestamp</code>: format “%H:%M”</li>
 <li>
@@ -142,7 +140,7 @@
 <span><span class="co">#&gt;  $ timestamp : chr  "00:00" "00:15" "00:30" "00:45" ...</span></span>
 <span><span class="co">#&gt;  $ watts     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...</span></span></code></pre></div>
 <p>In the context of the German electricity market, the term ‘Standard Load Profile’ denotes a representative pattern of electricity consumption over a specific period. These profiles portray anticipated electricity consumption for diverse customer groups, like households or businesses. While not an exact match for an individual customer’s consumption profile, they serve as a valid approximation for larger groups of similar customers.</p>
-<p>For each unique combination of <code>profile_id</code>, <code>period</code> and <code>day</code> there are 96 x 1/4 hour measurements in watts. If <code>H0</code> keeps you puzzled, you are not alone:</p>
+<p>For each unique combination of <code>profile_id</code>, <code>period</code> and <code>day</code> there are 96 x 1/4 hour measurements in watts. If you have no idea what <code>H0</code> means, you are not alone:</p>
 <ul>
 <li>
 <code>H0</code>: households (German: “Haushalte”)</li>
@@ -153,20 +151,20 @@
 </ul>
 <p>For more details, call the <code><a href="reference/slp_info.html">slp_info()</a></code> function.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/slp_info.html">slp_info</a></span><span class="op">(</span>profile_id <span class="op">=</span> <span class="st">"H0"</span>, language <span class="op">=</span> <span class="st">"EN"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/slp_info.html">slp_info</a></span><span class="op">(</span>profile_id <span class="op">=</span> <span class="st">"H0"</span>, language <span class="op">=</span> <span class="st">"DE"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $H0</span></span>
 <span><span class="co">#&gt; $H0$profile</span></span>
 <span><span class="co">#&gt; [1] "H0"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $H0$description</span></span>
-<span><span class="co">#&gt; [1] "household"</span></span>
+<span><span class="co">#&gt; [1] "Haushalt"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $H0$details</span></span>
-<span><span class="co">#&gt; [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps."</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "In dieses Profil werden alle Haushalte mit ausschließlichem und überwiegendem Privatverbrauch eingeordnet. Haushalte mit überwiegend privatem elektrischen Verbrauch, d.h. auch mit geringfügigem gewerblichen Bedarf sind z.B. Handelsvertreter, Heimarbeiter u.ä. mit Büro im Haushalt. Das Profil Haushalt ist nicht anwendbar bei Sonderanwendungen wie z.B. elektrischen Speicherheizungen oder Wärmepumpen."</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="generate-a-standard-load-profile">Generate a standard load profile<a class="anchor" aria-label="anchor" href="#generate-a-standard-load-profile"></a>
 </h3>
-<p>To create a standard load profile for a specified time period, utilize the <code><a href="reference/slp_generate.html">slp_generate()</a></code> function:</p>
+<p>To create a standard load profile for a specified time period, call the <code><a href="reference/slp_generate.html">slp_generate()</a></code> function:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">G5</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_generate.html">slp_generate</a></span><span class="op">(</span></span>
 <span>  profile_id <span class="op">=</span> <span class="st">"G5"</span>,</span>
@@ -189,7 +187,7 @@
 <div class="section level2">
 <h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a>
 </h2>
-<p>Data and information about the methodology can be found on website of the BDEW: <a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link uri">https://www.bdew.de/energie/standardlastprofile-strom/</a></p>
+<p>You can access the studies and data on standard load profiles for electricity by downloading them from the BDEW website: <a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link uri">https://www.bdew.de/energie/standardlastprofile-strom/</a></p>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

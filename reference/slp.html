@@ -90,34 +90,24 @@ der Energie- und Wasserwirtschaft e.V.) in a tidy format.</p>
     <p><a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link">https://www.bdew.de/energie/standardlastprofile-strom/</a></p>
 <p><a href="https://www.bdew.de/media/documents/Profile.zip" class="external-link">https://www.bdew.de/media/documents/Profile.zip</a></p>
 <p><a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link">https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf</a></p>
-<p><a href="https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf" class="external-link">https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf</a></p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>There are 96 x 1/4h measurements of electrical power for each combination
 of <code>profile_id</code>, <code>period</code> and <code>day</code>, which we refer to as the "standard load
-profile". The data was determined in 1999 on the basis of 1,209 measured load
-profiles of low-voltage customers in Germany.</p>
-<p>For each profile identifier the measurements were normalized so that they
-correspond to an annual consumption of 1,000 kWh. So if we sum up all the
-quarter-hourly consumption values for one year, the result is (approximately)
-1,000 kWh/a.</p>
-<p><strong>Note</strong> The values given for profile H0 are only characteristic calculation
-values. Only through multiplication with the 4th order polynomial function do
-they become a representative and dynamized load profile for the group of
-household customers. This fact is taken care of in the function <code><a href="slp_generate.html">slp_generate()</a></code>,
-see <code><a href="../articles/algorithm-step-by-step.html">vignette("algorithm-step-by-step")</a></code> for more information.</p>
-<p>There are 11 standard load profiles for 3 different customer groups:</p><ul><li><p>households: <code>H0</code></p></li>
-<li><p>commercial: <code>G0</code>, <code>G1</code>, <code>G2</code>, <code>G3</code>, <code>G4</code>, <code>G5</code>, <code>G6</code></p></li>
-<li><p>agriculture: <code>L0</code>, <code>L1</code>, <code>L2</code></p></li>
+profile". This dataset results from an analysis of 1,209 load profiles of
+low-voltage electricity consumers in Germany, published in 1999.</p>
+<p>In total there are 11 <code>profile_id</code> for three different customer groups:</p><ul><li><p>Households: <code>H0</code></p></li>
+<li><p>Commercial: <code>G0</code>, <code>G1</code>, <code>G2</code>, <code>G3</code>, <code>G4</code>, <code>G5</code>, <code>G6</code></p></li>
+<li><p>Agriculture: <code>L0</code>, <code>L1</code>, <code>L2</code></p></li>
 </ul><p>Call <code><a href="slp_info.html">slp_info()</a></code> to for more information and examples.</p>
-<p>Periods are defined as:</p><ul><li><p><code>summer</code>: May 15 to September 14</p></li>
+<p>Period definitions:</p><ul><li><p><code>summer</code>: May 15 to September 14</p></li>
 <li><p><code>winter</code>: November 1 to March 20</p></li>
 <li><p><code>transition</code>: March 21 to May 14, and September 15 to October 31</p></li>
-</ul><p>There are 3 different characteristic days:</p><ul><li><p><code>workday</code>: Monday to Friday</p></li>
-<li><p><code>saturday</code>: Saturdays; Dec 24th and Dec 31th are considered a Saturday too,
+</ul><p>Day definitions:</p><ul><li><p><code>workday</code>: Monday to Friday</p></li>
+<li><p><code>saturday</code>: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
 if they are not a Sunday</p></li>
-<li><p><code>sunday</code>: Sundays and all public holidays in Germany</p></li>
+<li><p><code>sunday</code>: Sundays and all public holidays</p></li>
 </ul></div>
 
     <div class="section level2">
