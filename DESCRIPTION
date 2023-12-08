@@ -15,7 +15,7 @@ Authors@R:
     given = "Markus",
     family = "Döring",
     email = "m4rkus.doering@gmail.com", 
-    role = c("aut", "cre", cph)
+    role = c("aut", "cre", "cph")
     )
 License: CC0
 Encoding: UTF-8
