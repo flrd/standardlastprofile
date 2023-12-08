@@ -27,7 +27,7 @@ test_that("start_date must be greater 1973", {
       start_date = "1972-12-31",
       end_date = Sys.Date()
     ),
-    "Supported date range must be between 1990-01-01 and 2073-12-31."
+    "Date range must be between 1990-01-01 and 2073-12-31."
   )
 })
 
@@ -38,7 +38,7 @@ test_that("start_date must be greater 1973", {
       start_date = Sys.Date(),
       end_date = "2074-01-01"
     ),
-    "Supported date range must be between 1990-01-01 and 2073-12-31."
+    "Date range must be between 1990-01-01 and 2073-12-31."
   )
 })
 

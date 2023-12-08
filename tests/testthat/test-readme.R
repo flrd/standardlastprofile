@@ -21,7 +21,7 @@ p1 <- ggplot2::ggplot(slp,
   ggplot2::geom_line() +
   ggplot2::facet_grid(profile_id ~ day, scales = "free_y",
              labeller = ggplot2::labeller(day = ggplot2::as_labeller(label_names))) +
-  ggplot2::scale_x_datetime(NULL, date_labels = "%H") +
+  ggplot2::scale_x_datetime(NULL, date_labels = "%k:%M") +
   ggplot2::scale_y_continuous(NULL) +
   ggplot2::scale_color_manual(name = NULL,
                      values = c(
@@ -38,9 +38,13 @@ p1 <- ggplot2::ggplot(slp,
   ggplot2::theme(
     panel.grid.major.x = ggplot2::element_blank(),
     panel.grid.major.y = ggplot2::element_blank(),
+    panel.grid.minor.y = ggplot2::element_blank(),
+    panel.grid = ggplot2::element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+    )
   ) +
-  ggplot2::theme(axis.text.x = ggplot2::element_blank()) +
-  ggplot2::theme(axis.text.y = ggplot2::element_blank()) +
   NULL
 
 
@@ -58,14 +62,19 @@ p2 <- ggplot2::ggplot(G5, ggplot2::aes(start_time, watts)) +
   ggplot2::geom_line(color = "#0CC792") +
   ggplot2::scale_x_datetime(date_breaks = "1 day", date_labels = "%b %d") +
   ggplot2::labs(title = "'G5': bakery with bakehouse",
-                subtitle = "1/4h-measurements, based on consumption of 1,000 kWh/a",
+                subtitle = "1/4h measurements, based on consumption of 1,000 kWh/a",
                 caption = "data: www.bdew.de",
                 x = NULL,
                 y = "[watts]") +
   ggplot2::theme_minimal() +
   ggplot2::theme(
     panel.grid.minor.x = ggplot2::element_blank(),
-    panel.grid.minor.y = ggplot2::element_blank()
+    panel.grid.minor.y = ggplot2::element_blank(),
+    panel.grid = ggplot2::element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+    )
   ) +
   NULL
 

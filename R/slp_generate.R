@@ -17,40 +17,39 @@
 #' @details
 #' In regards to the electricity market in Germany, the term "Standard Load
 #' Profile" refers to a representative pattern of electricity consumption over
-#' a specific period. These profiles are used to depict the expected electricity
+#' a specific period. These profiles can be used to depict the expected electricity
 #' consumption for various customer groups, such as households or businesses.
-#'
-#' In total there are 11 representative, standard load profiles for three
-#' different customer groups:
-#'
-#'- Households: `H0`
-#'- Commercial: `G0`, `G1`, `G2`, `G3`, `G4`, `G5`, `G6`
-#'- Agriculture: `L0`, `L1`, `L2`
-#'
-#'For more information and examples, call [slp_info()].
 #'
 #' For each distinct combination of `profile_id`, `period`, and `day`, there
 #' are 96 x 1/4 hour measurements of electrical power. Values are normalized so
-#' that they correspond to an annual consumption of 1,000 kWh. Summing up all
-#' the quarter-hourly consumption values for one year yields an approximate
+#' that they correspond to an annual consumption of 1,000 kWh. That is, summing
+#' up all the quarter-hourly consumption values for one year yields an approximate
 #' total of 1,000 kWh/a; for more information, refer to the 'Examples' section,
 #' or call `vignette("algorithm-step-by-step")`.
 #'
-#'Period definitions:
-#'- `summer`: May 15 to September 14
-#'- `winter`: November 1 to March 20
-#'- `transition`: March 21 to May 14, and September 15 to October 31
+#' In total there are 11 `profile_id` for three different customer groups:
 #'
-#'Day definitions:
-#'- `saturday`: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
-#'if they are not a Sunday.
-#'- `sunday`: Sundays and all public holidays.
-#'- `workday`: Monday to Friday.
+#' - Households: `H0`
+#' - Commercial: `G0`, `G1`, `G2`, `G3`, `G4`, `G5`, `G6`
+#' - Agriculture: `L0`, `L1`, `L2`
 #'
-#'**Note**: The package supports public holidays for Germany,
-#'retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
-#'Use the optional argument `state_code` to consider public holidays on a state
-#'level too. Allowed values are listed below:
+#' For more information and examples, call [slp_info()].
+#'
+#' Period definitions:
+#' - `summer`: May 15 to September 14
+#' - `winter`: November 1 to March 20
+#' - `transition`: March 21 to May 14, and September 15 to October 31
+#'
+#' Day definitions:
+#' - `workday`: Monday to Friday
+#' - `saturday`: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+#'if they are not a Sunday
+#' - `sunday`: Sundays and all public holidays
+#'
+#' **Note**: The package supports public holidays for Germany,
+#' retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
+#' Use the optional argument `state_code` to consider public holidays on a state
+#' level too. Allowed values are listed below:
 #'
 #' - `DE-BB`: Brandenburg
 #' - `DE-BE`: Berlin
@@ -119,7 +118,7 @@ slp_generate <- function(
   }
 
   if(start < as_date("1990-01-01") || end > as_date("2073-12-31")) {
-    stop("Supported date range must be between 1990-01-01 and 2073-12-31.")
+    stop("Date range must be between 1990-01-01 and 2073-12-31.")
   }
 
   profile_id <- match_profile(profile_id)

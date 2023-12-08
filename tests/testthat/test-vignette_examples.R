@@ -24,7 +24,12 @@ p3 <- ggplot2::ggplot(H0_2024_daily, ggplot2::aes(start_time, watts)) +
   ggplot2::theme_minimal() +
   ggplot2::theme(
     panel.grid.minor.x = ggplot2::element_blank(),
-    panel.grid.minor.y = ggplot2::element_blank()
+    panel.grid.minor.y = ggplot2::element_blank(),
+    panel.grid = ggplot2::element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+    )
   ) +
   NULL
 

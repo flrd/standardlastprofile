@@ -38,11 +38,17 @@ consumption of 1,000 kWh.
 \details{
 In regards to the electricity market in Germany, the term "Standard Load
 Profile" refers to a representative pattern of electricity consumption over
-a specific period. These profiles are used to depict the expected electricity
+a specific period. These profiles can be used to depict the expected electricity
 consumption for various customer groups, such as households or businesses.
 
-In total there are 11 representative, standard load profiles for three
-different customer groups:
+For each distinct combination of \code{profile_id}, \code{period}, and \code{day}, there
+are 96 x 1/4 hour measurements of electrical power. Values are normalized so
+that they correspond to an annual consumption of 1,000 kWh. That is, summing
+up all the quarter-hourly consumption values for one year yields an approximate
+total of 1,000 kWh/a; for more information, refer to the 'Examples' section,
+or call \code{vignette("algorithm-step-by-step")}.
+
+In total there are 11 \code{profile_id} for three different customer groups:
 \itemize{
 \item Households: \code{H0}
 \item Commercial: \code{G0}, \code{G1}, \code{G2}, \code{G3}, \code{G4}, \code{G5}, \code{G6}
@@ -50,13 +56,6 @@ different customer groups:
 }
 
 For more information and examples, call \code{\link[=slp_info]{slp_info()}}.
-
-For each distinct combination of \code{profile_id}, \code{period}, and \code{day}, there
-are 96 x 1/4 hour measurements of electrical power. Values are normalized so
-that they correspond to an annual consumption of 1,000 kWh. Summing up all
-the quarter-hourly consumption values for one year yields an approximate
-total of 1,000 kWh/a; for more information, refer to the 'Examples' section,
-or call \code{vignette("algorithm-step-by-step")}.
 
 Period definitions:
 \itemize{
@@ -67,10 +66,10 @@ Period definitions:
 
 Day definitions:
 \itemize{
+\item \code{workday}: Monday to Friday
 \item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
-if they are not a Sunday.
-\item \code{sunday}: Sundays and all public holidays.
-\item \code{workday}: Monday to Friday.
+if they are not a Sunday
+\item \code{sunday}: Sundays and all public holidays
 }
 
 \strong{Note}: The package supports public holidays for Germany,
