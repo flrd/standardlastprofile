@@ -264,8 +264,8 @@ w_d = w_s \times(-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7} \times  d^
 $$
 Where:
 
-* $w_d$ is the resulting 'dynamic' quarter-hour value
-* $w_s$ is the static quarter-hourly value
+* $w_d$ is the resulting 'dynamic' value
+* $w_s$ is the 'static' value
 * $d$ is the day of the year as integer, starting at 1 on January 1st
 
 The following plot shows how the electrical power develops over the year for 
@@ -401,7 +401,7 @@ ggplot(H0_plot,
                        "summer" = "#FA9529",
                        "transition" = "#0CC792"
                      )) +
-  labs(title = "Dynamic vs. Static Standard Load Profile 'H0'",
+  labs(title = "Dynamic vs. Static Values of Standard Load Profile 'H0'",
        subtitle = "96 x 1/4h measurements, based on consumption of 1,000 kWh/a",
        caption = "data: www.bdew.de") +
   theme_minimal() +
