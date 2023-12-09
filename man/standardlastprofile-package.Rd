@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Markus Döring \email{m4rkus.doering@gmail.com}
+\strong{Maintainer}: Markus Döring \email{m4rkus.doering@gmail.com} [copyright holder]
 
 }
 \keyword{internal}
