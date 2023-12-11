@@ -4,11 +4,11 @@
 # standardlastprofile
 
 <!-- badges: start -->
-<!-- [![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
-<!-- [![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
 
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 [![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
+[![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
 <!-- badges: end -->
 
 This package provides data on representative, standard load profiles for
@@ -20,13 +20,14 @@ format.
 
 ## Installation
 
-<!-- You can install standardlastprofile from CRAN with: -->
-<!-- ```{r eval=FALSE} -->
-<!-- install.packages("standardlastprofile") -->
-<!-- ``` -->
+You can install standardlastprofile from CRAN with:
 
-You can install the development version of standardlastprofile from
-[GitHub](https://github.com/), call:
+``` r
+install.packages("standardlastprofile")
+```
+
+To install the development version from [GitHub](https://github.com/)
+use:
 
 ``` r
 # install.packages("devtools")
@@ -42,9 +43,9 @@ devtools::install_github("flrd/standardlastprofile")
 - `slp_info()` – A function for retrieving details of standard load
   profiles.
 
-## About the data
+## About the Data
 
-The standardlastprofile package encompasses a dataset named slp. This
+The standardlastprofile package encompasses a dataset named `slp`. This
 dataset results from an analysis of 1,209 load profiles of low-voltage
 electricity consumers in Germany, published in 1999.[^1] It comprises a
 total of 9,504 observations across 5 variables:
@@ -56,6 +57,7 @@ total of 9,504 observations across 5 variables:
 - `watts`: electric power
 
 ``` r
+library(standardlastprofile)
 str(slp)
 #> 'data.frame':    9504 obs. of  5 variables:
 #>  $ profile_id: chr  "H0" "H0" "H0" "H0" ...
@@ -96,7 +98,7 @@ slp_info(profile_id = "H0", language = "DE")
 #> [1] "In dieses Profil werden alle Haushalte mit ausschließlichem und überwiegendem Privatverbrauch eingeordnet. Haushalte mit überwiegend privatem elektrischen Verbrauch, d.h. auch mit geringfügigem gewerblichen Bedarf sind z.B. Handelsvertreter, Heimarbeiter u.ä. mit Büro im Haushalt. Das Profil Haushalt ist nicht anwendbar bei Sonderanwendungen wie z.B. elektrischen Speicherheizungen oder Wärmepumpen."
 ```
 
-### Generate a standard load profile
+### Generate a Standard Load Profile
 
 To create a standard load profile for a specified time period, call the
 `slp_generate()` function:
@@ -127,7 +129,7 @@ algorithm, call
 ## Source
 
 You can access the studies and data on standard load profiles for
-electricity by downloading them from the BDEW website:
+electricity on the website of the BDEW:
 <https://www.bdew.de/energie/standardlastprofile-strom/>
 
 ## Code of Conduct

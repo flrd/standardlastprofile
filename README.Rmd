@@ -17,10 +17,10 @@ knitr::opts_chunk$set(
 # standardlastprofile
 
 <!-- badges: start -->
-<!-- [![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
-<!-- [![](http://cranlogs.r-pkg.org/badges/last-month/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile) -->
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 [![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
+[![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
 <!-- badges: end -->
 
 This package provides data on representative, standard load profiles for electricity from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format.
@@ -87,14 +87,13 @@ ggplot(tmp,
 
 ## Installation
 
-<!-- You can install standardlastprofile from CRAN with: -->
+You can install standardlastprofile from CRAN with:
 
-<!-- ```{r eval=FALSE} -->
-<!-- install.packages("standardlastprofile") -->
-<!-- ``` -->
+```{r eval=FALSE}
+install.packages("standardlastprofile")
+```
 
-You can install the development version of standardlastprofile from 
-[GitHub](https://github.com/), call:
+To install the development version from [GitHub](https://github.com/) use:
 
 ``` {r eval=FALSE}
 # install.packages("devtools")
@@ -107,8 +106,8 @@ devtools::install_github("flrd/standardlastprofile")
 - `slp_generate()` --	An interface for generating a standard load profile for a user-defined time period.
 - `slp_info()` -- A function for retrieving details of standard load profiles.
 
-## About the data
-The standardlastprofile package encompasses a dataset named slp. This dataset results from an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany, published in 1999.[^bdew-2] It comprises a total of 9,504 observations across 5 variables:
+## About the Data
+The standardlastprofile package encompasses a dataset named `slp`. This dataset results from an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany, published in 1999.[^bdew-2] It comprises a total of 9,504 observations across 5 variables:
 
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
@@ -119,6 +118,7 @@ The standardlastprofile package encompasses a dataset named slp. This dataset re
 - `watts`: electric power
 
 ``` {r, message=FALSE}
+library(standardlastprofile)
 str(slp)
 ```
 
@@ -138,7 +138,7 @@ For more details, call the `slp_info()` function.
 slp_info(profile_id = "H0", language = "DE")
 ```
 
-### Generate a standard load profile
+### Generate a Standard Load Profile
 
 To create a standard load profile for a specified time period, call the `slp_generate()` function:
 
@@ -187,7 +187,7 @@ For more information, details about the data, and an explanation of the algorith
 call [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
 
 ## Source
-You can access the studies and data on standard load profiles for electricity by downloading them from the BDEW website: https://www.bdew.de/energie/standardlastprofile-strom/
+You can access the studies and data on standard load profiles for electricity on the website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
 
 ## Code of Conduct
 Please note that this project is released with a [Contributor Code of Conduct](https://github.com/flrd/standardlastprofile/blob/main/CODE_OF_CONDUCT.md). 
