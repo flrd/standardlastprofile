@@ -9,7 +9,7 @@ Description: Data on standard load profiles from the German Association of
   over a user-defined period. For the algorithm, see VDEW (2000), 
   "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step",
   <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>.
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: 
     person(
     given = "Markus",
