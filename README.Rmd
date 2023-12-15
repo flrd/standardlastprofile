@@ -107,7 +107,7 @@ devtools::install_github("flrd/standardlastprofile")
 - `slp_info()` -- A function for retrieving details of standard load profiles.
 
 ## About the Data
-The standardlastprofile package encompasses a dataset named `slp`. This dataset results from an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany, published in 1999.[^bdew-2] It comprises a total of 9,504 observations across 5 variables:
+The dataset `slp` is the result from an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany, published in 1999.[^bdew-2] It contains a total of 9,504 observations across 5 variables:
 
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 

@@ -45,10 +45,9 @@ devtools::install_github("flrd/standardlastprofile")
 
 ## About the Data
 
-The standardlastprofile package encompasses a dataset named `slp`. This
-dataset results from an analysis of 1,209 load profiles of low-voltage
-electricity consumers in Germany, published in 1999.[^1] It comprises a
-total of 9,504 observations across 5 variables:
+The dataset `slp` is the result from an analysis of 1,209 load profiles
+of low-voltage electricity consumers in Germany, published in 1999.[^1]
+It contains a total of 9,504 observations across 5 variables:
 
 - `profile_id`: identifier of a standard load profile
 - `period`: one of “summer”, “winter”, “transition”
