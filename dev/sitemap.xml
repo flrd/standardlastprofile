@@ -1,39 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/articles/algorithm-step-by-step.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/index.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/reference/slp.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_info.html</loc>
-  </url>
-  <url>
-    <loc>https://flrd.github.io/standardlastprofile/dev/reference/standardlastprofile-package.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/LICENSE.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/articles/algorithm-step-by-step.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/articles/index.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/authors.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/index.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/news/index.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/index.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_info.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/standardlastprofile-package.html</loc></url>
 </urlset>
+
