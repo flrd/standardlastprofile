@@ -74,21 +74,17 @@ get_weekday <- function(x, state_code = NULL) {
   # see page 30/46 in:
   # https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
 
-  christmastide <- c(
-    "christmas_eve" = "12-24",
-    "new_years_eve" = "12-31"
-  )
-
-  christmastide_idx <- x_md %in% christmastide
-
-  if (any(christmastide_idx)) {
-    if (all(wkday_decimal[christmastide_idx] != "7")) {
-      weekday[christmastide_idx] <- "saturday"
-    }
-  }
+  # FIX: Vectorized assignment for Christmastide
+  # Set Dec 24th & 31st to 'saturday' ONLY if they are not a Sunday
+  christmastide <- c("12-24", "12-31")
+  
+  # Logic: (Is it Dec 24/31?) AND (Is it NOT a Sunday?)
+  is_christmastide <- x_md %in% christmastide
+  is_not_sunday <- wkday_decimal != "7"
+  
+  weekday[is_christmastide & is_not_sunday] <- "saturday"
 
   # get public holidays in Germany for all years in 'x'
-
   # range returns a vector of length 2
   yrs_rng <- range(format_Y(x))
   yrs_int <- as.integer(yrs_rng)
