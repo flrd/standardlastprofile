@@ -8,8 +8,8 @@
 <title>Generate a standard load profile • standardlastprofile</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate a standard load profile">
 <meta name="robots" content="noindex">
 </head>
@@ -94,8 +94,8 @@ value for “00:00” indicates the average work done in the morning between
 provided by German Association of Energy and Water Industries (BDEW
 Bundesverband der Energie- und Wasserwirtschaft e.V.).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the data and methodology can be
 found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>2</sup></a></p>
-<p><img src="algorithm-step-by-step_files/figure-html/small_multiples_vignette-1.png" alt="Small multiple line chart of 11 standard load profiles
- published by the German Association of Energy and Water Industries (BDEW
+<p><img src="algorithm-step-by-step_files/figure-html/small_multiples_vignette-1.png" class="r-plt" alt="Small multiple line chart of 11 standard load profiles
+ published by the German Association of Energy and Water Industries (BDEW 
  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
  the consumption for three different periods over a year, and
  also compare the consumption between different days of a week." width="95%" style="display: block; margin: auto;"></p>
@@ -261,8 +261,8 @@ the algorithm’s outcome:</p>
 <span>      <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="cn">NULL</span></span></code></pre></div>
-<p><img src="algorithm-step-by-step_files/figure-html/G5_plot_vignette-1.png" alt="Line plot of the BDEW standard load profile 'G5' (Bakery
- with a bakehouse) from December 22nd to December 27th 2023; values
+<p><img src="algorithm-step-by-step_files/figure-html/G5_plot_vignette-1.png" class="r-plt" alt="Line plot of the BDEW standard load profile 'G5' (Bakery
+ with a bakehouse) from December 22nd to December 27th 2023; values 
  are normalized to an annual consumption of 1,000 kWh." width="95%" style="display: block; margin: auto;"></p>
 <p>As you can see, the values in 2023 for December 24 (a Sunday) and
 December 25 and 26 (both public holidays) are identical.</p>
@@ -305,15 +305,15 @@ is the day of the year as integer, starting at 1 on January 1st</li>
 <p>The following plot shows how the electrical power develops over the
 year for profile <code>H0</code>; for a clearer picture, the values are
 aggregated at daily level:</p>
-<p><img src="algorithm-step-by-step_files/figure-html/H0_2024_plot-1.png" alt="Line plot of standard load profile 'H0' (households)
- aggregated by day from January 1st to December 31st, 2023. The plot shows that
- households have a continuously decreasing load from winter
+<p><img src="algorithm-step-by-step_files/figure-html/H0_2024_plot-1.png" class="r-plt" alt="Line plot of standard load profile 'H0' (households)
+ aggregated by day from January 1st to December 31st, 2023. The plot shows that  
+ households have a continuously decreasing load from winter 
  to summer and vice versa." width="95%" style="display: block; margin: auto;"></p>
 <p>This multiplication process aims to generate a representative,
 dynamic load profile. Finally, the following chart compares the dynamic
 values with their static counterparts.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Refer to page 9 in &lt;a href="https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf" class="external-link"&gt;Anwendung
 der Repräsentativen VDEW-Lastprofile step-by-step&lt;/a&gt;.&lt;/p&gt;'><sup>4</sup></a></p>
-<p><img src="algorithm-step-by-step_files/figure-html/H0_dynamic-1.png" alt="A plot of standard load profile 'H0' (households)
+<p><img src="algorithm-step-by-step_files/figure-html/H0_dynamic-1.png" class="r-plt" alt="A plot of standard load profile 'H0' (households)
  that shows a comparision between the static values, and their
  dynamic counterparts." width="95%" style="display: block; margin: auto;"></p>
 </div>
@@ -330,7 +330,7 @@ der Repräsentativen VDEW-Lastprofile step-by-step&lt;/a&gt;.&lt;/p&gt;'><sup>4<
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
