@@ -53,7 +53,7 @@ get_holidays <- function(x, years, state_code) {
   x[idx, "holiday"]
 }
 
-get_weekday <- function(x, state_code = NULL) {
+get_weekday <- function(x, state_code = NULL, holidays = NULL) {
 
   if(!is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
@@ -70,38 +70,35 @@ get_weekday <- function(x, state_code = NULL) {
 
   x_md <- format_md(x)
 
-  # set December 24th & 31st to 'saturday', iff they are not a Sunday
-  # see page 30/46 in:
-  # https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
+  # resolve holiday dates: user-supplied take precedence over built-in data
+  if (!is.null(holidays)) {
+    holiday_dates <- holidays
+  } else {
+    yrs_rng <- range(format_Y(x))
+    yrs_int <- as.integer(yrs_rng)
+    yrs_seq <- seq.int(yrs_int[1], yrs_int[2])
 
-  # FIX: Vectorized assignment for Christmastide
-  # Set Dec 24th & 31st to 'saturday' ONLY if they are not a Sunday
-  christmastide <- c("12-24", "12-31")
-  
-  # Logic: (Is it Dec 24/31?) AND (Is it NOT a Sunday?)
-  is_christmastide <- x_md %in% christmastide
-  is_not_sunday <- wkday_decimal != "7"
-  
-  weekday[is_christmastide & is_not_sunday] <- "saturday"
-
-  # get public holidays in Germany for all years in 'x'
-  # range returns a vector of length 2
-  yrs_rng <- range(format_Y(x))
-  yrs_int <- as.integer(yrs_rng)
-  yrs_seq <- seq.int(yrs_int[1], yrs_int[2])
-
-  holidays <- get_holidays(
-    x = holidays_DE,
-    years = yrs_seq,
-    state_code = state_code
-    )
+    holiday_dates <- as.Date(get_holidays(
+      x = holidays_DE,
+      years = yrs_seq,
+      state_code = state_code
+    ))
+  }
 
   # public holidays are mapped to a Sunday
-  holidays_idx <- x %in% as.Date(holidays)
+  holidays_idx <- x %in% holiday_dates
 
   if(any(holidays_idx)) {
     weekday[holidays_idx] <- "sunday"
   }
+
+  # Dec 24th & Dec 31st are treated as Saturday unless already Sunday —
+  # checking weekday (not wkday_decimal) captures both calendar Sundays and
+  # public holidays in one condition, so no assignment is ever overridden.
+  # see page 30/46 in:
+  # https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
+  christmastide <- c("12-24", "12-31")
+  weekday[x_md %in% christmastide & weekday != "sunday"] <- "saturday"
 
   weekday
 
@@ -187,7 +184,8 @@ match_profile <- function(profile_id) {
   out <- tryCatch(
     expr = {
       match.arg(arg = profile_id,
-                choices = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
+                choices = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2",
+                            "H25", "G25", "L25", "P25", "S25"),
                 several.ok = TRUE)
     },
     error = function(e) {
@@ -197,7 +195,7 @@ match_profile <- function(profile_id) {
   )
 
   if(anyNA(out)) {
-    stop("'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2'.")
+    stop("'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2', 'H25', 'G25', 'L25', 'P25', 'S25'.")
   }
 
   out
@@ -217,8 +215,13 @@ standardise_state_names <- function(state) {
   paste_dash("DE", state)
 }
 
-get_wkday_period <- function(x, state_code = NULL) {
-  paste_snake(get_weekday(x, state_code = state_code), get_period(x))
+get_wkday_period <- function(x, state_code = NULL, holidays = NULL) {
+  paste_snake(get_weekday(x, state_code = state_code, holidays = holidays), get_period(x))
+}
+
+get_wkday_month <- function(x, state_code = NULL, holidays = NULL) {
+  month_name <- tolower(month.name[as.integer(format_m(x))])
+  paste_snake(get_weekday(x, state_code = state_code, holidays = holidays), month_name)
 }
 
 
@@ -233,6 +236,7 @@ dynamization_fun <- function(x) {
 
 format_u <- function(x) format.Date(x, "%u")      # Weekday as a decimal number (1–7, Monday is 1).
 format_md <- function(x) format.Date(x, "%m-%d")  # Month as decimal number - Day of the month
+format_m <- function(x) format.Date(x, "%m")      # Month as decimal number (01–12)
 format_Y <- function(x) format.Date(x, "%Y")      # Year with century
 format_j <- function(x) format.Date(x, "%j")      # Day of year as decimal number (001–366)
 

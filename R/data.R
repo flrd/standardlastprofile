@@ -1,6 +1,6 @@
 #' Standard Load Profile Data for Electricity from BDEW
 #'
-#'Data about representative, standard load profiles for electricity from
+#' Data about representative, standard load profiles for electricity from
 #'the German Association of Energy and Water Industries (BDEW Bundesverband
 #'der Energie- und Wasserwirtschaft e.V.) in a tidy format.
 #'
@@ -28,7 +28,7 @@
 #' - Commercial: `G0`, `G1`, `G2`, `G3`, `G4`, `G5`, `G6`
 #' - Agriculture: `L0`, `L1`, `L2`
 #'
-#' Call [slp_info()] to for more information and examples.
+#' Call [slp_info()] for more information and examples.
 #'
 #' Period definitions:
 #' - `summer`: May 15 to September 14
@@ -37,7 +37,7 @@
 #'
 #' Day definitions:
 #' - `workday`: Monday to Friday
-#' - `saturday`: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+#' - `saturday`: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
 #'if they are not a Sunday
 #' - `sunday`: Sundays and all public holidays
 #'

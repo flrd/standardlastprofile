@@ -42,7 +42,7 @@ In total there are 11 \code{profile_id} for three different customer groups:
 \item Agriculture: \code{L0}, \code{L1}, \code{L2}
 }
 
-Call \code{\link[=slp_info]{slp_info()}} to for more information and examples.
+Call \code{\link[=slp_info]{slp_info()}} for more information and examples.
 
 Period definitions:
 \itemize{
@@ -54,7 +54,7 @@ Period definitions:
 Day definitions:
 \itemize{
 \item \code{workday}: Monday to Friday
-\item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+\item \code{saturday}: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
 if they are not a Sunday
 \item \code{sunday}: Sundays and all public holidays
 }

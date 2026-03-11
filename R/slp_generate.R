@@ -6,7 +6,17 @@
 #' @param profile_id load profile identifier, required
 #' @param start_date start date in ISO 8601 format, required
 #' @param end_date end date in ISO 8601 format, required
-#' @param state_code identifier for one of 16 German states, optional
+#' @param holidays an optional character or Date vector of dates in ISO 8601
+#'   format (`"YYYY-MM-DD"`) that are treated as public holidays (and therefore
+#'   mapped to `"sunday"` in the algorithm). When supplied, the built-in
+#'   holiday data are ignored entirely and only the dates in `holidays` are
+#'   used.
+#' @param unit one of `"W"` (default) or `"KWH"`. Controls the unit of the
+#'   returned `watts` column. `"W"` returns average electric power in watts
+#'   for each 15-minute interval. `"KWH"` converts to energy consumed during
+#'   each interval in kilowatt-hours (`watts * 0.25 / 1000`). Matching is
+#'   case-insensitive, so `"kWh"` is accepted.
+#' @param state_code `r lifecycle::badge("deprecated")` Use `holidays` instead.
 #'
 #' @return A data.frame with four variables:
 #' - `profile_id`, character, load profile identifier
@@ -42,43 +52,22 @@
 #'
 #' Day definitions:
 #' - `workday`: Monday to Friday
-#' - `saturday`: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+#' - `saturday`: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
 #'if they are not a Sunday
 #' - `sunday`: Sundays and all public holidays
 #'
-#' **Note**: The package supports public holidays for Germany,
-#' retrieved from the [nager.Date API](https://github.com/nager/Nager.Date).
-#' Use the optional argument `state_code` to consider public holidays on a state
-#' level too. Allowed values are listed below:
+#' **Note**: By default, the package uses built-in nationwide public holiday
+#' data for Germany (1990–2073). Use `holidays` to supply your own set of
+#' holiday dates instead.
 #'
-#' - `DE-BB`: Brandenburg
-#' - `DE-BE`: Berlin
-#' - `DE-BW`: Baden-Württemberg
-#' - `DE-BY`: Bavaria
-#' - `DE-HB`: Bremen
-#' - `DE-HE`: Hesse
-#' - `DE-HH`: Hamburg
-#' - `DE-MV`: Mecklenburg-Vorpommern
-#' - `DE-NI`: Lower-Saxony
-#' - `DE-NW`: North Rhine-Westphalia
-#' - `DE-RP`: Rhineland-Palatinate
-#' - `DE-SH`: Schleswig-Holstein
-#' - `DE-SL`: Saarland
-#' - `DE-SN`: Saxony
-#' - `DE-ST`: Saxony-Anhalt
-#' - `DE-TH`: Thuringia
-#'
-#' `start_date` must be greater or equal to "1990-01-01". This is because public
-#'  holidays in Germany would be ambitious before the reunification in 1990
-#'  (think of the state of Berlin in 1989 and earlier).
-#'
-#' `end_date` must be smaller or equal to "2073-12-31" because this is last
-#' year supported by the [nager.Date API](https://github.com/nager/Nager.Date).
+#' `start_date` must be greater or equal to "1990-01-01" and `end_date` must
+#' be smaller or equal to "2073-12-31".
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
 #' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 #' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 #'
+#' @importFrom lifecycle deprecated
 #' @export
 #' @examples
 #' start <- "2024-01-01"
@@ -88,17 +77,10 @@
 #' L <- slp_generate(c("L0", "L1", "L2"), start, end)
 #' head(L)
 #'
-#' # you can specify one of the 16 ISO 3166-2:DE codes to take into
-#' # account holidays determined at the level of the federal states
-#' berlin <- slp_generate("H0", start, end, state_code = "DE-BE")
+#' # supply custom holiday dates (e.g. only treat New Year's Day as a holiday)
+#' H0_custom <- slp_generate("H0", start, end, holidays = "2024-01-01")
 #'
-#' # for convenience, the codes can be specified without the prefix "DE-"
-#' identical(berlin, slp_generate("H0", start, end, state_code = "BE"))
-#'
-#' # state codes are not case-sensitive
-#' identical(berlin, slp_generate("H0", start, end, state_code = "de-be"))
-#'
-#' # consider only nationwide public holidays
+#' # consider only nationwide public holidays (default)
 #' H0_2024 <- slp_generate("H0", start, end)
 #'
 #' # electric power values are normalized to consumption of ~1,000 kWh/a
@@ -108,7 +90,17 @@ slp_generate <- function(
     profile_id,
     start_date,
     end_date,
-    state_code = NULL) {
+    holidays = NULL,
+    unit = "W",
+    state_code = deprecated()) {
+
+  unit <- match.arg(toupper(unit), choices = c("W", "KWH"))
+
+  if (lifecycle::is_present(state_code)) {
+    lifecycle::deprecate_warn("1.1.0", "slp_generate(state_code)", "slp_generate(holidays)")
+  } else {
+    state_code <- NULL
+  }
 
   start <- as_date(start_date)
   end <- as_date(end_date)
@@ -123,6 +115,13 @@ slp_generate <- function(
 
   profile_id <- match_profile(profile_id)
   profiles_n <- length(profile_id)
+
+  if (!is.null(holidays)) {
+    holidays <- as_date(holidays)
+    if (anyNA(holidays)) {
+      stop("'holidays' must contain valid dates in ISO 8601 format.")
+    }
+  }
 
   if(!is.null(state_code)) {
 
@@ -143,33 +142,43 @@ slp_generate <- function(
   # returns vector of class 'Date'
   daily_seq <- get_daily_sequence(start_date, end_date)
 
-  # given a date, returns combination of weekday and period
-  wkday_period <- get_wkday_period(daily_seq, state_code = state_code)
-
   # subset of load_profiles_lst
   tmp <- load_profiles_lst[profile_id]
 
   vals <- vector("list", length = profiles_n)
   names(vals) <- profile_id
 
-  for(profile in profile_id) {
-    vals[[profile]] <- tmp[[profile]][, wkday_period]
+  # 1999 profiles use period-based matrix columns (e.g. "saturday_winter")
+  profiles_1999 <- intersect(profile_id, c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"))
+  if (length(profiles_1999) > 0L) {
+    wkday_period <- get_wkday_period(daily_seq, state_code = state_code, holidays = holidays)
+    for (profile in profiles_1999) {
+      vals[[profile]] <- tmp[[profile]][, wkday_period]
+    }
   }
 
-  # generate a dynamic profile for households which takes
-  # into account that electricity consumption increases
-  # in winter, see: page 18f.
+  # 2025 profiles use month-based matrix columns (e.g. "saturday_january")
+  profiles_2025 <- intersect(profile_id, c("H25", "G25", "L25", "P25", "S25"))
+  if (length(profiles_2025) > 0L) {
+    wkday_month <- get_wkday_month(daily_seq, state_code = state_code, holidays = holidays)
+    for (profile in profiles_2025) {
+      vals[[profile]] <- tmp[[profile]][, wkday_month]
+    }
+  }
+
+  # apply dynamization to profiles where electricity consumption varies
+  # by day of year, see: page 18f.
   # https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
-  if ("H0" %in% profile_id) {
-    tmp_h0 <- vals[["H0"]]
-
-    # get day of year as decimal number
+  dynamic_profiles <- intersect(profile_id, c("H0", "H25", "P25", "S25"))
+  if (length(dynamic_profiles) > 0L) {
     days_decimal <- as.integer(format_j(daily_seq))
-
-    # multiply values for each day with
-    vals[["H0"]] <- suppressWarnings(
-      tmp_h0 * rep(dynamization_fun(days_decimal), each = dim(tmp_h0)[[1]])
+    dyn_factors  <- dynamization_fun(days_decimal)
+    for (profile in dynamic_profiles) {
+      mat <- vals[[profile]]
+      vals[[profile]] <- suppressWarnings(
+        mat * rep(dyn_factors, each = dim(mat)[[1L]])
       )
+    }
   }
 
   # timestamp for output
@@ -182,6 +191,10 @@ slp_generate <- function(
       end_time = rep(time_seq[-1], profiles_n),
       watts = unlist(vals, use.names = FALSE)
     )
+
+  if (unit == "KWH") {
+    out$watts <- out$watts * 0.25 / 1000
+  }
 
   out
 }

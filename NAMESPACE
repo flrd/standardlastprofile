@@ -2,3 +2,4 @@
 
 export(slp_generate)
 export(slp_info)
+importFrom(lifecycle,deprecated)

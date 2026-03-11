@@ -11,7 +11,14 @@
 \url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
 }
 \usage{
-slp_generate(profile_id, start_date, end_date, state_code = NULL)
+slp_generate(
+  profile_id,
+  start_date,
+  end_date,
+  holidays = NULL,
+  unit = "W",
+  state_code = deprecated()
+)
 }
 \arguments{
 \item{profile_id}{load profile identifier, required}
@@ -20,7 +27,19 @@ slp_generate(profile_id, start_date, end_date, state_code = NULL)
 
 \item{end_date}{end date in ISO 8601 format, required}
 
-\item{state_code}{identifier for one of 16 German states, optional}
+\item{holidays}{an optional character or Date vector of dates in ISO 8601
+format (\code{"YYYY-MM-DD"}) that are treated as public holidays (and therefore
+mapped to \code{"sunday"} in the algorithm). When supplied, the built-in
+holiday data are ignored entirely and only the dates in \code{holidays} are
+used.}
+
+\item{unit}{one of \code{"W"} (default) or \code{"KWH"}. Controls the unit of the
+returned \code{watts} column. \code{"W"} returns average electric power in watts
+for each 15-minute interval. \code{"KWH"} converts to energy consumed during
+each interval in kilowatt-hours (\code{watts * 0.25 / 1000}). Matching is
+case-insensitive, so \code{"kWh"} is accepted.}
+
+\item{state_code}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Use \code{holidays} instead.}
 }
 \value{
 A data.frame with four variables:
@@ -67,40 +86,17 @@ Period definitions:
 Day definitions:
 \itemize{
 \item \code{workday}: Monday to Friday
-\item \code{saturday}: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+\item \code{saturday}: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
 if they are not a Sunday
 \item \code{sunday}: Sundays and all public holidays
 }
 
-\strong{Note}: The package supports public holidays for Germany,
-retrieved from the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
-Use the optional argument \code{state_code} to consider public holidays on a state
-level too. Allowed values are listed below:
-\itemize{
-\item \code{DE-BB}: Brandenburg
-\item \code{DE-BE}: Berlin
-\item \code{DE-BW}: Baden-Württemberg
-\item \code{DE-BY}: Bavaria
-\item \code{DE-HB}: Bremen
-\item \code{DE-HE}: Hesse
-\item \code{DE-HH}: Hamburg
-\item \code{DE-MV}: Mecklenburg-Vorpommern
-\item \code{DE-NI}: Lower-Saxony
-\item \code{DE-NW}: North Rhine-Westphalia
-\item \code{DE-RP}: Rhineland-Palatinate
-\item \code{DE-SH}: Schleswig-Holstein
-\item \code{DE-SL}: Saarland
-\item \code{DE-SN}: Saxony
-\item \code{DE-ST}: Saxony-Anhalt
-\item \code{DE-TH}: Thuringia
-}
+\strong{Note}: By default, the package uses built-in nationwide public holiday
+data for Germany (1990–2073). Use \code{holidays} to supply your own set of
+holiday dates instead.
 
-\code{start_date} must be greater or equal to "1990-01-01". This is because public
-holidays in Germany would be ambitious before the reunification in 1990
-(think of the state of Berlin in 1989 and earlier).
-
-\code{end_date} must be smaller or equal to "2073-12-31" because this is last
-year supported by the \href{https://github.com/nager/Nager.Date}{nager.Date API}.
+\code{start_date} must be greater or equal to "1990-01-01" and \code{end_date} must
+be smaller or equal to "2073-12-31".
 }
 \examples{
 start <- "2024-01-01"
@@ -110,17 +106,10 @@ end <- "2024-12-31"
 L <- slp_generate(c("L0", "L1", "L2"), start, end)
 head(L)
 
-# you can specify one of the 16 ISO 3166-2:DE codes to take into
-# account holidays determined at the level of the federal states
-berlin <- slp_generate("H0", start, end, state_code = "DE-BE")
+# supply custom holiday dates (e.g. only treat New Year's Day as a holiday)
+H0_custom <- slp_generate("H0", start, end, holidays = "2024-01-01")
 
-# for convenience, the codes can be specified without the prefix "DE-"
-identical(berlin, slp_generate("H0", start, end, state_code = "BE"))
-
-# state codes are not case-sensitive
-identical(berlin, slp_generate("H0", start, end, state_code = "de-be"))
-
-# consider only nationwide public holidays
+# consider only nationwide public holidays (default)
 H0_2024 <- slp_generate("H0", start, end)
 
 # electric power values are normalized to consumption of ~1,000 kWh/a
