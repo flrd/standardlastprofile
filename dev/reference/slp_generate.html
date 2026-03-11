@@ -46,7 +46,14 @@ consumption of 1,000 kWh.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">slp_generate</span><span class="op">(</span><span class="va">profile_id</span>, <span class="va">start_date</span>, <span class="va">end_date</span>, state_code <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">slp_generate</span><span class="op">(</span></span>
+<span>  <span class="va">profile_id</span>,</span>
+<span>  <span class="va">start_date</span>,</span>
+<span>  <span class="va">end_date</span>,</span>
+<span>  holidays <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  unit <span class="op">=</span> <span class="st">"W"</span>,</span>
+<span>  state_code <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -71,8 +78,24 @@ consumption of 1,000 kWh.</p>
 <dd><p>end date in ISO 8601 format, required</p></dd>
 
 
+<dt id="arg-holidays">holidays<a class="anchor" aria-label="anchor" href="#arg-holidays"></a></dt>
+<dd><p>an optional character or Date vector of dates in ISO 8601
+format (<code>"YYYY-MM-DD"</code>) that are treated as public holidays (and therefore
+mapped to <code>"sunday"</code> in the algorithm). When supplied, the built-in
+holiday data are ignored entirely and only the dates in <code>holidays</code> are
+used.</p></dd>
+
+
+<dt id="arg-unit">unit<a class="anchor" aria-label="anchor" href="#arg-unit"></a></dt>
+<dd><p>one of <code>"W"</code> (default) or <code>"KWH"</code>. Controls the unit of the
+returned <code>watts</code> column. <code>"W"</code> returns average electric power in watts
+for each 15-minute interval. <code>"KWH"</code> converts to energy consumed during
+each interval in kilowatt-hours (<code>watts * 0.25 / 1000</code>). Matching is
+case-insensitive, so <code>"kWh"</code> is accepted.</p></dd>
+
+
 <dt id="arg-state-code">state_code<a class="anchor" aria-label="anchor" href="#arg-state-code"></a></dt>
-<dd><p>identifier for one of 16 German states, optional</p></dd>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> Use <code>holidays</code> instead.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -102,33 +125,14 @@ or call <code><a href="../articles/algorithm-step-by-step.html">vignette("algori
 <li><p><code>winter</code>: November 1 to March 20</p></li>
 <li><p><code>transition</code>: March 21 to May 14, and September 15 to October 31</p></li>
 </ul><p>Day definitions:</p><ul><li><p><code>workday</code>: Monday to Friday</p></li>
-<li><p><code>saturday</code>: Saturdays; Dec 24th and Dec 31th are considered a Saturdays too
+<li><p><code>saturday</code>: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
 if they are not a Sunday</p></li>
 <li><p><code>sunday</code>: Sundays and all public holidays</p></li>
-</ul><p><strong>Note</strong>: The package supports public holidays for Germany,
-retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.
-Use the optional argument <code>state_code</code> to consider public holidays on a state
-level too. Allowed values are listed below:</p><ul><li><p><code>DE-BB</code>: Brandenburg</p></li>
-<li><p><code>DE-BE</code>: Berlin</p></li>
-<li><p><code>DE-BW</code>: Baden-Württemberg</p></li>
-<li><p><code>DE-BY</code>: Bavaria</p></li>
-<li><p><code>DE-HB</code>: Bremen</p></li>
-<li><p><code>DE-HE</code>: Hesse</p></li>
-<li><p><code>DE-HH</code>: Hamburg</p></li>
-<li><p><code>DE-MV</code>: Mecklenburg-Vorpommern</p></li>
-<li><p><code>DE-NI</code>: Lower-Saxony</p></li>
-<li><p><code>DE-NW</code>: North Rhine-Westphalia</p></li>
-<li><p><code>DE-RP</code>: Rhineland-Palatinate</p></li>
-<li><p><code>DE-SH</code>: Schleswig-Holstein</p></li>
-<li><p><code>DE-SL</code>: Saarland</p></li>
-<li><p><code>DE-SN</code>: Saxony</p></li>
-<li><p><code>DE-ST</code>: Saxony-Anhalt</p></li>
-<li><p><code>DE-TH</code>: Thuringia</p></li>
-</ul><p><code>start_date</code> must be greater or equal to "1990-01-01". This is because public
-holidays in Germany would be ambitious before the reunification in 1990
-(think of the state of Berlin in 1989 and earlier).</p>
-<p><code>end_date</code> must be smaller or equal to "2073-12-31" because this is last
-year supported by the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>.</p>
+</ul><p><strong>Note</strong>: By default, the package uses built-in nationwide public holiday
+data for Germany (1990–2073). Use <code>holidays</code> to supply your own set of
+holiday dates instead.</p>
+<p><code>start_date</code> must be greater or equal to "1990-01-01" and <code>end_date</code> must
+be smaller or equal to "2073-12-31".</p>
     </div>
 
     <div class="section level2">
@@ -147,19 +151,10 @@ year supported by the <a href="https://github.com/nager/Nager.Date" class="exter
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5         L0 2024-01-01 01:00:00 2024-01-01 01:15:00  62.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6         L0 2024-01-01 01:15:00 2024-01-01 01:30:00  61.4</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># you can specify one of the 16 ISO 3166-2:DE codes to take into</span></span></span>
-<span class="r-in"><span><span class="co"># account holidays determined at the level of the federal states</span></span></span>
-<span class="r-in"><span><span class="va">berlin</span> <span class="op">&lt;-</span> <span class="fu">slp_generate</span><span class="op">(</span><span class="st">"H0"</span>, <span class="va">start</span>, <span class="va">end</span>, state_code <span class="op">=</span> <span class="st">"DE-BE"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># supply custom holiday dates (e.g. only treat New Year's Day as a holiday)</span></span></span>
+<span class="r-in"><span><span class="va">H0_custom</span> <span class="op">&lt;-</span> <span class="fu">slp_generate</span><span class="op">(</span><span class="st">"H0"</span>, <span class="va">start</span>, <span class="va">end</span>, holidays <span class="op">=</span> <span class="st">"2024-01-01"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># for convenience, the codes can be specified without the prefix "DE-"</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">berlin</span>, <span class="fu">slp_generate</span><span class="op">(</span><span class="st">"H0"</span>, <span class="va">start</span>, <span class="va">end</span>, state_code <span class="op">=</span> <span class="st">"BE"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># state codes are not case-sensitive</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">berlin</span>, <span class="fu">slp_generate</span><span class="op">(</span><span class="st">"H0"</span>, <span class="va">start</span>, <span class="va">end</span>, state_code <span class="op">=</span> <span class="st">"de-be"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># consider only nationwide public holidays</span></span></span>
+<span class="r-in"><span><span class="co"># consider only nationwide public holidays (default)</span></span></span>
 <span class="r-in"><span><span class="va">H0_2024</span> <span class="op">&lt;-</span> <span class="fu">slp_generate</span><span class="op">(</span><span class="st">"H0"</span>, <span class="va">start</span>, <span class="va">end</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># electric power values are normalized to consumption of ~1,000 kWh/a</span></span></span>

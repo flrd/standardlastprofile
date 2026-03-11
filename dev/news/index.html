@@ -38,6 +38,24 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="standardlastprofile-development-version">standardlastprofile (development version)<a class="anchor" aria-label="anchor" href="#standardlastprofile-development-version"></a></h2>
+<div class="section level3">
+<h3 id="new-profiles-development-version">New profiles<a class="anchor" aria-label="anchor" href="#new-profiles-development-version"></a></h3>
+<ul><li>Added five new standard load profiles published by BDEW in 2025: <code>H25</code> (household), <code>G25</code> (commerce), <code>L25</code> (agriculture), <code>P25</code> (combination profile with photovoltaics), and <code>S25</code> (combination profile with storage and photovoltaics). All five are available via <code><a href="../reference/slp_generate.html">slp_generate()</a></code> and <code><a href="../reference/slp_info.html">slp_info()</a></code>, and are included in the <code>slp</code> dataset. Unlike the 1999 profiles, which use seasonal periods (<code>winter</code>, <code>summer</code>, <code>transition</code>), the 2025 profiles carry month names in the <code>period</code> column (<code>january</code> … <code>december</code>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li><p><code><a href="../reference/slp_generate.html">slp_generate()</a></code> gains a <code>holidays</code> argument: a character or Date vector of ISO 8601 dates that are treated as public holidays (mapped to <code>"sunday"</code> in the algorithm). When supplied, the built-in holiday data are ignored entirely, giving callers full control over which dates count as holidays.</p></li>
+<li><p><code><a href="../reference/slp_generate.html">slp_generate()</a></code> gains a <code>unit</code> argument (<code>"W"</code> or <code>"KWH"</code>, default <code>"W"</code>). <code>"KWH"</code> converts the <code>watts</code> column from average power (W) to energy consumed per 15-minute interval (kWh). Matching is case-insensitive, so <code>"kWh"</code> is accepted silently.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="deprecations-development-version">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-development-version"></a></h3>
+<ul><li>The <code>state_code</code> argument of <code><a href="../reference/slp_generate.html">slp_generate()</a></code> is deprecated. Pass a vector of holiday dates to the new <code>holidays</code> argument instead (<a href="https://github.com/flrd/standardlastprofile/issues/3" class="external-link">#3</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li><p>Fixed incorrect weekday assignment when a date range contains a Dec 24 or Dec 31 that falls on a Sunday. The previous check used <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code> across the entire range, which caused every other Dec 24/31 in the range to be mapped to <code>"workday"</code> instead of <code>"saturday"</code> (<a href="https://github.com/flrd/standardlastprofile/issues/2" class="external-link">#2</a>).</p></li>
+<li><p>The christmastide rule (<code>get_weekday()</code>) now runs after the public-holiday lookup. The condition checks the already-resolved <code>weekday</code> vector (<code>weekday != "sunday"</code>) rather than the raw calendar weekday, so a Dec 24 or Dec 31 that is also a public holiday is never redundantly set to <code>"saturday"</code> before being overridden.</p></li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="standardlastprofile-100">standardlastprofile 1.0.0<a class="anchor" aria-label="anchor" href="#standardlastprofile-100"></a></h2><p class="text-muted">CRAN release: 2023-12-11</p>

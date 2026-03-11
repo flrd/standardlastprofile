@@ -28,10 +28,19 @@ head(slp)
 There are 96 x 1/4 hour measurements of electrical power for each unique
 combination of `profile_id`, `period` and `day`, which we refer to as
 the “standard load profile”. The value for “00:00” indicates the average
-work done in the morning between 00:00 and 00:15. The data was collected
-and analyzed in 1999 and is provided by German Association of Energy and
-Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft
-e.V.).[²](#fn2)
+work done in the morning between 00:00 and 00:15. The `slp` dataset
+contains 26,784 observations and covers two generations of profiles
+published by the German Association of Energy and Water Industries (BDEW
+Bundesverband der Energie- und Wasserwirtschaft e.V.):
+
+- **1999 profiles** (`H0`, `G0`–`G6`, `L0`–`L2`): based on an analysis
+  of 1,209 load profiles of low-voltage electricity consumers. Each
+  profile uses three seasonal `period` values: `summer`, `winter`, and
+  `transition`.[²](#fn2)
+- **2025 profiles** (`H25`, `G25`, `L25`, `P25`, `S25`): an updated set
+  reflecting changes in electricity consumption patterns. Instead of
+  seasons, `period` carries a lowercase month name (`january` …
+  `december`).
 
 ![Small multiple line chart of 11 standard load profiles published by
 the German Association of Energy and Water Industries (BDEW
@@ -79,11 +88,13 @@ that are then performed:
 
 1.  Generate a date sequence from `start_date` to `end_date`.
 
-2.  Map each day to combination of `day` and `period`.
+2.  Map each day to combination of `day` and `period` (1999 profiles:
+    seasonal period; 2025 profiles: calendar month).
 
 3.  Use result from 2nd step to extract values from `slp`.[³](#fn3)
 
-4.  Apply polynomial function to values of profile identifier `H0`.
+4.  Apply polynomial function to values of profile identifiers `H0`,
+    `H25`, `P25`, and `S25`.
 
 5.  Return data.
 
@@ -105,11 +116,16 @@ end <- as.Date("2023-12-27")
 
 The measured load profiles analyzed in the study showed that electricity
 consumption across all groups fluctuates both over the period of a year
-and over the days within a week. The `period` definition is:
+and over the days within a week. For the **1999 profiles**, the `period`
+definition is:
 
 - `summer`: May 15 to September 14
 - `winter`: November 1 to March 20
 - `transition`: March 21 to May 14, and September 15 to October 31
+
+For the **2025 profiles**, each calendar month is treated as its own
+period (`january` … `december`) rather than grouping months into
+seasons.
 
 It was also found that there was no significant difference in
 consumption on weekdays from Monday to Friday for any group. For this
@@ -132,10 +148,10 @@ for 2024:
 - Dec 25: Christmas Day
 - Dec 26: Boxing Day
 
-There is an optional argument `state_code` that can take one of 16 [ISO
-3166-2:DE](https://en.wikipedia.org/wiki/ISO_3166-2:DE) codes
-representing a German state. This allows you to consider holidays that
-are defined at the state level too.
+Use the optional `holidays` argument to supply your own vector of ISO
+8601 dates that should be treated as public holidays. When provided, the
+built-in holiday data are ignored entirely, giving you full control over
+which dates count as holidays.
 
 The result of this second step is a mapping from each date to a
 so-called characteristic profile day, i.e. a combination of weekday and
@@ -227,7 +243,7 @@ kWh.](algorithm-step-by-step_files/figure-html/G5_plot_vignette-1.png)
 As you can see, the values in 2023 for December 24 (a Sunday) and
 December 25 and 26 (both public holidays) are identical.
 
-### Special case: H0
+### Special case: H0, H25, P25, S25
 
 In contrast to most commercial and agricultural businesses, which have a
 relatively even and constant electricity consumption throughout the
@@ -235,19 +251,15 @@ year, household electricity consumption decreases from winter to summer
 and vice versa (at least in Germany). Because of the distinctive annual
 load profile characteristics of household customers, we contend that
 these customers cannot be adequately described through a static
-representation using 3x3 characteristic days, as is done for commercial
-or agricultural customers during the respective periods. Consequently,
-the values provided in the `slp` dataset are not directly comparable
-with the representative 1/4h values of commercial and agricultural
-profiles. In the context of the `slp` dataset, the term ‘static’ is
-somewhat inappropriate when applied to household profiles. The values
-for H0 within the `slp` dataset are primarily mathematical auxiliary
-values intended for multiplication with a dynamization factor.
+representation using characteristic days alone. Consequently, the values
+provided in the `slp` dataset for `H0`, `H25`, `P25`, and `S25` are
+primarily mathematical auxiliary values intended for multiplication with
+a dynamization factor.
 
 This is taken into account when you call
 [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md).
 The study suggested the application of a 4th order polynomial function
-to the values of standard load profile `H0`.
+to the values of these profiles.
 
 $$w_{d} = w_{s} \times \left( - 3.92e{- 10} \times d^{4} + 3.20e{- 7} \times d^{3} - 7.02e{- 5} \times d^{2} + 2.10e{- 3} \times d + 1.24 \right)$$
 Where:

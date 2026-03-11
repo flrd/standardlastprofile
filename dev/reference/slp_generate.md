@@ -6,7 +6,14 @@ Generate a standard load profile, normalized to an annual consumption of
 ## Usage
 
 ``` r
-slp_generate(profile_id, start_date, end_date, state_code = NULL)
+slp_generate(
+  profile_id,
+  start_date,
+  end_date,
+  holidays = NULL,
+  unit = "W",
+  state_code = deprecated()
+)
 ```
 
 ## Source
@@ -31,9 +38,25 @@ slp_generate(profile_id, start_date, end_date, state_code = NULL)
 
   end date in ISO 8601 format, required
 
+- holidays:
+
+  an optional character or Date vector of dates in ISO 8601 format
+  (`"YYYY-MM-DD"`) that are treated as public holidays (and therefore
+  mapped to `"sunday"` in the algorithm). When supplied, the built-in
+  holiday data are ignored entirely and only the dates in `holidays` are
+  used.
+
+- unit:
+
+  one of `"W"` (default) or `"KWH"`. Controls the unit of the returned
+  `watts` column. `"W"` returns average electric power in watts for each
+  15-minute interval. `"KWH"` converts to energy consumed during each
+  interval in kilowatt-hours (`watts * 0.25 / 1000`). Matching is
+  case-insensitive, so `"kWh"` is accepted.
+
 - state_code:
 
-  identifier for one of 16 German states, optional
+  **\[deprecated\]** Use `holidays` instead.
 
 ## Value
 
@@ -86,55 +109,17 @@ Day definitions:
 
 - `workday`: Monday to Friday
 
-- `saturday`: Saturdays; Dec 24th and Dec 31th are considered a
-  Saturdays too if they are not a Sunday
+- `saturday`: Saturdays; Dec 24th and Dec 31st are considered Saturdays
+  too if they are not a Sunday
 
 - `sunday`: Sundays and all public holidays
 
-**Note**: The package supports public holidays for Germany, retrieved
-from the [nager.Date API](https://github.com/nager/Nager.Date). Use the
-optional argument `state_code` to consider public holidays on a state
-level too. Allowed values are listed below:
+**Note**: By default, the package uses built-in nationwide public
+holiday data for Germany (1990–2073). Use `holidays` to supply your own
+set of holiday dates instead.
 
-- `DE-BB`: Brandenburg
-
-- `DE-BE`: Berlin
-
-- `DE-BW`: Baden-Württemberg
-
-- `DE-BY`: Bavaria
-
-- `DE-HB`: Bremen
-
-- `DE-HE`: Hesse
-
-- `DE-HH`: Hamburg
-
-- `DE-MV`: Mecklenburg-Vorpommern
-
-- `DE-NI`: Lower-Saxony
-
-- `DE-NW`: North Rhine-Westphalia
-
-- `DE-RP`: Rhineland-Palatinate
-
-- `DE-SH`: Schleswig-Holstein
-
-- `DE-SL`: Saarland
-
-- `DE-SN`: Saxony
-
-- `DE-ST`: Saxony-Anhalt
-
-- `DE-TH`: Thuringia
-
-`start_date` must be greater or equal to "1990-01-01". This is because
-public holidays in Germany would be ambitious before the reunification
-in 1990 (think of the state of Berlin in 1989 and earlier).
-
-`end_date` must be smaller or equal to "2073-12-31" because this is last
-year supported by the [nager.Date
-API](https://github.com/nager/Nager.Date).
+`start_date` must be greater or equal to "1990-01-01" and `end_date`
+must be smaller or equal to "2073-12-31".
 
 ## Examples
 
@@ -153,19 +138,10 @@ head(L)
 #> 5         L0 2024-01-01 01:00:00 2024-01-01 01:15:00  62.1
 #> 6         L0 2024-01-01 01:15:00 2024-01-01 01:30:00  61.4
 
-# you can specify one of the 16 ISO 3166-2:DE codes to take into
-# account holidays determined at the level of the federal states
-berlin <- slp_generate("H0", start, end, state_code = "DE-BE")
+# supply custom holiday dates (e.g. only treat New Year's Day as a holiday)
+H0_custom <- slp_generate("H0", start, end, holidays = "2024-01-01")
 
-# for convenience, the codes can be specified without the prefix "DE-"
-identical(berlin, slp_generate("H0", start, end, state_code = "BE"))
-#> [1] TRUE
-
-# state codes are not case-sensitive
-identical(berlin, slp_generate("H0", start, end, state_code = "de-be"))
-#> [1] TRUE
-
-# consider only nationwide public holidays
+# consider only nationwide public holidays (default)
 H0_2024 <- slp_generate("H0", start, end)
 
 # electric power values are normalized to consumption of ~1,000 kWh/a

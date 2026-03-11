@@ -69,7 +69,7 @@ slp_info(c("G0", "G5"))
 #> [1] "bakery with bakehouse"
 #> 
 #> $G5$details
-#> [1] "Bakeries with a bakery traditionally have their main consumption on weekdays from around 3 a.m. and on Saturday nights from around midnight. Daytime consumption is relatively low compared to overall demand and is mainly determined by sales activities. Sales-oriented bakeries in which bakery products are prepared during business hours ('in-store baking') behave like other stores and are classified in profile G4."
+#> [1] "Bakeries with a bakehouse traditionally have their main consumption on weekdays from around 3 a.m. and on Saturday nights from around midnight. Daytime consumption is relatively low compared to overall demand and is mainly determined by sales activities. Sales-oriented bakeries in which bakery products are prepared during business hours ('in-store baking') behave like other stores and are classified in profile G4."
 #> 
 #> 
 ```

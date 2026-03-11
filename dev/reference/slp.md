@@ -60,7 +60,7 @@ In total there are 11 `profile_id` for three different customer groups:
 
 Call
 [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md)
-to for more information and examples.
+for more information and examples.
 
 Period definitions:
 
@@ -74,8 +74,8 @@ Day definitions:
 
 - `workday`: Monday to Friday
 
-- `saturday`: Saturdays; Dec 24th and Dec 31th are considered a
-  Saturdays too if they are not a Sunday
+- `saturday`: Saturdays; Dec 24th and Dec 31st are considered Saturdays
+  too if they are not a Sunday
 
 - `sunday`: Sundays and all public holidays
 
