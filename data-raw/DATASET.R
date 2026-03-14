@@ -72,9 +72,10 @@ load_profiles_lst <- c(load_profiles_1999, load_profiles_2025)
 mat_to_slp <- function(mat, period_levels) {
   dt <- as.data.table(mat, keep.rownames = "timestamp")
   dt <- melt(dt,
-             measure.vars  = patterns(days),
-             value.name    = days,
-             variable.factor = TRUE)
+    measure.vars = patterns(days),
+    value.name = days,
+    variable.factor = TRUE
+  )
   dt[, period := `levels<-`(variable, period_levels)]
   dt[, period := as.character(period)]
   dt[, variable := NULL]
@@ -83,19 +84,23 @@ mat_to_slp <- function(mat, period_levels) {
 
 slp_1999 <- lapply(load_profiles_1999, mat_to_slp, period_levels = periods_1999) |>
   rbindlist(idcol = "profile_id") |>
-  melt(measure.vars    = days,
-       variable.name   = "day",
-       variable.factor = FALSE,
-       value.name      = "watts") |>
+  melt(
+    measure.vars = days,
+    variable.name = "day",
+    variable.factor = FALSE,
+    value.name = "watts"
+  ) |>
   setcolorder(c("profile_id", "period", "day", "timestamp", "watts")) |>
   as.data.frame()
 
 slp_2025 <- lapply(load_profiles_2025, mat_to_slp, period_levels = tolower(month.name)) |>
   rbindlist(idcol = "profile_id") |>
-  melt(measure.vars    = days,
-       variable.name   = "day",
-       variable.factor = FALSE,
-       value.name      = "watts") |>
+  melt(
+    measure.vars = days,
+    variable.name = "day",
+    variable.factor = FALSE,
+    value.name = "watts"
+  ) |>
   setcolorder(c("profile_id", "period", "day", "timestamp", "watts")) |>
   as.data.frame()
 
@@ -156,7 +161,7 @@ holidays_DE <- do.call(rbind, holidays_DE)
 # profile descriptions ----------------------------------------------------
 profiles_1999 <- c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2")
 profiles_2025 <- c("H25", "G25", "L25", "P25", "S25")
-profiles      <- c(profiles_1999, profiles_2025)
+profiles <- c(profiles_1999, profiles_2025)
 
 # German descriptions
 description_DE <- c(
@@ -220,14 +225,14 @@ description_EN <- c(
 details_EN <- c(
   H0  = "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps.",
   G0  = "If an assignment to one of the profiles G1 to G6 is not possible or desired, this profile represents the weighted average of the overall group.",
-  G1  = "This profile represents consumers that typically use electricity between around 8 a.m. and 6 p.m. on weekdays, with little or no consumption on weekends (otherwise see G4). These include offices, doctors' offices, law firms, workshops, print shops, schools, kindergartens and daycare centers, administrative facilities and branch banks.",
-  G2  = "This profile mainly includes illumination-intensive electricity consumption. Such businesses are characterized by a rather subordinate daily demand on working days (especially in the winter season) and a consumption focus in the evening hours. These include, for example, petrol stations and stores with a large display window area, also evening restaurants and leisure facilities, as long as their consumption focus is not on weekends, e.g. fitness and tanning studios, youth centers (see also G6).",
+  G1  = "This profile represents consumers that typically use electricity between around 8 a.m. and 6 p.m. on weekdays, with little or no consumption on weekends (otherwise see G4). These include offices, doctors' offices, law firms, workshops, print shops, schools, kindergartens and daycare centres, administrative facilities and branch banks.",
+  G2  = "This profile mainly includes illumination-intensive electricity consumption. Such businesses are characterised by a rather subordinate daily demand on working days (especially in the winter season) and a consumption focus in the evening hours. These include, for example, petrol stations and stores with a large display window area, also evening restaurants and leisure facilities, as long as their consumption focus is not on weekends, e.g. fitness and tanning studios, youth centres (see also G6).",
   G3  = "These are consumers that have a relatively constant consumption throughout the year and also over the course of the week, with a noticeable constant base load. Examples include sewage treatment plants, drinking water pumps, communal facilities in residential complexes, cold stores, stores with considerable cooling requirements, facilities with forced ventilation (e.g. parking garages).",
-  G4  = "These are consumers that are almost exclusively characterized by store opening hours (workday until the evening, on Saturday until the afternoon). This is the typical profile for stores of all kinds. Hairdressers also have a similar profile. Differences due to e.g. individual afternoons without business operations are hardly significant in relation to the overall group. Store opening hours, some of which are extended to 8 p.m., also have little influence, as the effects of business operations are mixed with those of evening store lighting.",
+  G4  = "These are consumers that are almost exclusively characterised by store opening hours (workday until the evening, on Saturday until the afternoon). This is the typical profile for stores of all kinds. Hairdressers also have a similar profile. Differences due to e.g. individual afternoons without business operations are hardly significant in relation to the overall group. Store opening hours, some of which are extended to 8 p.m., also have little influence, as the effects of business operations are mixed with those of evening store lighting.",
   G5  = "Bakeries with a bakehouse traditionally have their main consumption on weekdays from around 3 a.m. and on Saturday nights from around midnight. Daytime consumption is relatively low compared to overall demand and is mainly determined by sales activities. Sales-oriented bakeries in which bakery products are prepared during business hours ('in-store baking') behave like other stores and are classified in profile G4.",
-  G6  = "Commercial facilities with a clear focus on consumption at weekends. In particular, these are all businesses characterized by the leisure activities of the population: youth clubs, excursion restaurants and dining establishments, petrol stations with car washes, cinemas with food outlets, sports and leisure facilities.",
+  G6  = "Commercial facilities with a clear focus on consumption at weekends. In particular, these are all businesses characterised by the leisure activities of the population: youth clubs, excursion restaurants and dining establishments, petrol stations with car washes, cinemas with food outlets, sports and leisure facilities.",
   L0  = "If there is no differentiation of farms according to profiles L1 or L2 and no classification into one of the characteristic commercial profiles can be made, this profile can be used as a good approximation. It represents the weighted average value of the total group for agricultural enterprises according to the sample drawn in 1992 to represent the RWE Energie AG energy supply area.",
-  L1  = "The electricity consumption of dairy farms is characterized by the double milking and subsequent cooling of the milk. Part-time farms with e.g. pig rearing show similar behavior: Here, electricity consumption is triggered in the early morning and evening (before and after the main occupation, respectively) by the feeding processes. In the case of large main farms with animal husbandry, such processes are distributed over the classic working hours, so that the appropriate commercial profile must be selected.",
+  L1  = "The electricity consumption of dairy farms is characterised by the double milking and subsequent cooling of the milk. Part-time farms with e.g. pig rearing show similar behaviour: Here, electricity consumption is triggered in the early morning and evening (before and after the main occupation, respectively) by the feeding processes. In the case of large main farms with animal husbandry, such processes are distributed over the classic working hours, so that the appropriate commercial profile must be selected.",
   L2  = "Traditionally, most West German farms have a combination of household and production. This average profile should be applied to such farms. If production on a farm is largely independent of the time of day (e.g. animal production facilities in eastern Germany), the appropriate commercial profile should be selected.",
   H25 = "Representative household profile from the 2025 BDEW publication, normalised to 1,000 kWh annual consumption. This profile replaces H0 as the updated standard load profile for household customers.",
   G25 = "Representative commercial profile from the 2025 BDEW publication, normalised to 1,000 kWh annual consumption. This profile replaces G0 as the general commercial standard load profile.",

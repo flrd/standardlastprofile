@@ -16,10 +16,12 @@ slp_info(profile_id, language = c("EN", "DE"))
 \arguments{
 \item{profile_id}{load profile identifier, required}
 
-\item{language}{one of 'EN' (English), 'DE' (German)}
+\item{language}{one of \code{"EN"} (default) or \code{"DE"}}
 }
 \value{
-A list
+A named list with one element per \code{profile_id}. Each element is
+itself a list with three character components: \code{profile} (the identifier),
+\code{description} (a short label), and \code{details} (a longer explanation).
 }
 \description{
 Information and examples on standard load profiles from the

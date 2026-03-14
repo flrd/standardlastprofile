@@ -8,7 +8,7 @@
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 [![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
 [![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
-[![](https://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
 <!-- badges: end -->
 
 This package provides data on representative, standard load profiles for
@@ -16,7 +16,11 @@ electricity from the German Association of Energy and Water Industries
 (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy
 format.
 
-<img src="man/figures/README-small_multiples-1.png" alt="Small multiple line chart of 11 standard load profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare the consumption for three different periods over a year, and also compare the consumption between different days of a week." width="95%" style="display: block; margin: auto;" />
+<img src="man/figures/README-bdew-1999-small_multiples-1.png" alt="Small multiple line chart of 11 standard load profiles
+ published by the German Association of Energy and Water Industries (BDEW
+ Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
+ the consumption for three different periods over a year, and
+ also compare the consumption between different days of a week." width="95%" style="display: block; margin: auto;" />
 
 ## Installation
 
@@ -30,8 +34,8 @@ To install the development version from [GitHub](https://github.com/)
 use:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("flrd/standardlastprofile")
+# install.packages("pak")
+pak::pkg_install("flrd/standardlastprofile")
 ```
 
 ## Included Features
@@ -45,20 +49,20 @@ devtools::install_github("flrd/standardlastprofile")
 
 ## About the Data
 
-The dataset `slp` is the result from an analysis of 1,209 load profiles
-of low-voltage electricity consumers in Germany, published in 1999.[^1]
-It contains a total of 9,504 observations across 5 variables:
+The dataset `slp` contains 26,784 observations across 5 variables:
 
 - `profile_id`: identifier of a standard load profile
-- `period`: one of “summer”, “winter”, “transition”
-- `day`: one of “workday”, “saturday”, “sunday”
-- `timestamp`: format “%H:%M”
+- `period`: one of `"summer"`, `"winter"`, `"transition"` for the 1999
+  profiles; a lowercase month name (`"january"` … `"december"`) for the
+  2025 profiles
+- `day`: one of `"workday"`, `"saturday"`, `"sunday"`
+- `timestamp`: format `"%H:%M"`
 - `watts`: electric power
 
 ``` r
 library(standardlastprofile)
 str(slp)
-#> 'data.frame':    9504 obs. of  5 variables:
+#> 'data.frame':    26784 obs. of  5 variables:
 #>  $ profile_id: chr  "H0" "H0" "H0" "H0" ...
 #>  $ period    : chr  "winter" "winter" "winter" "winter" ...
 #>  $ day       : chr  "saturday" "saturday" "saturday" "saturday" ...
@@ -75,12 +79,23 @@ profile, they serve as a valid approximation for larger groups of
 similar customers.
 
 For each unique combination of `profile_id`, `period` and `day` there
-are 96 x 1/4 hour measurements in watts. If you have no idea what `H0`
-means, you are not alone:
+are 96 x 1/4 hour measurements in watts. The dataset covers two
+generations of profiles:
+
+**1999 profiles**[^1] — based on an analysis of 1,209 load profiles of
+low-voltage electricity consumers in Germany:
 
 - `H0`: households (German: “Haushalte”)
 - `G0` to `G6`: commerce (“Gewerbe”)
 - `L0` to `L2`: agriculture (“Landwirtschaft”)
+
+**2025 profiles** — an updated set published by BDEW reflecting changes
+in consumption patterns:
+
+- `H25`, `G25`, `L25`: updated household, commerce, and agriculture
+  profiles
+- `P25`: households with a photovoltaic (PV) system
+- `S25`: households with a PV system and battery storage
 
 For more details, call the `slp_info()` function.
 
@@ -107,7 +122,7 @@ G5 <- slp_generate(
   profile_id = "G5",
   start_date = "2023-12-22",
   end_date = "2023-12-27"
-  )
+)
 
 head(G5)
 #>   profile_id          start_time            end_time watts
@@ -119,11 +134,118 @@ head(G5)
 #> 6         G5 2023-12-22 01:15:00 2023-12-22 01:30:00  43.8
 ```
 
-<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery with a bakehouse) based on data from the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) from December 22nd to December 27th 2023; values are normalized to an annual consumption of 1,000 kWh." width="95%" style="display: block; margin: auto;" />
+<img src="man/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery
+ with a bakehouse) based on data from the German Association of Energy
+ and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft
+ e.V.) from December 22nd to December 27th 2023; values
+ are normalised to an annual consumption of 1,000 kWh." width="95%" style="display: block; margin: auto;" />
+
+### Public Holidays
+
+By default, `slp_generate()` treats the nine public holidays observed
+nationwide in Germany as Sundays. State-level holidays are excluded
+because they vary by state and can change. Use the `holidays` argument
+to supply your own dates — the built-in data are then ignored entirely.
+
+The example below fetches all 2027 public holidays for Germany from the
+[nager.Date API](https://date.nager.at), keeps those that apply to
+Berlin (`global == TRUE` or `"DE-BE"` in `counties`), and passes them to
+`slp_generate()`. Berlin observes **International Women’s Day** (8
+March) as an additional public holiday not shared by most other states.
+
+``` r
+library(httr2)
+
+resp <- request("https://date.nager.at") |>
+  req_url_path_append("api", "v3", "PublicHolidays", "2027", "DE") |>
+  req_perform() |>
+  resp_body_json()
+
+# global == TRUE  →  nationwide holiday (counties is NULL)
+# global == FALSE →  counties lists the states that observe it
+is_berlin <- function(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
+
+holidays_berlin_2027 <- as.Date(
+  vapply(Filter(is_berlin, resp), function(x) x$date, character(1))
+)
+
+H0_berlin_2027 <- slp_generate(
+  "H0", "2027-01-01", "2027-12-31",
+  holidays = holidays_berlin_2027
+)
+```
+
+To generate a separate profile for each of the 16 German states, repeat
+the same pattern in a loop — one API call suffices, re-filter per state:
+
+``` r
+states <- c(
+  "DE-BB", "DE-BE", "DE-BW", "DE-BY", "DE-HB", "DE-HE",
+  "DE-HH", "DE-MV", "DE-NI", "DE-NW", "DE-RP", "DE-SH",
+  "DE-SL", "DE-SN", "DE-ST", "DE-TH"
+)
+
+results <- vector("list", length(states))
+names(results) <- states
+
+for (state in states) {
+  is_state <- function(x) isTRUE(x$global) || state %in% unlist(x$counties)
+  holidays_state <- as.Date(
+    vapply(Filter(is_state, resp), function(x) x$date, character(1))
+  )
+  results[[state]] <- slp_generate("H0", "2027-01-01", "2027-12-31",
+    holidays = holidays_state
+  )
+}
+```
 
 For more information, details about the data, and an explanation of the
 algorithm, call
 [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
+
+## 2025 Profiles
+
+In 2025, BDEW published an updated set of standard load profiles
+reflecting changes in electricity consumption patterns since the
+original 1999 study. Five new profiles are included:
+
+- `H25`: households — updated version of `H0`
+- `G25`: commerce (general) — updated version of `G0`
+- `L25`: agriculture — updated version of `L0`
+- `P25`: combination profile for households with a photovoltaic (PV)
+  system
+- `S25`: combination profile for households with a PV system and battery
+  storage
+
+Unlike the 1999 profiles, which group days into three seasonal periods
+(`winter`, `summer`, `transition`), the 2025 profiles provide a separate
+set of values for each calendar month. `P25` and `S25` are entirely new
+profile types with no 1999 equivalent, capturing the growing role of
+distributed generation and storage in residential electricity
+consumption.
+
+<img src="man/figures/README-bdew-2025-small_multiples-1.png" alt="Small multiple line chart of five standard load profiles published
+ by the German Association of Energy and Water Industries (BDEW) in 2025.
+ Lines are coloured by calendar month and faceted by profile and day type." width="95%" style="display: block; margin: auto;" />
+
+The final chart below places the 2025 household profiles side by side
+against `H0` as a reference, showing how cumulative energy consumption
+diverges over the course of a year. The grey line is `H0`; the coloured
+line is the 2025 profile in each panel.
+
+<img src="man/figures/README-H0_vs_2025-1.png" alt="Faceted line plot with three panels for profiles H25, P25, and
+ S25. Each panel shows cumulative energy consumption in kWh over 2026.
+ A grey reference line shows H0 in every panel. H25 tracks H0 closely,
+ while P25 and S25 diverge due to photovoltaic generation and battery
+ storage respectively." width="100%" style="display: block; margin: auto;" />
+
+`H25` tracks `H0` almost exactly, confirming that the updated household
+profile represents a similar consumption pattern to its 1999
+predecessor. `P25` and `S25`, on the other hand, show a flattening of
+the cumulative curve from spring through summer: households with a
+photovoltaic system — and even more so those with additional battery
+storage — draw less energy from the grid during the months of high solar
+yield.
 
 ## Source
 

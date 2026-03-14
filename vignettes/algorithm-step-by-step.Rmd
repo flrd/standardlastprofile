@@ -21,13 +21,13 @@ library(standardlastprofile)
 library(ggplot2)
 ```
 
-Standard load profiles are crucial for electricity providers, grid operators, and 
-the energy industry as a whole. They aid in planning and optimizing the demand 
-for electricity generation and distribution. Additionally, they serve as the foundation for billing and balancing electricity quantities in the energy 
+Standard load profiles are crucial for electricity providers, grid operators, and
+the energy industry as a whole. They aid in planning and optimizing the demand
+for electricity generation and distribution. Additionally, they serve as the foundation for billing and balancing electricity quantities in the energy
 market. For smaller consumers, the financial expense of continuous consumption measurement is often unreasonable. Energy supply companies can therefore use a standard load profile as the basis for creating a consumption forecast.
 
-The aim of this vignette is to show how the algorithm of the `slp_generate()` 
-function works.[^bdew-1] The data in the `slp` dataset forms the basis for all subsequent steps. 
+The aim of this vignette is to show how the algorithm of the `slp_generate()`
+function works.[^bdew-1] The data in the `slp` dataset forms the basis for all subsequent steps.
 
   [^bdew-1]: More information on the algorithm can be found [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf)
 
@@ -41,10 +41,10 @@ There are 96 x 1/4 hour measurements of electrical power for each unique combina
 * **2025 profiles** (`H25`, `G25`, `L25`, `P25`, `S25`): an updated set reflecting changes in electricity consumption patterns. Instead of seasons, `period` carries a lowercase month name (`january` … `december`).
 
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
-  
-```{r small_multiples_vignette, echo = FALSE, fig.asp = 1.6, fig.retina=2}
+
+```{r small_multiples_vignette, echo = FALSE, fig.asp = 2.64, fig.retina=2}
 #| fig.alt = "Small multiple line chart of 11 standard load profiles
-#|  published by the German Association of Energy and Water Industries (BDEW 
+#|  published by the German Association of Energy and Water Industries (BDEW
 #|  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
 #|  the consumption for three different periods over a year, and
 #|  also compare the consumption between different days of a week."
@@ -68,7 +68,7 @@ ggplot(tmp,
            y = watts,
            color = period)) +
   geom_line() +
-  facet_grid(profile_id ~ day, 
+  facet_grid(profile_id ~ day,
              scales = "free_y",
              labeller = labeller(day = as_labeller(label_names))) +
   scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
@@ -84,7 +84,7 @@ ggplot(tmp,
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
-  theme(strip.text.y.right = element_text(angle = 0)) + 
+  theme(strip.text.y.right = element_text(angle = 0)) +
   theme(
     panel.grid.minor.x = element_blank(),
     panel.grid.minor.y = element_blank(),
@@ -101,21 +101,55 @@ Those measurements are normalized to an annual consumption of 1,000 kWh. So, if 
 
 ```{r H0_data, message=FALSE}
 library(standardlastprofile)
-H0_2024 <- slp_generate(
+H0_2026 <- slp_generate(
   profile_id = "H0",
-  start_date = "2024-01-01",
-  end_date = "2024-12-31"
+  start_date = "2026-01-01",
+  end_date = "2026-12-31"
   )
 ```
 
 ```{r normalization-1, message=FALSE}
-sum(H0_2024$watts)
+sum(H0_2026$watts)
 ```
 
 'Hold on - didn't you just say 1,000?!', you might be thinking. Yes, you are correct; we must [convert power units into energy units](https://en.wikipedia.org/wiki/Watt#Distinction_between_watts_and_watt-hours). The values returned are 1/4-hour measurements in watts. To convert the values to watt-hours, we must, therefore, divide them by 4. Since one watt-hour is equal to 1/1000 kilowatt-hour, we also divide by 1,000:
 
 ```{r normalization-2, message=FALSE}
-sum(H0_2024$watts / 4 / 1000)
+sum(H0_2026$watts / 4 / 1000)
+```
+
+## Units and normalisation
+
+The two generations of profiles come from different source files and use different units:
+
+- The **1999 profiles** (`H0`, `G0`–`G6`, `L0`–`L2`) were published as an Excel file in which every value is already expressed as **average electric power in watts (W)**, normalised so that the annual sum of all 15-minute intervals equals 1,000 kWh.[^data-2]
+
+- The **2025 profiles** (`H25`, `G25`, `L25`, `P25`, `S25`) were published as a separate Excel file in which every value is expressed as **energy consumed in the 15-minute interval in kilowatt-hours (kWh)**, but normalised to an annual consumption of **1,000,000 kWh**.[^data-3]
+
+To give users a single, consistent interface we convert all values to watts normalised to 1,000 kWh/a. This conversion is applied once, at data-build time, in `data-raw/DATASET.R`. As a result, `slp_generate()` always returns watts regardless of which profile is requested. We can verify that the normalisation holds for a 2025 profile just as it does for a 1999 profile:
+
+[^data-2]: See the source Excel file distributed with the step-by-step guide: <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
+
+[^data-3]: See the BDEW 2025 publication: <https://www.bdew.de/energie/standardlastprofile-strom/>
+
+```{r units-verify, message=FALSE}
+P25_2026 <- slp_generate("P25", "2026-01-01", "2026-12-31")
+sum(P25_2026$watts / 4 / 1000)
+```
+
+### Converting the output to kWh
+
+The values returned by `slp_generate()` represent **average electric power** during each 15-minute interval. To obtain the **energy consumed** during that interval in kWh you can wrap `slp_generate()` once:
+
+```{r units-wrapper, message=FALSE}
+slp_generate_kwh <- function(...) {
+  out <- slp_generate(...)
+  out$kwh <- out$watts / 4 / 1000
+  out
+}
+
+H0_kwh <- slp_generate_kwh("H0", "2026-01-01", "2026-12-31")
+sum(H0_kwh$kwh)
 ```
 
 ## Algorithm step by step
@@ -126,11 +160,11 @@ When you call `slp_generate()`, you generate (surprise!) a standard load profile
 2. Map each day to combination of `day` and `period` (1999 profiles: seasonal period; 2025 profiles: calendar month).
 3. Use result from 2nd step to extract values from `slp`.[^data-1]
 
-    [^data-1]: That is actually a lie. There is an internal data object from which the data is extracted for efficiency.
+[^data-1]: That is actually a lie. There is an internal data object from which the data is extracted for efficiency.
 
 4. Apply polynomial function to values of profile identifiers `H0`, `H25`, `P25`, and `S25`.
 5. Return data.
-  
+
 ### Generate a date sequence
 
 In the initial step, a date sequence is created from `start_date` to `end_date` based on the user input. Here's a simple example:
@@ -155,14 +189,14 @@ over the days within a week. For the **1999 profiles**, the `period` definition 
 For the **2025 profiles**, each calendar month is treated as its own period
 (`january` … `december`) rather than grouping months into seasons.
 
-It was also found that there was no significant difference in consumption on 
+The 1999 study also found no significant difference in consumption on
 weekdays from Monday to Friday for any group. For this reason, the days Monday
-to Friday are grouped together as 'workdays'. December 24th and 31st are 
+to Friday are grouped together as `workday`. December 24th and 31st are
 considered Saturdays too if they are not Sundays. Public holidays are regarded as Sundays.
 
-*Note*: The package standardlastprofile supports only public holidays for 
-Germany. Those were retrieved from the 
-[nager.Date API](https://github.com/nager/Nager.Date). Below are 
+*Note*: The package standardlastprofile supports only public holidays for
+Germany. Those were retrieved from the
+[nager.Date API](https://github.com/nager/Nager.Date). Below are
 nationwide holidays for 2024:
 
 * Jan 1: New Year's
@@ -175,7 +209,13 @@ nationwide holidays for 2024:
 * Dec 25: Christmas Day
 * Dec 26: Boxing Day
 
-Use the optional `holidays` argument to supply your own vector of ISO 8601 dates that should be treated as public holidays. When provided, the built-in holiday data are ignored entirely, giving you full control over which dates count as holidays.
+> State-level holidays are **not** included by default, as these vary by state
+> and can change over time. Use the optional `holidays` argument to pass your
+> own vector of dates and take full control over which dates are treated as
+> public holidays; the built-in data are then ignored entirely. See the
+> [README](https://flrd.github.io/standardlastprofile/index.html#public-holidays) for an
+> example of how to fetch state-level holidays from the
+> [nager.Date API](https://date.nager.at) and pass them to `slp_generate()`.
 
 The result of this second step is a mapping from each date to a so-called
 characteristic profile day, i.e. a combination of weekday and period:
@@ -206,13 +246,13 @@ head(G5)
 
 The data analysis revealed that load fluctuations for both commercial and agricultural customers remain moderate throughout the year. Specifically, for customers and customer groups labeled as `G0` to `G6`, and `L0` to `L2`,the standard load profile can be accurately derived directly from the 3x3 characteristic profile days available in the dataset  `slp`.
 
-Below is the code snippet from the [README](https://github.com/flrd/standardlastprofile#generate-a-load-profile), 
-which can be used to reproduce the plot for the G5 profile, showcasing the 
+Below is the code snippet from the [README](https://github.com/flrd/standardlastprofile#generate-a-load-profile),
+which can be used to reproduce the plot for the G5 profile, showcasing the
 algorithm's outcome:
 
 ``` {r G5_plot_vignette, echo=TRUE, eval=TRUE, message=FALSE, fig.retina=2, fig.asp=0.5}
 #| fig.alt = "Line plot of the BDEW standard load profile 'G5' (Bakery
-#|  with a bakehouse) from December 22nd to December 27th 2023; values 
+#|  with a bakehouse) from December 22nd to December 27th 2023; values
 #|  are normalized to an annual consumption of 1,000 kWh."
 library(ggplot2)
 ggplot(G5, aes(start_time, watts)) +
@@ -220,12 +260,12 @@ ggplot(G5, aes(start_time, watts)) +
   scale_x_datetime(
     date_breaks = "1 day",
     date_labels = "%b %d") +
+  scale_y_continuous(NULL, labels = \(x) paste(x, "W")) +
   labs(
     title = "'G5': bakery with bakehouse",
     subtitle = "1/4h measurements, based on consumption of 1,000 kWh/a",
     caption = "data: www.bdew.de",
-    x = NULL,
-    y = "[watts]") +
+    x = NULL) +
   theme_minimal() +
   theme(
     panel.grid.minor.x = element_blank(),
@@ -239,7 +279,7 @@ ggplot(G5, aes(start_time, watts)) +
   NULL
 ```
 
-As you can see, the values in 2023 for December 24 (a Sunday) and 
+As you can see, the values in 2023 for December 24 (a Sunday) and
 December 25 and 26 (both public holidays) are identical.
 
 ### Special case: H0, H25, P25, S25
@@ -267,34 +307,34 @@ Where:
 * $w_s$ is the 'static' value
 * $d$ is the day of the year as integer, starting at 1 on January 1st
 
-The following plot shows how the electrical power develops over the year for 
-profile `H0`; for a clearer picture, the values are aggregated 
+The following plot shows how the electrical power develops over the year for
+profile `H0`; for a clearer picture, the values are aggregated
 at daily level:
 
-``` {r H0_2024_daily, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+``` {r H0_2026_daily, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 # aggregate by day of year as decimal number (1 - 365)
-H0_2024_daily <- by(H0_2024, INDICES = format(H0_2024$start_time, "%j"), FUN = function(x) {
+H0_2026_daily <- by(H0_2026, INDICES = format(H0_2026$start_time, "%j"), FUN = function(x) {
   data.frame(
     start_time = x[["start_time"]][1],
     watts = mean(x[["watts"]])
   )
 })
-H0_2024_daily <- do.call(rbind, args = H0_2024_daily)
+H0_2026_daily <- do.call(rbind, args = H0_2026_daily)
 ```
 
 
-``` {r H0_2024_plot, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+``` {r H0_2026_plot, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 #| fig.alt = "Line plot of standard load profile 'H0' (households)
-#|  aggregated by day from January 1st to December 31st, 2023. The plot shows that  
-#|  households have a continuously decreasing load from winter 
+#|  aggregated by day from January 1st to December 31st, 2026. The plot shows that
+#|  households have a continuously decreasing load from winter
 #|  to summer and vice versa."
-ggplot(H0_2024_daily, aes(start_time, watts)) +
+ggplot(H0_2026_daily, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
+  scale_y_continuous(NULL, labels = \(x) paste(x, "W")) +
   labs(title = "Dynamic Load Profile 'H0': Households",
        subtitle = "Electrical power per day",
        caption = "data: www.bdew.de",
-       x = NULL,
-       y = "[watts]") +
+       x = NULL) +
   theme_minimal() +
   theme(
     panel.grid.minor.x = element_blank(),
@@ -341,12 +381,11 @@ for(i in periods) {
   out[[i]] <- slp_generate("H0", lst[[i]][[1]], lst[[i]][[3]])
 }
 
-# add day column
+# add day column (locale-independent: %u gives 1=Mon…7=Sun)
 out <- lapply(out, function(x) {
-  tmp <- format.Date(x$start_time, "%A")
-  tmp <- replace(tmp, tmp == "Friday", "workday")
-  
-  cbind(x, data.frame(day = tolower(tmp)))
+  wday <- as.integer(format(as.Date(x$start_time), "%u"))
+  tmp <- ifelse(wday <= 5, "workday", ifelse(wday == 6, "saturday", "sunday"))
+  cbind(x, data.frame(day = tmp))
 })
 
 # adds period column
@@ -393,7 +432,7 @@ ggplot(H0_plot,
   facet_grid(day ~ type,
              labeller = labeller(day = as_labeller(label_names))) +
   scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
-  scale_y_continuous("[watts]") +
+  scale_y_continuous(NULL, labels = \(x) paste(x, "W")) +
   scale_color_manual(name = NULL,
                      values = c(
                        "winter" = "#961BFA",
@@ -405,7 +444,7 @@ ggplot(H0_plot,
        caption = "data: www.bdew.de") +
   theme_minimal() +
   theme(legend.position = "top") +
-  theme(strip.text.y.right = element_text(angle = 0)) + 
+  theme(strip.text.y.right = element_text(angle = 0)) +
   theme(
     panel.grid.minor.x = element_blank(),
     panel.grid.minor.y = element_blank(),

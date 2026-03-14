@@ -28,23 +28,31 @@ test_that("get_weekday() sets Jan 1st to 'sunday'", {
 })
 
 
-test_that("december 24, and 31st are set to be a saturday, if they are not a sunday",
-          {
-            expect_equal(
-              get_weekday(get_daily_sequence("2021-12-21", "2022-01-01")),
-              c(
-                "workday",
-                "workday",
-                "workday",
-                "saturday",
-                "sunday",
-                "sunday",
-                "workday",
-                "workday",
-                "workday",
-                "workday",
-                "saturday",
-                "sunday"
-              )
-            )
-          })
+# Regression test for https://github.com/flrd/standardlastprofile/issues/3
+# When a date range contains a Dec 31 that is a Sunday, the christmastide rule
+# must still promote *other* Dec 31s (that are not a Sunday) to Saturday.
+# The old code used all() which failed if any Dec 31 in the range was a Sunday.
+test_that("christmastide rule is applied per-date, not across the whole range", {
+  dates <- as.Date(c("2023-12-31", "2024-12-31")) # Sunday, then Tuesday
+  expect_equal(get_weekday(dates), c("sunday", "saturday"))
+})
+
+test_that("december 24, and 31st are set to be a saturday, if they are not a sunday", {
+  expect_equal(
+    get_weekday(get_daily_sequence("2021-12-21", "2022-01-01")),
+    c(
+      "workday",
+      "workday",
+      "workday",
+      "saturday",
+      "sunday",
+      "sunday",
+      "workday",
+      "workday",
+      "workday",
+      "workday",
+      "saturday",
+      "sunday"
+    )
+  )
+})

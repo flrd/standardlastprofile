@@ -1,20 +1,20 @@
-
 # create a daily sequence -------------------------------------------------
 
 get_daily_sequence <- function(start_date, end_date) {
-
   if (length(start_date) != 1L || length(end_date) != 1L) {
-    stop("'start_date and 'end_date' must be of length one.")
+    stop("'start_date' and 'end_date' must be of length one.")
   }
 
   start_date <- as_date(start_date)
   end_date <- as_date(end_date)
 
   if (anyNA(c(start_date, end_date))) {
-    stop("'start_date and 'end_date' must follow the ISO 8601 date format, i.e. '%Y-%m-%d'.")
+    stop("'start_date' and 'end_date' must follow the ISO 8601 date format, i.e. '%Y-%m-%d'.")
   }
 
-  stopifnot(start_date <= end_date)
+  if (start_date > end_date) {
+    stop("'start_date' must not be later than 'end_date'.")
+  }
 
   seq.Date(from = start_date, to = end_date, by = "day")
 }
@@ -26,7 +26,6 @@ is_date <- function(x) {
 }
 
 as_date <- function(x) {
-
   if (is_date(x)) {
     return(x)
   }
@@ -46,7 +45,6 @@ as_date <- function(x) {
 # Map a date to a weekday -------------------------------------------------
 
 get_holidays <- function(x, years, state_code) {
-
   state_code <- paste_dash("DE", state_code)
 
   idx <- x[["year"]] %in% years & x[["region"]] %in% c("DE", state_code)
@@ -54,8 +52,7 @@ get_holidays <- function(x, years, state_code) {
 }
 
 get_weekday <- function(x, state_code = NULL, holidays = NULL) {
-
-  if(!is_date(x)) {
+  if (!is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
   }
 
@@ -88,7 +85,7 @@ get_weekday <- function(x, state_code = NULL, holidays = NULL) {
   # public holidays are mapped to a Sunday
   holidays_idx <- x %in% holiday_dates
 
-  if(any(holidays_idx)) {
+  if (any(holidays_idx)) {
     weekday[holidays_idx] <- "sunday"
   }
 
@@ -101,14 +98,12 @@ get_weekday <- function(x, state_code = NULL, holidays = NULL) {
   weekday[x_md %in% christmastide & weekday != "sunday"] <- "saturday"
 
   weekday
-
 }
 
 # Map date to consumption period ------------------------------------------
 
 get_period <- function(x) {
-
-  if(!is_date(x)) {
+  if (!is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
   }
 
@@ -123,7 +118,7 @@ get_period <- function(x) {
   # which each value is >= 1, i.e. we ensure that
   # 'x_bp' starts before 'time_series' does
 
-  if(length(yrs_rng) == 1L) {
+  if (length(yrs_rng) == 1L) {
     yrs_rng_extended <- yrs_rng + seq.int(-1, 1)
   } else {
     yrs_rng_extended <- seq.int(yrs_rng[1] - 1L, yrs_rng[2] + 1L)
@@ -162,10 +157,9 @@ get_period <- function(x) {
     unname()
 
   # magic, see: https://stackoverflow.com/a/64666688
-  periods <- x_bp_names[ findInterval(x, x_bp) ]
+  periods <- x_bp_names[findInterval(x, x_bp)]
 
   periods
-
 }
 
 
@@ -173,8 +167,7 @@ get_period <- function(x) {
 
 # helper to check if profile_id is valid
 match_profile <- function(profile_id) {
-
-  if(missing(profile_id)) {
+  if (missing(profile_id)) {
     stop("Please provide at least one value as 'profile_id'.")
   }
 
@@ -183,10 +176,14 @@ match_profile <- function(profile_id) {
 
   out <- tryCatch(
     expr = {
-      match.arg(arg = profile_id,
-                choices = c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2",
-                            "H25", "G25", "L25", "P25", "S25"),
-                several.ok = TRUE)
+      match.arg(
+        arg = profile_id,
+        choices = c(
+          "H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2",
+          "H25", "G25", "L25", "P25", "S25"
+        ),
+        several.ok = TRUE
+      )
     },
     error = function(e) {
       # return value in case of error
@@ -194,12 +191,11 @@ match_profile <- function(profile_id) {
     }
   )
 
-  if(anyNA(out)) {
+  if (anyNA(out)) {
     stop("'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2', 'H25', 'G25', 'L25', 'P25', 'S25'.")
   }
 
   out
-
 }
 
 # helper to concatenate weekday and period --------------------------------
@@ -207,11 +203,11 @@ match_profile <- function(profile_id) {
 # This function adds "DE-" as prefixe to state codes if a user did not provide it,
 # see also: [ISO 3166-2:DE](https://en.wikipedia.org/wiki/ISO_3166-2:DE)
 standardise_state_names <- function(state) {
-
   tmp <- c("DE-BW", "DE-BY", "DE-ST", "DE-BE", "DE-MV", "DE-SL", "DE-RP", "DE-NW", "DE-HE", "DE-SH", "DE-NI", "DE-BB", "DE-HH", "DE-HB", "DE-SN", "DE-TH")
   state <- match.arg(
     state,
-    sub("DE-", "", tmp))
+    sub("DE-", "", tmp)
+  )
   paste_dash("DE", state)
 }
 
@@ -228,17 +224,17 @@ get_wkday_month <- function(x, state_code = NULL, holidays = NULL) {
 # dynamization function ---------------------------------------------------
 
 dynamization_fun <- function(x) {
-  1.24 + 0.0021*x + -0.0000702*x^2 + 0.00000032*x^3 + -0.000000000392*x^4
+  1.24 + 0.0021 * x + -0.0000702 * x^2 + 0.00000032 * x^3 + -0.000000000392 * x^4
 }
 
 
 # dates helpers -----------------------------------------------------------
 
-format_u <- function(x) format.Date(x, "%u")      # Weekday as a decimal number (1–7, Monday is 1).
-format_md <- function(x) format.Date(x, "%m-%d")  # Month as decimal number - Day of the month
-format_m <- function(x) format.Date(x, "%m")      # Month as decimal number (01–12)
-format_Y <- function(x) format.Date(x, "%Y")      # Year with century
-format_j <- function(x) format.Date(x, "%j")      # Day of year as decimal number (001–366)
+format_u <- function(x) format.Date(x, "%u") # Weekday as a decimal number (1–7, Monday is 1).
+format_md <- function(x) format.Date(x, "%m-%d") # Month as decimal number - Day of the month
+format_m <- function(x) format.Date(x, "%m") # Month as decimal number (01–12)
+format_Y <- function(x) format.Date(x, "%Y") # Year with century
+format_j <- function(x) format.Date(x, "%j") # Day of year as decimal number (001–366)
 
 get_15min_seq <- function(start, end) {
   seq.POSIXt(as.POSIXlt(start), as.POSIXlt(end), by = "15 min")

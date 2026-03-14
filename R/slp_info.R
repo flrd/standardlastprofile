@@ -4,10 +4,12 @@
 #' German Association of Energy and Water Industries (BDEW
 #' Bundesverband der Energie- und Wasserwirtschaft e.V.)
 #'
-#' @return A list
+#' @return A named list with one element per `profile_id`. Each element is
+#'   itself a list with three character components: `profile` (the identifier),
+#'   `description` (a short label), and `details` (a longer explanation).
 #'
 #' @param profile_id load profile identifier, required
-#' @param language one of 'EN' (English), 'DE' (German)
+#' @param language one of `"EN"` (default) or `"DE"`
 #' @export
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
@@ -20,8 +22,7 @@
 #' # multiple profile IDs are supported
 #' slp_info(c("G0", "G5"))
 slp_info <- function(profile_id, language = c("EN", "DE")) {
-
-  match_profile(profile_id)
+  profile_id <- match_profile(profile_id)
 
   language <- toupper(language)
   language <- match.arg(language)

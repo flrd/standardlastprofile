@@ -31,58 +31,14 @@ library(ggplot2)
 ```
 
 
-```{r small_multiples, echo = FALSE, fig.asp = 1.6, fig.retina=2}
+```{r bdew-1999-small_multiples, echo = FALSE, fig.asp = 2.64, fig.retina=2}
 #| fig.alt = "Small multiple line chart of 11 standard load profiles
-#|  published by the German Association of Energy and Water Industries (BDEW 
+#|  published by the German Association of Energy and Water Industries (BDEW
 #|  Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
 #|  the consumption for three different periods over a year, and
 #|  also compare the consumption between different days of a week."
 
-# labeller
-label_names <- c(
-  "saturday" = "Saturday",
-  "sunday" = "Sunday",
-  "workday" = "Workday"
-)
-
-label_fun <- function(x) label_names[[x]]
-
-# reorder facets
-tmp <- slp
-tmp$day <- factor(slp$day, levels = c("workday", "saturday", "sunday"))
-
-# plot
-ggplot(tmp,
-       aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
-           y = watts,
-           color = period)) +
-  geom_line() +
-  facet_grid(profile_id ~ day, 
-             scales = "free_y",
-             labeller = labeller(day = as_labeller(label_names))) +
-  scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
-  scale_y_continuous(NULL, n.breaks = 3, limits = c(0, NA)) +
-  scale_color_manual(name = NULL,
-                     values = c(
-                       "winter" = "#961BFA",
-                       "summer" = "#FA9529",
-                       "transition" = "#0CC792"
-                       )) +
-  labs(title = "Standard Load Profiles",
-       subtitle = "96 x 1/4h measurements [in watts], based on consumption of 1,000 kWh/a",
-       caption = "data: www.bdew.de") +
-  theme_minimal() +
-  theme(legend.position = "top") +
-  theme(strip.text.y.right = element_text(angle = 0)) + 
-  theme(
-    panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    panel.grid = element_line(
-      linetype = "12",
-      lineend = "round", 
-      colour = "#FAF6F4")
-  ) +
-  NULL
+standardlastprofile:::slp_plot_1999()
 ```
 
 ## Installation
@@ -96,8 +52,8 @@ install.packages("standardlastprofile")
 To install the development version from [GitHub](https://github.com/) use:
 
 ``` {r eval=FALSE}
-# install.packages("devtools")
-devtools::install_github("flrd/standardlastprofile")
+# install.packages("pak")
+pak::pkg_install("flrd/standardlastprofile")
 ```
 
 ## Included Features
@@ -107,14 +63,13 @@ devtools::install_github("flrd/standardlastprofile")
 - `slp_info()` -- A function for retrieving details of standard load profiles.
 
 ## About the Data
-The dataset `slp` is the result from an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany, published in 1999.[^bdew-2] It contains a total of 9,504 observations across 5 variables:
 
-  [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
+The dataset `slp` contains 26,784 observations across 5 variables:
 
 - `profile_id`: identifier of a standard load profile
-- `period`: one of "summer", "winter", "transition"
-- `day`: one of "workday", "saturday", "sunday"
-- `timestamp`: format "%H:%M"
+- `period`: one of `"summer"`, `"winter"`, `"transition"` for the 1999 profiles; a lowercase month name (`"january"` … `"december"`) for the 2025 profiles
+- `day`: one of `"workday"`, `"saturday"`, `"sunday"`
+- `timestamp`: format `"%H:%M"`
 - `watts`: electric power
 
 ``` {r, message=FALSE}
@@ -124,13 +79,21 @@ str(slp)
 
 In the context of the German electricity market, the term 'Standard Load Profile' denotes a representative pattern of electricity consumption over a specific period. These profiles portray anticipated electricity consumption for diverse customer groups, like households or businesses. While not an exact match for an individual customer's consumption profile, they serve as a valid approximation for larger groups of similar customers.
 
-For each unique combination of `profile_id`, `period` and `day` there are 
-96 x 1/4 hour measurements in watts. If you have no idea what `H0` means, 
-you are not alone:
+For each unique combination of `profile_id`, `period` and `day` there are 96 x 1/4 hour measurements in watts. The dataset covers two generations of profiles:
+
+**1999 profiles**[^bdew-2] — based on an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany:
+
+  [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
 - `H0`: households (German: "Haushalte")
 - `G0` to `G6`: commerce ("Gewerbe")
 - `L0` to `L2`: agriculture ("Landwirtschaft")
+
+**2025 profiles** — an updated set published by BDEW reflecting changes in consumption patterns:
+
+- `H25`, `G25`, `L25`: updated household, commerce, and agriculture profiles
+- `P25`: households with a photovoltaic (PV) system
+- `S25`: households with a PV system and battery storage
 
 For more details, call the `slp_info()` function.
 
@@ -147,7 +110,7 @@ G5 <- slp_generate(
   profile_id = "G5",
   start_date = "2023-12-22",
   end_date = "2023-12-27"
-  )
+)
 
 head(G5)
 ```
@@ -157,34 +120,193 @@ head(G5)
 #| fig.alt = "Line plot of the standard load profile 'G5' (i.e. Bakery
 #|  with a bakehouse) based on data from the German Association of Energy
 #|  and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft
-#|  e.V.) from December 22nd to December 27th 2023; values 
-#|  are normalized to an annual consumption of 1,000 kWh."
+#|  e.V.) from December 22nd to December 27th 2023; values
+#|  are normalised to an annual consumption of 1,000 kWh."
 ggplot(G5, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
   scale_x_datetime(
     date_breaks = "1 day",
-    date_labels = "%b %d") +
+    date_labels = "%b %d"
+  ) +
+  scale_y_continuous(NULL, labels = \(x) paste(x, "W")) +
   labs(
     title = "'G5': bakery with bakehouse",
     subtitle = "1/4h measurements, based on consumption of 1,000 kWh/a",
     caption = "data: www.bdew.de",
-    x = NULL,
-    y = "[watts]") +
+    x = NULL
+  ) +
   theme_minimal() +
   theme(
-      panel.grid.minor.x = element_blank(),
-      panel.grid.minor.y = element_blank(),
-      panel.grid = element_line(
-        linetype = "12",
-        lineend = "round",
-        colour = "#FAF6F4"
-        )
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+    )
   ) +
   NULL
 ```
 
-For more information, details about the data, and an explanation of the algorithm, 
+### Public Holidays
+
+By default, `slp_generate()` treats the nine public holidays observed
+nationwide in Germany as Sundays. State-level holidays are excluded because
+they vary by state and can change. Use the `holidays` argument to supply your
+own dates — the built-in data are then ignored entirely.
+
+The example below fetches all 2027 public holidays for Germany from the
+[nager.Date API](https://date.nager.at), keeps those that apply to Berlin
+(`global == TRUE` or `"DE-BE"` in `counties`), and passes them to
+`slp_generate()`. Berlin observes **International Women's Day** (8 March) as
+an additional public holiday not shared by most other states.
+
+``` {r holidays-berlin, eval=FALSE}
+library(httr2)
+
+resp <- request("https://date.nager.at") |>
+  req_url_path_append("api", "v3", "PublicHolidays", "2027", "DE") |>
+  req_perform() |>
+  resp_body_json()
+
+# global == TRUE  →  nationwide holiday (counties is NULL)
+# global == FALSE →  counties lists the states that observe it
+is_berlin <- function(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
+
+holidays_berlin_2027 <- as.Date(
+  vapply(Filter(is_berlin, resp), function(x) x$date, character(1))
+)
+
+H0_berlin_2027 <- slp_generate(
+  "H0", "2027-01-01", "2027-12-31",
+  holidays = holidays_berlin_2027
+)
+```
+
+To generate a separate profile for each of the 16 German states, repeat the
+same pattern in a loop — one API call suffices, re-filter per state:
+
+``` {r holidays-all-states, eval=FALSE}
+states <- c(
+  "DE-BB", "DE-BE", "DE-BW", "DE-BY", "DE-HB", "DE-HE",
+  "DE-HH", "DE-MV", "DE-NI", "DE-NW", "DE-RP", "DE-SH",
+  "DE-SL", "DE-SN", "DE-ST", "DE-TH"
+)
+
+results <- vector("list", length(states))
+names(results) <- states
+
+for (state in states) {
+  is_state <- function(x) isTRUE(x$global) || state %in% unlist(x$counties)
+  holidays_state <- as.Date(
+    vapply(Filter(is_state, resp), function(x) x$date, character(1))
+  )
+  results[[state]] <- slp_generate("H0", "2027-01-01", "2027-12-31",
+    holidays = holidays_state
+  )
+}
+```
+
+For more information, details about the data, and an explanation of the algorithm,
 call [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
+
+## 2025 Profiles
+
+In 2025, BDEW published an updated set of standard load profiles reflecting
+changes in electricity consumption patterns since the original 1999 study. Five
+new profiles are included:
+
+- `H25`: households — updated version of `H0`
+- `G25`: commerce (general) — updated version of `G0`
+- `L25`: agriculture — updated version of `L0`
+- `P25`: combination profile for households with a photovoltaic (PV) system
+- `S25`: combination profile for households with a PV system and battery storage
+
+Unlike the 1999 profiles, which group days into three seasonal periods
+(`winter`, `summer`, `transition`), the 2025 profiles provide a separate set
+of values for each calendar month. `P25` and `S25` are entirely new profile
+types with no 1999 equivalent, capturing the growing role of distributed
+generation and storage in residential electricity consumption.
+
+```{r bdew-2025-small_multiples, echo = FALSE, fig.asp = 1.2, fig.retina = 2}
+#| fig.alt = "Small multiple line chart of five standard load profiles published
+#|  by the German Association of Energy and Water Industries (BDEW) in 2025.
+#|  Lines are coloured by calendar month and faceted by profile and day type."
+
+standardlastprofile:::slp_plot_2025()
+```
+
+The final chart below places the 2025 household profiles side by side against
+`H0` as a reference, showing how cumulative energy consumption diverges over
+the course of a year. The grey line is `H0`; the coloured line is the 2025
+profile in each panel.
+
+```{r H0_vs_2025, echo=FALSE, message=FALSE, fig.asp=0.5, fig.retina=2, out.width="100%"}
+#| fig.alt = "Faceted line plot with three panels for profiles H25, P25, and
+#|  S25. Each panel shows cumulative energy consumption in kWh over 2026.
+#|  A grey reference line shows H0 in every panel. H25 tracks H0 closely,
+#|  while P25 and S25 diverge due to photovoltaic generation and battery
+#|  storage respectively."
+
+library(data.table)
+library(ggpointless)
+
+dat <- slp_generate(
+  profile_id = c("H0", "H25", "P25", "S25"),
+  start_date = "2026-01-01",
+  end_date = "2026-12-31"
+)
+
+setDT(dat)
+dat[, kWh := (cumsum(watts) - watts[1]) / 4 / 1000, by = profile_id]
+
+idx_H0 <- dat[, profile_id == "H0"]
+dat_H0 <- dat[idx_H0]
+dat_H25_P25_S25 <- dat[!idx_H0]
+
+ggplot(dat_H25_P25_S25, aes(start_time, kWh)) +
+  geom_line(
+    data = dat_H0[, .(start_time, kWh)],
+    colour = "#CCCCCC"
+  ) +
+  geom_line(aes(colour = profile_id), linewidth = 1) +
+  geom_pointless(aes(colour = profile_id), size = 2) +
+  facet_grid(cols = vars(profile_id)) +
+  scale_x_datetime(NULL, date_labels = "%b") +
+  scale_y_continuous(NULL, breaks = c(0, 500, 1000), labels = \(x) paste(x, "kWh")) +
+  scale_colour_manual(
+    name = NULL,
+    values = c(
+      "H25" = "#961BFA",
+      "P25" = "#FA9529",
+      "S25" = "#0CC792"
+    )
+  ) +
+  labs(
+    title = "Cumulative energy consumption: H0 vs. H25, S25, and P25",
+    subtitle = "Reference line = H0; based on 1,000 kWh/a",
+    caption = "data: www.bdew.de"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "top",
+    strip.text.y.right = element_text(angle = 0),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+    )
+  )
+```
+
+`H25` tracks `H0` almost exactly, confirming that the updated household profile
+represents a similar consumption pattern to its 1999 predecessor. `P25` and
+`S25`, on the other hand, show a flattening of the cumulative curve from spring
+through summer: households with a photovoltaic system — and even more so those
+with additional battery storage — draw less energy from the grid during the
+months of high solar yield.
 
 ## Source
 You can access the studies and data on standard load profiles for electricity on the website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/
