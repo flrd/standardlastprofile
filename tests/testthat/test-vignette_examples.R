@@ -5,12 +5,16 @@ H0_2024 <- slp_generate(
 )
 
 # aggregate by day of year as decimal number (1 - 365)
-H0_2024_daily <- by(H0_2024, INDICES = format(H0_2024$start_time, "%j"), FUN = function(x) {
-  data.frame(
-    start_time = x[["start_time"]][1],
-    watts = mean(x[["watts"]])
-  )
-})
+H0_2024_daily <- by(
+  H0_2024,
+  INDICES = format(H0_2024$start_time, "%j"),
+  FUN = function(x) {
+    data.frame(
+      start_time = x[["start_time"]][1],
+      watts = mean(x[["watts"]])
+    )
+  }
+)
 H0_2024_daily <- do.call(rbind, args = H0_2024_daily)
 
 # example -----------------------------------------------------------------
@@ -42,7 +46,8 @@ test_that("vignette example H0 works", {
 
 # H0_dynamic --------------------------------------------------------------
 
-lst <- Map(paste,
+lst <- Map(
+  paste,
   list("1997-01", "1996-07", "1997-04"),
   list(17:19, 19:21, 18:20),
   sep = "-"
@@ -83,8 +88,8 @@ H0_plot$day <- factor(H0_plot$day, levels = days)
 
 label_names <- c(
   "saturday" = "Saturday",
-  "sunday"   = "Sunday",
-  "workday"  = "Workday"
+  "sunday" = "Sunday",
+  "workday" = "Workday"
 )
 
 p4 <- ggplot2::ggplot(
@@ -96,16 +101,21 @@ p4 <- ggplot2::ggplot(
   )
 ) +
   ggplot2::geom_line() +
-  ggplot2::facet_grid(day ~ type,
+  ggplot2::facet_grid(
+    day ~ type,
     labeller = ggplot2::labeller(day = ggplot2::as_labeller(label_names))
   ) +
-  ggplot2::scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
+  ggplot2::scale_x_datetime(
+    NULL,
+    date_breaks = "6 hours",
+    date_labels = "%k:%M"
+  ) +
   ggplot2::scale_y_continuous(NULL, labels = \(x) paste(x, "W")) +
   ggplot2::scale_color_manual(
     name = NULL,
     values = c(
-      "winter"     = "#961BFA",
-      "summer"     = "#FA9529",
+      "winter" = "#961BFA",
+      "summer" = "#FA9529",
       "transition" = "#0CC792"
     )
   ) +

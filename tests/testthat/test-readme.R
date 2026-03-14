@@ -10,7 +10,10 @@ label_names <- c(
 label_fun <- function(x) label_names[[x]]
 
 # 1999 profiles only; reorder facets
-tmp <- slp[slp$profile_id %in% c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"), ]
+tmp <- slp[
+  slp$profile_id %in%
+    c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
+]
 tmp$day <- factor(tmp$day, levels = c("workday", "saturday", "sunday"))
 
 # plot
@@ -23,7 +26,8 @@ p1 <- ggplot2::ggplot(
   )
 ) +
   ggplot2::geom_line() +
-  ggplot2::facet_grid(profile_id ~ day,
+  ggplot2::facet_grid(
+    profile_id ~ day,
     scales = "free_y",
     labeller = ggplot2::labeller(day = ggplot2::as_labeller(label_names))
   ) +

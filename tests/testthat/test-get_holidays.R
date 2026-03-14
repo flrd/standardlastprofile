@@ -14,5 +14,8 @@ berlin_23 <-
 
 
 test_that("multiplication works", {
-  expect_equal(get_holidays(holidays_DE, years = 2023, state_code = "DE-BE"), berlin_23)
+  expect_equal(
+    get_holidays(holidays_DE, years = 2023, state_code = "DE-BE"),
+    berlin_23
+  )
 })

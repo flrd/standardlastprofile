@@ -3,5 +3,8 @@ test_that("match_profile works", {
 })
 
 test_that("match_profile expects a BDEW profile", {
-  expect_error(match_profile("ABC"), "'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2'.")
+  expect_error(
+    match_profile("ABC"),
+    "'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2'."
+  )
 })
