@@ -97,5 +97,7 @@ p2 <- ggplot2::ggplot(G5, ggplot2::aes(start_time, watts)) +
   NULL
 
 test_that("readme example #2 works", {
-  vdiffr::expect_doppelganger("readme example 'G5'", p2)
+  withr::with_locale(c(LC_TIME = "C"), {
+    vdiffr::expect_doppelganger("readme example 'G5'", p2)
+  })
 })

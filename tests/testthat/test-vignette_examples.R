@@ -40,7 +40,9 @@ p3 <- ggplot2::ggplot(H0_2024_daily, ggplot2::aes(start_time, watts)) +
   NULL
 
 test_that("vignette example H0 works", {
-  vdiffr::expect_doppelganger("vignetee example 'H0'", p3)
+  withr::with_locale(c(LC_TIME = "C"), {
+    vdiffr::expect_doppelganger("vignetee example 'H0'", p3)
+  })
 })
 
 
