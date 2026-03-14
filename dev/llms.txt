@@ -1,9 +1,8 @@
 # standardlastprofile
 
-This package provides data on representative, standard load profiles for
-electricity from the German Association of Energy and Water Industries
-(BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy
-format.
+This package provides data on standard load profiles for electricity,
+published by the German Association of Energy and Water Industries (BDEW
+Bundesverband der Energie- und Wasserwirtschaft e.V.).
 
 ![Small multiple line chart of 11 standard load profiles published by
 the German Association of Energy and Water Industries (BDEW
@@ -61,8 +60,8 @@ str(slp)
 #>  $ watts     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
 ```
 
-In the context of the German electricity market, the term ‘Standard Load
-Profile’ denotes a representative pattern of electricity consumption
+In the context of the German electricity market, the term *Standard Load
+Profile* denotes a representative pattern of electricity consumption
 over a specific period. These profiles portray anticipated electricity
 consumption for diverse customer groups, like households or businesses.
 While not an exact match for an individual customer’s consumption
@@ -140,9 +139,21 @@ kWh.](reference/figures/README-G5_plot_readme-1.png)
 By default,
 [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
 treats the nine public holidays observed nationwide in Germany as
-Sundays. State-level holidays are excluded because they vary by state
-and can change. Use the `holidays` argument to supply your own dates —
-the built-in data are then ignored entirely.
+Sundays:
+
+- New Year’s (Jan 1)
+- Good Friday
+- Easter Monday
+- Labour Day (May 1)
+- Ascension Day
+- Whit Monday
+- German Unity Day (Oct 3)
+- Christmas Day (Dec 25)
+- Boxing Day (Dec 26)
+
+State-level holidays are *not* included because they vary by state and
+can change over time. Use the `holidays` argument to supply your own
+dates — the built-in data are then ignored entirely.
 
 The example below fetches all 2027 public holidays for Germany from the
 [nager.Date API](https://date.nager.at), keeps those that apply to
@@ -161,10 +172,10 @@ resp <- request("https://date.nager.at") |>
 
 # global == TRUE  →  nationwide holiday (counties is NULL)
 # global == FALSE →  counties lists the states that observe it
-is_berlin <- function(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
+is_berlin <- \(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
 
 holidays_berlin_2027 <- as.Date(
-  vapply(Filter(is_berlin, resp), function(x) x$date, character(1))
+  vapply(Filter(is_berlin, resp), \(x) x$date, character(1))
 )
 
 H0_berlin_2027 <- slp_generate(
@@ -187,9 +198,9 @@ results <- vector("list", length(states))
 names(results) <- states
 
 for (state in states) {
-  is_state <- function(x) isTRUE(x$global) || state %in% unlist(x$counties)
+  is_state <- \(x) isTRUE(x$global) || state %in% unlist(x$counties)
   holidays_state <- as.Date(
-    vapply(Filter(is_state, resp), function(x) x$date, character(1))
+    vapply(Filter(is_state, resp), \(x) x$date, character(1))
   )
   results[[state]] <- slp_generate("H0", "2027-01-01", "2027-12-31",
     holidays = holidays_state
@@ -198,8 +209,11 @@ for (state in states) {
 ```
 
 For more information, details about the data, and an explanation of the
-algorithm, call
-[`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html).
+algorithm, see the [algorithm step-by-step
+vignette](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
+or run
+[`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/dev/articles/algorithm-step-by-step.md)
+locally.
 
 ## 2025 Profiles
 
@@ -229,8 +243,7 @@ type.](reference/figures/README-bdew-2025-small_multiples-1.png)
 
 The final chart below places the 2025 household profiles side by side
 against `H0` as a reference, showing how cumulative energy consumption
-diverges over the course of a year. The grey line is `H0`; the coloured
-line is the 2025 profile in each panel.
+diverges over the course of a year.
 
 ![Faceted line plot with three panels for profiles H25, P25, and S25.
 Each panel shows cumulative energy consumption in kWh over 2026. A grey

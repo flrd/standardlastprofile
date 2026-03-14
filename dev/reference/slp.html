@@ -100,8 +100,8 @@ column (<code>'january'</code> through <code>'december'</code>).</p>
 <li><p><code>winter</code>: November 1 to March 20</p></li>
 <li><p><code>transition</code>: March 21 to May 14, and September 15 to October 31</p></li>
 </ul><p><strong>Day definitions</strong>:</p><ul><li><p><code>workday</code>: Monday to Friday</p></li>
-<li><p><code>saturday</code>: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
-if they are not a Sunday</p></li>
+<li><p><code>saturday</code>: Saturdays; Dec 24th and Dec 31st are also treated as Saturdays
+unless they fall on a Sunday</p></li>
 <li><p><code>sunday</code>: Sundays and all public holidays</p></li>
 </ul><p><strong>Units and normalisation</strong>:</p>
 <p>The source Excel file for the 1999 profiles stores values in watts (W),
@@ -114,7 +114,7 @@ watts normalised to 1,000 kWh/a.</p>
 <code><a href="slp_generate.html">slp_generate()</a></code> always represents average electric power in watts,
 normalised to 1,000 kWh/a. To convert to energy consumed per 15-minute
 interval in kWh, divide by 4 and by 1,000:</p>
-<p></p><div class="sourceCode r"><pre><code><span><span class="va">watts_to_kwh</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">/</span> <span class="fl">1000</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">watts_to_kwh</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">/</span> <span class="fl">1000</span></span></code></pre><p></p></div>
     </div>
 
     <div class="section level2">

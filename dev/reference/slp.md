@@ -91,8 +91,8 @@ for more information and examples.
 
 - `workday`: Monday to Friday
 
-- `saturday`: Saturdays; Dec 24th and Dec 31st are considered Saturdays
-  too if they are not a Sunday
+- `saturday`: Saturdays; Dec 24th and Dec 31st are also treated as
+  Saturdays unless they fall on a Sunday
 
 - `sunday`: Sundays and all public holidays
 
@@ -111,7 +111,7 @@ always represents average electric power in watts, normalised to 1,000
 kWh/a. To convert to energy consumed per 15-minute interval in kWh,
 divide by 4 and by 1,000:
 
-    watts_to_kwh <- function(x) x / 4 / 1000
+    watts_to_kwh <- \(x) x / 4 / 1000
 
 ## Examples
 
