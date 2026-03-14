@@ -104,6 +104,50 @@ slp_info(profile_id = "H0", language = "DE")
 #> [1] "In dieses Profil werden alle Haushalte mit ausschließlichem und überwiegendem Privatverbrauch eingeordnet. Haushalte mit überwiegend privatem elektrischen Verbrauch, d.h. auch mit geringfügigem gewerblichen Bedarf sind z.B. Handelsvertreter, Heimarbeiter u.ä. mit Büro im Haushalt. Das Profil Haushalt ist nicht anwendbar bei Sonderanwendungen wie z.B. elektrischen Speicherheizungen oder Wärmepumpen."
 ```
 
+## 2025 Profiles
+
+In 2025, BDEW published an updated set of standard load profiles
+reflecting changes in electricity consumption patterns since the
+original 1999 study. Five new profiles are included:
+
+- `H25`: households — updated version of `H0`
+- `G25`: commerce (general) — updated version of `G0`
+- `L25`: agriculture — updated version of `L0`
+- `P25`: combination profile for households with a photovoltaic (PV)
+  system
+- `S25`: combination profile for households with a PV system and battery
+  storage
+
+Unlike the 1999 profiles, which group days into three seasonal periods
+(`winter`, `summer`, `transition`), the 2025 profiles provide a separate
+set of values for each calendar month. `P25` and `S25` are entirely new
+profile types with no 1999 equivalent, capturing the growing role of
+distributed generation and storage in residential electricity
+consumption.
+
+![Small multiple line chart of five standard load profiles published by
+the German Association of Energy and Water Industries (BDEW) in 2025.
+Lines are coloured by calendar month and faceted by profile and day
+type.](reference/figures/README-bdew-2025-small_multiples-1.png)
+
+The chart below places the 2025 household profiles side by side against
+`H0` as a reference, showing how cumulative energy consumption diverges
+over the course of a year.
+
+![Faceted line plot with three panels for profiles H25, P25, and S25.
+Each panel shows cumulative energy consumption in kWh over 2026. A grey
+reference line shows H0 in every panel. H25 tracks H0 closely, while P25
+and S25 diverge due to photovoltaic generation and battery storage
+respectively.](reference/figures/README-H0_vs_2025-1.png)
+
+`H25` tracks `H0` almost exactly, confirming that the updated household
+profile represents a similar consumption pattern to its 1999
+predecessor. `P25` and `S25`, on the other hand, show a flattening of
+the cumulative curve from spring through summer: households with a
+photovoltaic system — and even more so those with additional battery
+storage — draw less energy from the grid during the months of high solar
+yield.
+
 ### Generate a Standard Load Profile
 
 To create a standard load profile for a specified time period, call the
@@ -214,50 +258,6 @@ vignette](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-
 or run
 [`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/dev/articles/algorithm-step-by-step.md)
 locally.
-
-## 2025 Profiles
-
-In 2025, BDEW published an updated set of standard load profiles
-reflecting changes in electricity consumption patterns since the
-original 1999 study. Five new profiles are included:
-
-- `H25`: households — updated version of `H0`
-- `G25`: commerce (general) — updated version of `G0`
-- `L25`: agriculture — updated version of `L0`
-- `P25`: combination profile for households with a photovoltaic (PV)
-  system
-- `S25`: combination profile for households with a PV system and battery
-  storage
-
-Unlike the 1999 profiles, which group days into three seasonal periods
-(`winter`, `summer`, `transition`), the 2025 profiles provide a separate
-set of values for each calendar month. `P25` and `S25` are entirely new
-profile types with no 1999 equivalent, capturing the growing role of
-distributed generation and storage in residential electricity
-consumption.
-
-![Small multiple line chart of five standard load profiles published by
-the German Association of Energy and Water Industries (BDEW) in 2025.
-Lines are coloured by calendar month and faceted by profile and day
-type.](reference/figures/README-bdew-2025-small_multiples-1.png)
-
-The final chart below places the 2025 household profiles side by side
-against `H0` as a reference, showing how cumulative energy consumption
-diverges over the course of a year.
-
-![Faceted line plot with three panels for profiles H25, P25, and S25.
-Each panel shows cumulative energy consumption in kWh over 2026. A grey
-reference line shows H0 in every panel. H25 tracks H0 closely, while P25
-and S25 diverge due to photovoltaic generation and battery storage
-respectively.](reference/figures/README-H0_vs_2025-1.png)
-
-`H25` tracks `H0` almost exactly, confirming that the updated household
-profile represents a similar consumption pattern to its 1999
-predecessor. `P25` and `S25`, on the other hand, show a flattening of
-the cumulative curve from spring through summer: households with a
-photovoltaic system — and even more so those with additional battery
-storage — draw less energy from the grid during the months of high solar
-yield.
 
 ## Source
 

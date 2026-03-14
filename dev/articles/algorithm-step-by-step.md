@@ -95,13 +95,13 @@ different units:
   (kWh)**, but normalised to an annual consumption of **1,000,000
   kWh**.[⁴](#fn4)
 
-To give users a single, consistent interface we convert all values to
-watts normalised to 1,000 kWh/a. This conversion is applied once, at
-data-build time, in `data-raw/DATASET.R`. As a result,
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
-always returns watts regardless of which profile is requested. We can
-verify that the normalisation holds for a 2025 profile just as it does
-for a 1999 profile:
+> To give users a single, consistent interface we convert all values to
+> watts normalised to 1,000 kWh/a. This conversion is applied once, at
+> data-build time, in `data-raw/DATASET.R`. As a result,
+> [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
+> always returns watts regardless of which profile is requested. We can
+> verify that the normalisation holds for a 2025 profile just as it does
+> for a 1999 profile:
 
 ``` r
 P25_2026 <- slp_generate("P25", "2026-01-01", "2026-12-31")
@@ -173,9 +173,9 @@ definition is:
 - `winter`: November 1 to March 20
 - `transition`: March 21 to May 14, and September 15 to October 31
 
-For the **2025 profiles**, each calendar month is treated as its own
-period (`january` … `december`) rather than grouping months into
-seasons.
+> For the **2025 profiles**, each calendar month is treated as its own
+> period (`january` … `december`) rather than grouping months into
+> seasons.
 
 The 1999 study also found no significant difference in consumption on
 weekdays from Monday to Friday for any group. For this reason, the days
@@ -183,7 +183,7 @@ Monday to Friday are grouped together as `workday`. December 24th and
 31st are considered Saturdays too if they are not Sundays. Public
 holidays are regarded as Sundays.
 
-*Note*: The function
+**Note**: The function
 [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
 supports by default nationwide public holidays for Germany. Those were
 retrieved from the [nager.Date

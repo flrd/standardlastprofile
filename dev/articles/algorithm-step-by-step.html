@@ -157,12 +157,14 @@ expressed as <strong>energy consumed in the 15-minute interval in
 kilowatt-hours (kWh)</strong>, but normalised to an annual consumption
 of <strong>1,000,000 kWh</strong>.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;See the BDEW 2025 publication: &lt;a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link uri"&gt;https://www.bdew.de/energie/standardlastprofile-strom/&lt;/a&gt;&lt;/p&gt;'><sup>4</sup></a></p></li>
 </ul>
+<blockquote>
 <p>To give users a single, consistent interface we convert all values to
 watts normalised to 1,000 kWh/a. This conversion is applied once, at
 data-build time, in <code>data-raw/DATASET.R</code>. As a result,
 <code><a href="../reference/slp_generate.html">slp_generate()</a></code> always returns watts regardless of which
 profile is requested. We can verify that the normalisation holds for a
 2025 profile just as it does for a 1999 profile:</p>
+</blockquote>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">P25_2026</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_generate.html">slp_generate</a></span><span class="op">(</span><span class="st">"P25"</span>, <span class="st">"2026-01-01"</span>, <span class="st">"2026-12-31"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">P25_2026</span><span class="op">$</span><span class="va">watts</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span></span>
@@ -237,18 +239,19 @@ profiles</strong>, the <code>period</code> definition is:</p>
 <code>transition</code>: March 21 to May 14, and September 15 to
 October 31</li>
 </ul>
+<blockquote>
 <p>For the <strong>2025 profiles</strong>, each calendar month is
 treated as its own period (<code>january</code> … <code>december</code>)
 rather than grouping months into seasons.</p>
+</blockquote>
 <p>The 1999 study also found no significant difference in consumption on
 weekdays from Monday to Friday for any group. For this reason, the days
 Monday to Friday are grouped together as <code>workday</code>. December
 24th and 31st are considered Saturdays too if they are not Sundays.
 Public holidays are regarded as Sundays.</p>
-<p><em>Note</em>: The function <code><a href="../reference/slp_generate.html">slp_generate()</a></code> supports by
-default nationwide public holidays for Germany. Those were retrieved
-from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date
-API</a>:</p>
+<p><strong>Note</strong>: The function <code><a href="../reference/slp_generate.html">slp_generate()</a></code>
+supports by default nationwide public holidays for Germany. Those were
+retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>:</p>
 <ul>
 <li>New Year’s (Jan 1)</li>
 <li>Good Friday</li>
