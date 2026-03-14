@@ -189,11 +189,33 @@ slp_generate <- \(
     state_code <- NULL
   }
 
+  if (is.null(start_date)) {
+    stop(
+      "'start_date' is missing; please provide a date in ISO 8601 format (\"YYYY-MM-DD\")."
+    )
+  }
+  if (is.null(end_date)) {
+    stop(
+      "'end_date' is missing; please provide a date in ISO 8601 format (\"YYYY-MM-DD\")."
+    )
+  }
+  if (length(start_date) != 1L) {
+    stop("'start_date' must be of length 1.")
+  }
+  if (length(end_date) != 1L) {
+    stop("'end_date' must be of length 1.")
+  }
+
   start <- as_date(start_date)
   end <- as_date(end_date)
 
-  if (anyNA(c(start, end))) {
-    stop("Please provide a valid date in ISO 8601 format")
+  if (is.na(start)) {
+    stop(
+      "'start_date' must be a valid date in ISO 8601 format (\"YYYY-MM-DD\")."
+    )
+  }
+  if (is.na(end)) {
+    stop("'end_date' must be a valid date in ISO 8601 format (\"YYYY-MM-DD\").")
   }
 
   if (start < as_date("1990-01-01") || end > as_date("2073-12-31")) {

@@ -101,6 +101,97 @@ For more details, call the `slp_info()` function.
 slp_info(profile_id = "H0", language = "DE")
 ```
 
+## 2025 Profiles
+
+In 2025, BDEW published an updated set of standard load profiles reflecting
+changes in electricity consumption patterns since the original 1999 study. Five
+new profiles are included:
+
+- `H25`: households — updated version of `H0`
+- `G25`: commerce (general) — updated version of `G0`
+- `L25`: agriculture — updated version of `L0`
+- `P25`: combination profile for households with a photovoltaic (PV) system
+- `S25`: combination profile for households with a PV system and battery storage
+
+Unlike the 1999 profiles, which group days into three seasonal periods
+(`winter`, `summer`, `transition`), the 2025 profiles provide a separate set
+of values for each calendar month. `P25` and `S25` are entirely new profile
+types with no 1999 equivalent, capturing the growing role of distributed
+generation and storage in residential electricity consumption.
+
+```{r bdew-2025-small_multiples, echo = FALSE, fig.asp = 1.2, fig.retina = 2}
+#| fig.alt = "Small multiple line chart of five standard load profiles published
+#|  by the German Association of Energy and Water Industries (BDEW) in 2025.
+#|  Lines are coloured by calendar month and faceted by profile and day type."
+
+standardlastprofile:::slp_plot_2025()
+```
+
+The chart below places the 2025 household profiles side by side against
+`H0` as a reference, showing how cumulative energy consumption diverges over
+the course of a year. 
+
+```{r H0_vs_2025, echo=FALSE, message=FALSE, fig.asp=0.84, fig.retina=2}
+#| fig.alt = "Faceted line plot with three panels for profiles H25, P25, and
+#|  S25. Each panel shows cumulative energy consumption in kWh over 2026.
+#|  A grey reference line shows H0 in every panel. H25 tracks H0 closely,
+#|  while P25 and S25 diverge due to photovoltaic generation and battery
+#|  storage respectively."
+dat <- slp_generate(
+  profile_id = c("H0", "H25", "P25", "S25"),
+  start_date = "2026-01-01",
+  end_date = "2026-12-31"
+)
+
+dat$kWh <- tapply(dat, dat$profile_id, \(x) {
+  (cumsum(x$watts) - x$watts[1]) / 4 / 1000
+}) |>
+  unlist()
+
+ggplot(transform(dat, profile_facet = profile_id), aes(start_time, kWh)) +
+  geom_line(
+    data = dat[, c("start_time", "kWh", "profile_id")],
+    aes(group = profile_id), 
+    colour = "#CCCCCC"
+  ) +
+  geom_line(aes(colour = profile_id), linewidth = 1) +
+  facet_wrap(vars(profile_facet), ncol = 2) +
+  scale_x_datetime(NULL, date_labels = "%b") +
+  scale_y_continuous(breaks = c(0, 500, 1000)) +
+  scale_colour_manual(
+    values = c(
+      "H25" = "#961BFA",
+      "P25" = "#FA9529",
+      "S25" = "#0CC792"
+    )
+  ) +
+  labs(
+    title = "H0 vs. H25, S25, and P25",
+    subtitle = "Cumulative energy consumption over the course of one year",
+    caption = "data: www.bdew.de",
+    y = "kWh"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(strip.text.y.right = element_text(angle = 0)) +
+  theme(panel.grid.minor.x = element_blank()) +
+  theme(panel.grid.minor.y = element_blank()) +
+  theme(
+    panel.grid = element_line(
+      linetype = "12",
+      lineend = "round",
+      colour = "#FAF6F4"
+    )
+  )
+```
+
+`H25` tracks `H0` almost exactly, confirming that the updated household profile
+represents a similar consumption pattern to its 1999 predecessor. `P25` and
+`S25`, on the other hand, show a flattening of the cumulative curve from spring
+through summer: households with a photovoltaic system — and even more so those
+with additional battery storage — draw less energy from the grid during the
+months of high solar yield.
+
 ### Generate a Standard Load Profile
 
 To create a standard load profile for a specified time period, call the `slp_generate()` function:
@@ -223,96 +314,6 @@ For more information, details about the data, and an explanation of the algorith
 see the [algorithm step-by-step vignette](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
 or run `vignette("algorithm-step-by-step", package = "standardlastprofile")` locally.
 
-## 2025 Profiles
-
-In 2025, BDEW published an updated set of standard load profiles reflecting
-changes in electricity consumption patterns since the original 1999 study. Five
-new profiles are included:
-
-- `H25`: households — updated version of `H0`
-- `G25`: commerce (general) — updated version of `G0`
-- `L25`: agriculture — updated version of `L0`
-- `P25`: combination profile for households with a photovoltaic (PV) system
-- `S25`: combination profile for households with a PV system and battery storage
-
-Unlike the 1999 profiles, which group days into three seasonal periods
-(`winter`, `summer`, `transition`), the 2025 profiles provide a separate set
-of values for each calendar month. `P25` and `S25` are entirely new profile
-types with no 1999 equivalent, capturing the growing role of distributed
-generation and storage in residential electricity consumption.
-
-```{r bdew-2025-small_multiples, echo = FALSE, fig.asp = 1.2, fig.retina = 2}
-#| fig.alt = "Small multiple line chart of five standard load profiles published
-#|  by the German Association of Energy and Water Industries (BDEW) in 2025.
-#|  Lines are coloured by calendar month and faceted by profile and day type."
-
-standardlastprofile:::slp_plot_2025()
-```
-
-The final chart below places the 2025 household profiles side by side against
-`H0` as a reference, showing how cumulative energy consumption diverges over
-the course of a year. 
-
-```{r H0_vs_2025, echo=FALSE, message=FALSE, fig.asp=0.84, fig.retina=2}
-#| fig.alt = "Faceted line plot with three panels for profiles H25, P25, and
-#|  S25. Each panel shows cumulative energy consumption in kWh over 2026.
-#|  A grey reference line shows H0 in every panel. H25 tracks H0 closely,
-#|  while P25 and S25 diverge due to photovoltaic generation and battery
-#|  storage respectively."
-dat <- slp_generate(
-  profile_id = c("H0", "H25", "P25", "S25"),
-  start_date = "2026-01-01",
-  end_date = "2026-12-31"
-)
-
-dat$kWh <- tapply(dat, dat$profile_id, \(x) {
-  (cumsum(x$watts) - x$watts[1]) / 4 / 1000
-}) |>
-  unlist()
-
-ggplot(transform(dat, profile_facet = profile_id), aes(start_time, kWh)) +
-  geom_line(
-    data = dat[, c("start_time", "kWh", "profile_id")],
-    aes(group = profile_id), 
-    colour = "#CCCCCC"
-  ) +
-  geom_line(aes(colour = profile_id), linewidth = 1) +
-  facet_wrap(vars(profile_facet), ncol = 2) +
-  scale_x_datetime(NULL, date_labels = "%b") +
-  scale_y_continuous(breaks = c(0, 500, 1000)) +
-  scale_colour_manual(
-    values = c(
-      "H25" = "#961BFA",
-      "P25" = "#FA9529",
-      "S25" = "#0CC792"
-    )
-  ) +
-  labs(
-    title = "H0 vs. H25, S25, and P25",
-    subtitle = "Cumulative energy consumption over the course of one year",
-    caption = "data: www.bdew.de",
-    y = "kWh"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  theme(strip.text.y.right = element_text(angle = 0)) +
-  theme(panel.grid.minor.x = element_blank()) +
-  theme(panel.grid.minor.y = element_blank()) +
-  theme(
-    panel.grid = element_line(
-      linetype = "12",
-      lineend = "round",
-      colour = "#FAF6F4"
-    )
-  )
-```
-
-`H25` tracks `H0` almost exactly, confirming that the updated household profile
-represents a similar consumption pattern to its 1999 predecessor. `P25` and
-`S25`, on the other hand, show a flattening of the cumulative curve from spring
-through summer: households with a photovoltaic system — and even more so those
-with additional battery storage — draw less energy from the grid during the
-months of high solar yield.
 
 ## Source
 You can access the studies and data on standard load profiles for electricity on the website of the BDEW: https://www.bdew.de/energie/standardlastprofile-strom/

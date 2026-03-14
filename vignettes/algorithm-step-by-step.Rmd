@@ -80,7 +80,7 @@ The two generations of profiles come from different source files and use differe
 
 - The **2025 profiles** (`H25`, `G25`, `L25`, `P25`, `S25`) were published as a separate Excel file in which every value is expressed as **energy consumed in the 15-minute interval in kilowatt-hours (kWh)**, but normalised to an annual consumption of **1,000,000 kWh**.[^data-3]
 
-To give users a single, consistent interface we convert all values to watts normalised to 1,000 kWh/a. This conversion is applied once, at data-build time, in `data-raw/DATASET.R`. As a result, `slp_generate()` always returns watts regardless of which profile is requested. We can verify that the normalisation holds for a 2025 profile just as it does for a 1999 profile:
+> To give users a single, consistent interface we convert all values to watts normalised to 1,000 kWh/a. This conversion is applied once, at data-build time, in `data-raw/DATASET.R`. As a result, `slp_generate()` always returns watts regardless of which profile is requested. We can verify that the normalisation holds for a 2025 profile just as it does for a 1999 profile:
 
 [^data-2]: See the source Excel file distributed with the step-by-step guide: <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 
@@ -140,15 +140,15 @@ over the days within a week. For the **1999 profiles**, the `period` definition 
 * `winter`: November 1 to March 20
 * `transition`: March 21 to May 14, and September 15 to October 31
 
-For the **2025 profiles**, each calendar month is treated as its own period
-(`january` … `december`) rather than grouping months into seasons.
+> For the **2025 profiles**, each calendar month is treated as its own period
+> (`january` … `december`) rather than grouping months into seasons.
 
 The 1999 study also found no significant difference in consumption on
 weekdays from Monday to Friday for any group. For this reason, the days Monday
 to Friday are grouped together as `workday`. December 24th and 31st are
 considered Saturdays too if they are not Sundays. Public holidays are regarded as Sundays.
 
-*Note*: The function `slp_generate()` supports by default nationwide
+**Note**: The function `slp_generate()` supports by default nationwide
 public holidays for Germany. Those were retrieved from the
 [nager.Date API](https://github.com/nager/Nager.Date):
 

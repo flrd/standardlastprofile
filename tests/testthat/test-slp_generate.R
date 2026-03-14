@@ -1,22 +1,50 @@
-test_that("end_date expects a ISO date", {
+test_that("end_date: invalid ISO date raises an informative error", {
   expect_error(
-    slp_generate(
-      profile_id = "H0",
-      start_date = Sys.Date(),
-      end_date = "2023-13-01"
-    ),
-    "Please provide a valid date in ISO 8601 format"
+    slp_generate("H0", start_date = Sys.Date(), end_date = "2023-13-01"),
+    "'end_date' must be a valid date"
   )
 })
 
-test_that("start_date expects a ISO date", {
+test_that("start_date: invalid ISO date raises an informative error", {
+  expect_error(
+    slp_generate("H0", start_date = "2023-13-01", end_date = Sys.Date()),
+    "'start_date' must be a valid date"
+  )
+})
+
+test_that("start_date: NULL raises an informative error", {
+  expect_error(
+    slp_generate("H0", start_date = NULL, end_date = "2026-12-31"),
+    "'start_date' is missing"
+  )
+})
+
+test_that("end_date: NULL raises an informative error", {
+  expect_error(
+    slp_generate("H0", start_date = "2026-01-01", end_date = NULL),
+    "'end_date' is missing"
+  )
+})
+
+test_that("start_date: length > 1 raises an informative error", {
   expect_error(
     slp_generate(
-      profile_id = "H0",
-      start_date = "2023-13-01",
-      end_date = Sys.Date()
+      "H0",
+      start_date = c("2026-01-01", "2026-02-01"),
+      end_date = "2026-12-31"
     ),
-    "Please provide a valid date in ISO 8601 format"
+    "'start_date' must be of length 1"
+  )
+})
+
+test_that("end_date: length > 1 raises an informative error", {
+  expect_error(
+    slp_generate(
+      "H0",
+      start_date = "2026-01-01",
+      end_date = c("2026-12-31", "2027-01-01")
+    ),
+    "'end_date' must be of length 1"
   )
 })
 
