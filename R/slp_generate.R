@@ -4,7 +4,7 @@
 #' consumption of 1,000 kWh.
 #'
 #' @param profile_id load profile identifier, required
-#' @param start_date start date in ISO 8601 format greater or equal
+#' @param start_date start date in ISO 8601 format, greater than or equal
 #'   to `"1990-01-01"`, required
 #' @param end_date end date in ISO 8601 format, no later than
 #'   `"2073-12-31"`, required
@@ -138,9 +138,9 @@
 #'   httr2::req_perform() |>
 #'   httr2::resp_body_json()
 #'
-#' is_berlin <- function(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
+#' is_berlin <- \(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
 #' holidays_berlin_2027 <- as.Date(
-#'   vapply(Filter(is_berlin, resp), function(x) x$date, character(1))
+#'   vapply(Filter(is_berlin, resp), \(x) x$date, character(1))
 #' )
 #'
 #' H0_berlin_2027 <- slp_generate(
@@ -149,6 +149,14 @@
 #' )
 #' }
 #'
+#' # when the deprecated state_code and holidays are both supplied, both sets
+#' # of dates are treated as Sundays: user-provided dates from holidays and
+#' # state-specific built-in holidays from state_code are merged
+#' suppressWarnings(
+#'   slp_generate("G0", "2026-04-01", "2026-06-04",
+#'     state_code = "SL", holidays = "2026-04-01")
+#' )
+#'
 #' # consider only nationwide public holidays (default)
 #' H0_2026 <- slp_generate("H0", start, end)
 #'
@@ -156,7 +164,7 @@
 #' sum(H0_2026$watts / 4 / 1000)
 #'
 #' # convert watts to kWh per interval using a wrapper
-#' slp_generate_kwh <- function(...) {
+#' slp_generate_kwh <- \(...) {
 #'   out <- slp_generate(...)
 #'   out$kwh <- out$watts / 4 / 1000
 #'   out
@@ -164,7 +172,7 @@
 #' H0_kwh <- slp_generate_kwh("H0", start, end)
 #' head(H0_kwh)
 #'
-slp_generate <- function(
+slp_generate <- \(
   profile_id,
   start_date,
   end_date,
@@ -252,6 +260,9 @@ slp_generate <- function(
         "DE-TH"
       )
     )
+    # get_holidays() prepends "DE-" internally, so strip it here to avoid
+    # producing "DE-DE-XX" downstream
+    state_code <- sub("^DE-", "", state_code)
   }
 
   # returns vector of class 'Date'

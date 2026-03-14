@@ -69,8 +69,8 @@ Call \code{\link[=slp_info]{slp_info()}} for more information and examples.
 \strong{Day definitions}:
 \itemize{
 \item \code{workday}: Monday to Friday
-\item \code{saturday}: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
-if they are not a Sunday
+\item \code{saturday}: Saturdays; Dec 24th and Dec 31st are also treated as Saturdays
+unless they fall on a Sunday
 \item \code{sunday}: Sundays and all public holidays
 }
 
@@ -88,7 +88,7 @@ As a result, the \code{watts} column in both this dataset and the output of
 normalised to 1,000 kWh/a. To convert to energy consumed per 15-minute
 interval in kWh, divide by 4 and by 1,000:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{watts_to_kwh <- function(x) x / 4 / 1000
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{watts_to_kwh <- \\(x) x / 4 / 1000
 }\if{html}{\out{</div>}}
 }
 \examples{

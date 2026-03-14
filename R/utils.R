@@ -1,6 +1,6 @@
 # create a daily sequence -------------------------------------------------
 
-get_daily_sequence <- function(start_date, end_date) {
+get_daily_sequence <- \(start_date, end_date) {
   if (length(start_date) != 1L || length(end_date) != 1L) {
     stop("'start_date' and 'end_date' must be of length one.")
   }
@@ -23,37 +23,34 @@ get_daily_sequence <- function(start_date, end_date) {
 
 # date helpers ------------------------------------------------------------
 
-is_date <- function(x) {
-  inherits(x, "Date")
-}
+is_date <- \(x) inherits(x, "Date")
 
-as_date <- function(x) {
+as_date <- \(x) {
   if (is_date(x)) {
     return(x)
   }
 
-  out <- tryCatch(
+  tryCatch(
     expr = {
       as.Date.character(x)
     },
-    error = function(e) {
+    error = \(e) {
       # return value in case of error
       return(NA_character_)
     }
   )
-  out
 }
 
 # Map a date to a weekday -------------------------------------------------
 
-get_holidays <- function(x, years, state_code) {
+get_holidays <- \(x, years, state_code) {
   state_code <- paste_dash("DE", state_code)
 
   idx <- x[["year"]] %in% years & x[["region"]] %in% c("DE", state_code)
   x[idx, "holiday"]
 }
 
-get_weekday <- function(x, state_code = NULL, holidays = NULL) {
+get_weekday <- \(x, state_code = NULL, holidays = NULL) {
   if (!is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
   }
@@ -69,19 +66,24 @@ get_weekday <- function(x, state_code = NULL, holidays = NULL) {
 
   x_md <- format_md(x)
 
-  # resolve holiday dates: user-supplied take precedence over built-in data
-  if (!is.null(holidays)) {
+  # resolve holiday dates:
+  # - holidays only:              use user-supplied dates, ignore built-in data
+  # - state_code only (or none):  use built-in data filtered by state
+  # - both:                       merge user-supplied with state built-in data
+  if (!is.null(holidays) && is.null(state_code)) {
     holiday_dates <- holidays
   } else {
     yrs_rng <- range(format_Y(x))
     yrs_int <- as.integer(yrs_rng)
     yrs_seq <- seq.int(yrs_int[1], yrs_int[2])
 
-    holiday_dates <- as.Date(get_holidays(
+    built_in <- as.Date(get_holidays(
       x = holidays_DE,
       years = yrs_seq,
       state_code = state_code
     ))
+
+    holiday_dates <- if (!is.null(holidays)) unique(c(holidays, built_in)) else built_in
   }
 
   # public holidays are mapped to a Sunday
@@ -104,7 +106,7 @@ get_weekday <- function(x, state_code = NULL, holidays = NULL) {
 
 # Map date to consumption period ------------------------------------------
 
-get_period <- function(x) {
+get_period <- \(x) {
   if (!is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
   }
@@ -168,7 +170,7 @@ get_period <- function(x) {
 # check for valid profile_id ----------------------------------------------
 
 # helper to check if profile_id is valid
-match_profile <- function(profile_id) {
+match_profile <- \(profile_id) {
   if (missing(profile_id)) {
     stop("Please provide at least one value as 'profile_id'.")
   }
@@ -201,7 +203,7 @@ match_profile <- function(profile_id) {
         several.ok = TRUE
       )
     },
-    error = function(e) {
+    error = \(e) {
       # return value in case of error
       return(NA_character_)
     }
@@ -220,7 +222,7 @@ match_profile <- function(profile_id) {
 
 # This function adds "DE-" as prefixe to state codes if a user did not provide it,
 # see also: [ISO 3166-2:DE](https://en.wikipedia.org/wiki/ISO_3166-2:DE)
-standardise_state_names <- function(state) {
+standardise_state_names <- \(state) {
   tmp <- c(
     "DE-BW",
     "DE-BY",
@@ -246,14 +248,14 @@ standardise_state_names <- function(state) {
   paste_dash("DE", state)
 }
 
-get_wkday_period <- function(x, state_code = NULL, holidays = NULL) {
+get_wkday_period <- \(x, state_code = NULL, holidays = NULL) {
   paste_snake(
     get_weekday(x, state_code = state_code, holidays = holidays),
     get_period(x)
   )
 }
 
-get_wkday_month <- function(x, state_code = NULL, holidays = NULL) {
+get_wkday_month <- \(x, state_code = NULL, holidays = NULL) {
   month_name <- tolower(month.name[as.integer(format_m(x))])
   paste_snake(
     get_weekday(x, state_code = state_code, holidays = holidays),
@@ -264,7 +266,7 @@ get_wkday_month <- function(x, state_code = NULL, holidays = NULL) {
 
 # dynamization function ---------------------------------------------------
 
-dynamization_fun <- function(x) {
+dynamization_fun <- \(x) {
   1.24 +
     0.0021 * x +
     -0.0000702 * x^2 +
@@ -275,18 +277,18 @@ dynamization_fun <- function(x) {
 
 # dates helpers -----------------------------------------------------------
 
-format_u <- function(x) format.Date(x, "%u") # Weekday as a decimal number (1–7, Monday is 1).
-format_md <- function(x) format.Date(x, "%m-%d") # Month as decimal number - Day of the month
-format_m <- function(x) format.Date(x, "%m") # Month as decimal number (01–12)
-format_Y <- function(x) format.Date(x, "%Y") # Year with century
-format_j <- function(x) format.Date(x, "%j") # Day of year as decimal number (001–366)
+format_u <- \(x) format.Date(x, "%u") # Weekday as a decimal number (1–7, Monday is 1).
+format_md <- \(x) format.Date(x, "%m-%d") # Month as decimal number - Day of the month
+format_m <- \(x) format.Date(x, "%m") # Month as decimal number (01–12)
+format_Y <- \(x) format.Date(x, "%Y") # Year with century
+format_j <- \(x) format.Date(x, "%j") # Day of year as decimal number (001–366)
 
-get_15min_seq <- function(start, end) {
+get_15min_seq <- \(start, end) {
   seq.POSIXt(as.POSIXlt(start), as.POSIXlt(end), by = "15 min")
 }
 
 
 # paste string helpers ----------------------------------------------------
 
-paste_dash <- function(...) paste(..., sep = "-")
-paste_snake <- function(...) paste(..., sep = "_")
+paste_dash <- \(...) paste(..., sep = "-")
+paste_snake <- \(...) paste(..., sep = "_")

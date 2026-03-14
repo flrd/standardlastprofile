@@ -5,7 +5,7 @@ library(httr2)
 
 
 # 1. Helper function for cleaning and matrix conversion -------------------
-process_slp_sheet <- function(
+process_slp_sheet <- \(
   path,
   sheet,
   range,
@@ -54,7 +54,7 @@ cols_2025 <- do.call(
 
 # 3. Import 1999 Data -----------------------------------------------------
 sheets_1999 <- excel_sheets(path_1999)
-load_profiles_1999 <- lapply(sheets_1999, function(sheet) {
+load_profiles_1999 <- lapply(sheets_1999, \(sheet) {
   process_slp_sheet(path_1999, sheet, "A3:J99", cols_1999)
 })
 names(load_profiles_1999) <- sheets_1999
@@ -65,7 +65,7 @@ names(load_profiles_1999) <- sheets_1999
 # 1,000,000 kWh/a. Multiplying by 4 converts to W normalised to 1,000 kWh/a:
 #   kWh / 0.25 h = 4 kW = 4,000 W; 4,000 W / 1,000 = 4 W per 1 kWh/a unit.
 sheets_2025 <- c("H25", "G25", "L25", "P25", "S25")
-load_profiles_2025 <- lapply(sheets_2025, function(sheet) {
+load_profiles_2025 <- lapply(sheets_2025, \(sheet) {
   process_slp_sheet(
     path_2025,
     sheet,
@@ -84,7 +84,7 @@ load_profiles_lst <- c(load_profiles_1999, load_profiles_2025)
 # 6. Create tidy slp dataset ----------------------------------------------
 
 # helper: matrix → long data.table with period column
-mat_to_slp <- function(mat, period_levels) {
+mat_to_slp <- \(mat, period_levels) {
   dt <- as.data.table(mat, keep.rownames = "timestamp")
   dt <- melt(
     dt,
@@ -134,11 +134,9 @@ slp <- rbind(slp_1999, slp_2025)
 # fetch public holidays in Germany from nager.Date API --------------------
 
 # extract nationwide holidays
-is_nationwide <- function(x) {
-  x[["global"]]
-}
+is_nationwide <- \(x) x[["global"]]
 
-get_holidays_DE <- function(year) {
+get_holidays_DE <- \(year) {
   if (year < 1990L || year > 2073L) {
     stop("'API supports 'only' years from 1990 to 2073.")
   }
@@ -161,12 +159,12 @@ get_holidays_DE <- function(year) {
     region = "DE",
     holiday = vapply(
       resp_body[idx_nation],
-      FUN = function(x) x[["date"]],
+      FUN = \(x) x[["date"]],
       FUN.VALUE = character(1)
     )
   )
 
-  holidays_states <- lapply(resp_body[!idx_nation], function(x) {
+  holidays_states <- lapply(resp_body[!idx_nation], \(x) {
     data.frame(
       holiday = x[["date"]],
       region = unlist(x["counties"], use.names = FALSE)
@@ -179,8 +177,8 @@ get_holidays_DE <- function(year) {
 }
 
 years <- seq.int(1990, 2073)
-holidays_DE <- lapply(years, get_holidays_DE)
-holidays_DE <- do.call(rbind, holidays_DE)
+holidays_DE <- lapply(years, get_holidays_DE) |>
+  do.call(rbind, args = _)
 
 
 # profile descriptions ----------------------------------------------------
@@ -279,26 +277,23 @@ details_EN <- c(
 )
 
 # build info lists
-infos_DE <- setNames(
-  lapply(profiles, function(p) {
-    list(
-      profile = p,
-      description = description_DE[[p]],
-      details = details_DE[[p]]
-    )
-  }),
-  profiles
-)
-infos_EN <- setNames(
-  lapply(profiles, function(p) {
-    list(
-      profile = p,
-      description = description_EN[[p]],
-      details = details_EN[[p]]
-    )
-  }),
-  profiles
-)
+infos_DE <- lapply(profiles, \(p) {
+  list(
+    profile = p,
+    description = description_DE[[p]],
+    details = details_DE[[p]]
+  )
+}) |>
+  setNames(profiles)
+
+infos_EN <- lapply(profiles, \(p) {
+  list(
+    profile = p,
+    description = description_EN[[p]],
+    details = details_EN[[p]]
+  )
+}) |>
+  setNames(profiles)
 
 
 # store in data/ to be accessible for users -------------------------------

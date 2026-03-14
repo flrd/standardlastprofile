@@ -21,7 +21,7 @@
 #'
 #' # multiple profile IDs are supported
 #' slp_info(c("G0", "G5"))
-slp_info <- function(profile_id, language = c("EN", "DE")) {
+slp_info <- \(profile_id, language = c("EN", "DE")) {
   profile_id <- match_profile(profile_id)
 
   language <- toupper(language)

@@ -22,7 +22,7 @@ slp_generate(
 \arguments{
 \item{profile_id}{load profile identifier, required}
 
-\item{start_date}{start date in ISO 8601 format greater or equal
+\item{start_date}{start date in ISO 8601 format, greater than or equal
 to \code{"1990-01-01"}, required}
 
 \item{end_date}{end date in ISO 8601 format, no later than
@@ -169,9 +169,9 @@ resp <- httr2::request("https://date.nager.at/api/v3") |>
   httr2::req_perform() |>
   httr2::resp_body_json()
 
-is_berlin <- function(x) isTRUE(x$global) || "DE-BE" \%in\% unlist(x$counties)
+is_berlin <- \(x) isTRUE(x$global) || "DE-BE" \%in\% unlist(x$counties)
 holidays_berlin_2027 <- as.Date(
-  vapply(Filter(is_berlin, resp), function(x) x$date, character(1))
+  vapply(Filter(is_berlin, resp), \(x) x$date, character(1))
 )
 
 H0_berlin_2027 <- slp_generate(
@@ -180,6 +180,14 @@ H0_berlin_2027 <- slp_generate(
 )
 }
 
+# when the deprecated state_code and holidays are both supplied, both sets
+# of dates are treated as Sundays: user-provided dates from holidays and
+# state-specific built-in holidays from state_code are merged
+suppressWarnings(
+  slp_generate("G0", "2026-04-01", "2026-06-04",
+    state_code = "SL", holidays = "2026-04-01")
+)
+
 # consider only nationwide public holidays (default)
 H0_2026 <- slp_generate("H0", start, end)
 
@@ -187,7 +195,7 @@ H0_2026 <- slp_generate("H0", start, end)
 sum(H0_2026$watts / 4 / 1000)
 
 # convert watts to kWh per interval using a wrapper
-slp_generate_kwh <- function(...) {
+slp_generate_kwh <- \(...) {
   out <- slp_generate(...)
   out$kwh <- out$watts / 4 / 1000
   out

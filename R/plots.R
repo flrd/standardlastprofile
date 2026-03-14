@@ -3,7 +3,7 @@
 
 utils::globalVariables(c("slp", "timestamp", "watts", "period"))
 
-slp_plot_1999 <- function() {
+slp_plot_1999 <- \() {
   label_names <- c(
     "saturday" = "Saturday",
     "sunday" = "Sunday",
@@ -67,7 +67,7 @@ slp_plot_1999 <- function() {
     )
 }
 
-slp_plot_2025 <- function(months = c("december", "march", "july")) {
+slp_plot_2025 <- \(months = c("december", "march", "july")) {
   label_names <- c(
     "saturday" = "Saturday",
     "sunday" = "Sunday",

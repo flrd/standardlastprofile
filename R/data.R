@@ -51,8 +51,8 @@
 #'
 #' **Day definitions**:
 #' - `workday`: Monday to Friday
-#' - `saturday`: Saturdays; Dec 24th and Dec 31st are considered Saturdays too
-#' if they are not a Sunday
+#' - `saturday`: Saturdays; Dec 24th and Dec 31st are also treated as Saturdays
+#' unless they fall on a Sunday
 #' - `sunday`: Sundays and all public holidays
 #'
 #' **Units and normalisation**:
@@ -70,7 +70,7 @@
 #' interval in kWh, divide by 4 and by 1,000:
 #'
 #' ```r
-#' watts_to_kwh <- function(x) x / 4 / 1000
+#' watts_to_kwh <- \(x) x / 4 / 1000
 #' ```
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
