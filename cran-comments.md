@@ -21,6 +21,10 @@
 * checking for future file timestamps ... NOTE
   unable to verify current time
 
+## Reverse dependencies
+
+None.
+
 ## Local-only issues (not expected on CRAN)
 
 * checking for non-standard things in the check directory ... NOTE

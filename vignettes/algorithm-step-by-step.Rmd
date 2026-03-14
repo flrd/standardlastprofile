@@ -22,8 +22,7 @@ library(ggplot2)
 ```
 
 Standard load profiles are crucial for electricity providers, grid operators, and
-the energy industry as a whole. They aid in planning and optimizing the demand
-for electricity generation and distribution. Additionally, they serve as the foundation for billing and balancing electricity quantities in the energy
+the energy industry as a whole. They support planning and optimising electricity generation and distribution. Additionally, they serve as the foundation for billing and balancing electricity quantities in the energy
 market. For smaller consumers, the financial expense of continuous consumption measurement is often unreasonable. Energy supply companies can therefore use a standard load profile as the basis for creating a consumption forecast.
 
 The aim of this vignette is to show how the algorithm of the `slp_generate()`
@@ -35,7 +34,7 @@ function works.[^bdew-1] The data in the `slp` dataset forms the basis for all s
 head(slp)
 ```
 
-There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The value for "00:00" indicates the average work done in the morning between 00:00 and 00:15. The `slp` dataset contains 26,784 observations and covers two generations of profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.):
+There are 96 x 1/4 hour measurements of electrical power for each unique combination of `profile_id`, `period` and `day`, which we refer to as the "standard load profile". The value for "00:00" indicates the average power consumed between 00:00 and 00:15. The `slp` dataset contains 26,784 observations and covers two generations of profiles published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.):
 
 * **1999 profiles** (`H0`, `G0`–`G6`, `L0`–`L2`): based on an analysis of 1,209 load profiles of low-voltage electricity consumers. Each profile uses three seasonal `period` values: `summer`, `winter`, and `transition`.[^bdew-2]
 * **2025 profiles** (`H25`, `G25`, `L25`, `P25`, `S25`): an updated set reflecting changes in electricity consumption patterns. Instead of seasons, `period` carries a lowercase month name (`january` … `december`).
@@ -49,55 +48,10 @@ There are 96 x 1/4 hour measurements of electrical power for each unique combina
 #|  the consumption for three different periods over a year, and
 #|  also compare the consumption between different days of a week."
 
-# labeller
-label_names <- c(
-  "saturday" = "Saturday",
-  "sunday" = "Sunday",
-  "workday" = "Workday"
-)
-
-label_fun <- function(x) label_names[[x]]
-
-# 1999 profiles only; reorder facets
-tmp <- slp[slp$profile_id %in% c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"), ]
-tmp$day <- factor(tmp$day, levels = c("workday", "saturday", "sunday"))
-
-# plot
-ggplot(tmp,
-       aes(x = as.POSIXct(x = paste(Sys.Date(), timestamp)),
-           y = watts,
-           color = period)) +
-  geom_line() +
-  facet_grid(profile_id ~ day,
-             scales = "free_y",
-             labeller = labeller(day = as_labeller(label_names))) +
-  scale_x_datetime(NULL, date_breaks = "6 hours", date_labels = "%k:%M") +
-  scale_y_continuous(NULL, n.breaks = 3, limits = c(0, NA)) +
-  scale_color_manual(name = NULL,
-                     values = c(
-                       "winter" = "#961BFA",
-                       "summer" = "#FA9529",
-                       "transition" = "#0CC792"
-                       )) +
-  labs(title = "Standard Load Profiles",
-       subtitle = "96 x 1/4h measurements [in watts], based on consumption of 1,000 kWh/a",
-       caption = "data: www.bdew.de") +
-  theme_minimal() +
-  theme(legend.position = "top") +
-  theme(strip.text.y.right = element_text(angle = 0)) +
-  theme(
-    panel.grid.minor.x = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    panel.grid = element_line(
-      linetype = "12",
-      lineend = "round",
-      colour = "#FAF6F4"
-      )
-  ) +
-  NULL
+standardlastprofile:::slp_plot_1999()
 ```
 
-Those measurements are normalized to an annual consumption of 1,000 kWh. So, if we sum up all the quarter-hour consumption values for a year, the result is (approximately) 1,000 kWh/year.
+Those measurements are normalised to an annual consumption of 1,000 kWh. So, if we convert all the quarter-hourly power measurements to energy and sum them for a year, the result is (approximately) 1,000 kWh/year.
 
 ```{r H0_data, message=FALSE}
 library(standardlastprofile)
@@ -142,7 +96,7 @@ sum(P25_2026$watts / 4 / 1000)
 The values returned by `slp_generate()` represent **average electric power** during each 15-minute interval. To obtain the **energy consumed** during that interval in kWh you can wrap `slp_generate()` once:
 
 ```{r units-wrapper, message=FALSE}
-slp_generate_kwh <- function(...) {
+slp_generate_kwh <- \(...) {
   out <- slp_generate(...)
   out$kwh <- out$watts / 4 / 1000
   out
@@ -178,7 +132,7 @@ end <- as.Date("2023-12-27")
 
 ### Map each day to a period and a weekday
 
-The measured load profiles analyzed in the study showed that electricity
+The measured load profiles analysed in the study showed that electricity
 consumption across all groups fluctuates both over the period of a year and
 over the days within a week. For the **1999 profiles**, the `period` definition is:
 
@@ -194,20 +148,19 @@ weekdays from Monday to Friday for any group. For this reason, the days Monday
 to Friday are grouped together as `workday`. December 24th and 31st are
 considered Saturdays too if they are not Sundays. Public holidays are regarded as Sundays.
 
-*Note*: The package standardlastprofile supports only public holidays for
-Germany. Those were retrieved from the
-[nager.Date API](https://github.com/nager/Nager.Date). Below are
-nationwide holidays for 2024:
+*Note*: The function `slp_generate()` supports by default nationwide
+public holidays for Germany. Those were retrieved from the
+[nager.Date API](https://github.com/nager/Nager.Date):
 
-* Jan 1: New Year's
-* Mar 29: Good Friday
-* Apr 1: Easter Monday
-* May 1: Labor Day
-* May 9: Ascension Day
-* May 20: Whit Monday
-* Oct 3: German Unity Day
-* Dec 25: Christmas Day
-* Dec 26: Boxing Day
+* New Year's (Jan 1)
+* Good Friday
+* Easter Monday
+* Labour Day (May 1)
+* Ascension Day
+* Whit Monday
+* German Unity Day (Oct 3)
+* Christmas Day (Dec 25)
+* Boxing Day (Dec 26)
 
 > State-level holidays are **not** included by default, as these vary by state
 > and can change over time. Use the optional `holidays` argument to pass your
@@ -244,7 +197,7 @@ This function returns a data frame with 4 columns:
 head(G5)
 ```
 
-The data analysis revealed that load fluctuations for both commercial and agricultural customers remain moderate throughout the year. Specifically, for customers and customer groups labeled as `G0` to `G6`, and `L0` to `L2`,the standard load profile can be accurately derived directly from the 3x3 characteristic profile days available in the dataset  `slp`.
+The data analysis revealed that load fluctuations for both commercial and agricultural customers remain moderate throughout the year. Specifically, for customers and customer groups labelled as `G0` to `G6` and `L0` to `L2`, the standard load profile can be accurately derived from the nine characteristic profile day combinations (3 day types × 3 seasonal periods) available in the dataset `slp`.
 
 Below is the code snippet from the [README](https://github.com/flrd/standardlastprofile#generate-a-load-profile),
 which can be used to reproduce the plot for the G5 profile, showcasing the
@@ -290,9 +243,8 @@ household electricity consumption decreases from winter to summer and
 vice versa (at least in Germany). Because of the distinctive annual load
 profile characteristics of household customers, we contend that these customers
 cannot be adequately described through a static representation using characteristic
-days alone. Consequently, the values provided in the `slp` dataset for `H0`,
-`H25`, `P25`, and `S25` are primarily mathematical auxiliary values intended
-for multiplication with a dynamization factor.
+days alone. Consequently, the values in the `slp` dataset for `H0`, `H25`, `P25`, and `S25` serve as
+base values to be scaled by a dynamization factor.
 
 This is taken into account when you call `slp_generate()`. The study suggested
 the application of a 4th order polynomial function to the values of these
@@ -313,7 +265,7 @@ at daily level:
 
 ``` {r H0_2026_daily, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
 # aggregate by day of year as decimal number (1 - 365)
-H0_2026_daily <- by(H0_2026, INDICES = format(H0_2026$start_time, "%j"), FUN = function(x) {
+H0_2026_daily <- by(H0_2026, INDICES = format(H0_2026$start_time, "%j"), FUN = \(x) {
   data.frame(
     start_time = x[["start_time"]][1],
     watts = mean(x[["watts"]])
@@ -348,8 +300,7 @@ ggplot(H0_2026_daily, aes(start_time, watts)) +
   NULL
 ```
 
-This multiplication process aims to generate a representative, dynamic load
-profile. Finally, the following chart compares the dynamic values with their
+This dynamization step produces a representative, dynamic load profile. Finally, the following chart compares the dynamic values with their
 static counterparts.[^bdew-3]
 
   [^bdew-3]: Refer to page 9 in [Anwendung der Repräsentativen VDEW-Lastprofile step-by-step](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).
@@ -382,14 +333,14 @@ for(i in periods) {
 }
 
 # add day column (locale-independent: %u gives 1=Mon…7=Sun)
-out <- lapply(out, function(x) {
+out <- lapply(out, \(x) {
   wday <- as.integer(format(as.Date(x$start_time), "%u"))
   tmp <- ifelse(wday <= 5, "workday", ifelse(wday == 6, "saturday", "sunday"))
   cbind(x, data.frame(day = tmp))
 })
 
 # adds period column
-H0 <- lapply(names(out), function(x) {
+H0 <- lapply(names(out), \(x) {
   cbind(out[[x]], data.frame(period = x))
 })
 
@@ -420,7 +371,7 @@ label_names <- c(
   "workday" = "Workday"
 )
 
-label_fun <- function(x) label_names[[x]]
+label_fun <- \(x) label_names[[x]]
 
 # plot
 library(ggplot2)
