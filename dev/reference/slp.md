@@ -12,7 +12,7 @@ slp
 
 ## Format
 
-A data.frame with 9,504 observations and 5 variables:
+A data.frame with 26,784 observations and 5 variables:
 
 - profile_id:
 
@@ -20,19 +20,20 @@ A data.frame with 9,504 observations and 5 variables:
 
 - period:
 
-  character, one of 'summer', 'winter', 'transition'
+  character, one of `'summer'`, `'winter'`, `'transition'` for 1999
+  profiles; one of `'january'` through `'december'` for 2025 profiles
 
 - day:
 
-  character, one of 'saturday', 'sunday', 'workday'
+  character, one of `'saturday'`, `'sunday'`, `'workday'`
 
 - timestamp:
 
   character, format: %H:%M
 
-- watt:
+- watts:
 
-  numeric, electric power
+  numeric, electric power in watts, normalised to 1,000 kWh/a
 
 ## Source
 
@@ -46,11 +47,12 @@ A data.frame with 9,504 observations and 5 variables:
 
 There are 96 x 1/4h measurements of electrical power for each
 combination of `profile_id`, `period` and `day`, which we refer to as
-the "standard load profile". This dataset results from an analysis of
-1,209 load profiles of low-voltage electricity consumers in Germany,
-published in 1999.
+the "standard load profile".
 
-In total there are 11 `profile_id` for three different customer groups:
+In total there are 16 `profile_id` across two generations of profiles:
+
+**1999 profiles** (based on analysis of 1,209 load profiles of
+low-voltage electricity consumers in Germany):
 
 - Households: `H0`
 
@@ -58,11 +60,26 @@ In total there are 11 `profile_id` for three different customer groups:
 
 - Agriculture: `L0`, `L1`, `L2`
 
+**2025 profiles** (updated profiles published by BDEW in 2025):
+
+- Households: `H25`
+
+- Commercial: `G25`
+
+- Agriculture: `L25`
+
+- Combination profile PV: `P25`
+
+- Combination profile storage and PV: `S25`
+
+The 2025 profiles use calendar months rather than seasons for the
+`period` column (`'january'` through `'december'`).
+
 Call
 [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md)
 for more information and examples.
 
-Period definitions:
+**Period definitions (1999 profiles)**:
 
 - `summer`: May 15 to September 14
 
@@ -70,7 +87,7 @@ Period definitions:
 
 - `transition`: March 21 to May 14, and September 15 to October 31
 
-Day definitions:
+**Day definitions**:
 
 - `workday`: Monday to Friday
 
@@ -78,6 +95,23 @@ Day definitions:
   too if they are not a Sunday
 
 - `sunday`: Sundays and all public holidays
+
+**Units and normalisation**:
+
+The source Excel file for the 1999 profiles stores values in watts (W),
+normalised to an annual consumption of 1,000 kWh/a. The source Excel
+file for the 2025 profiles stores values in kilowatt-hours (kWh) per
+15-minute interval, normalised to 1,000,000 kWh/a. To keep the internal
+representation consistent and backwards compatible, all 2025 values have
+been converted to watts normalised to 1,000 kWh/a.
+
+As a result, the `watts` column in both this dataset and the output of
+[`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
+always represents average electric power in watts, normalised to 1,000
+kWh/a. To convert to energy consumed per 15-minute interval in kWh,
+divide by 4 and by 1,000:
+
+    watts_to_kwh <- function(x) x / 4 / 1000
 
 ## Examples
 

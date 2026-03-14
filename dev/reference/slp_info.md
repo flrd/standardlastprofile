@@ -26,11 +26,13 @@ slp_info(profile_id, language = c("EN", "DE"))
 
 - language:
 
-  one of 'EN' (English), 'DE' (German)
+  one of `"EN"` (default) or `"DE"`
 
 ## Value
 
-A list
+A named list with one element per `profile_id`. Each element is itself a
+list with three character components: `profile` (the identifier),
+`description` (a short label), and `details` (a longer explanation).
 
 ## Examples
 

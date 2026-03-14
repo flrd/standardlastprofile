@@ -55,16 +55,16 @@ result is (approximately) 1,000 kWh/year.
 
 ``` r
 library(standardlastprofile)
-H0_2024 <- slp_generate(
+H0_2026 <- slp_generate(
   profile_id = "H0",
-  start_date = "2024-01-01",
-  end_date = "2024-12-31"
+  start_date = "2026-01-01",
+  end_date = "2026-12-31"
   )
 ```
 
 ``` r
-sum(H0_2024$watts)
-#> [1] 4008335
+sum(H0_2026$watts)
+#> [1] 3992465
 ```
 
 ‘Hold on - didn’t you just say 1,000?!’, you might be thinking. Yes, you
@@ -75,8 +75,59 @@ values to watt-hours, we must, therefore, divide them by 4. Since one
 watt-hour is equal to 1/1000 kilowatt-hour, we also divide by 1,000:
 
 ``` r
-sum(H0_2024$watts / 4 / 1000)
-#> [1] 1002.084
+sum(H0_2026$watts / 4 / 1000)
+#> [1] 998.1163
+```
+
+## Units and normalisation
+
+The two generations of profiles come from different source files and use
+different units:
+
+- The **1999 profiles** (`H0`, `G0`–`G6`, `L0`–`L2`) were published as
+  an Excel file in which every value is already expressed as **average
+  electric power in watts (W)**, normalised so that the annual sum of
+  all 15-minute intervals equals 1,000 kWh.[³](#fn3)
+
+- The **2025 profiles** (`H25`, `G25`, `L25`, `P25`, `S25`) were
+  published as a separate Excel file in which every value is expressed
+  as **energy consumed in the 15-minute interval in kilowatt-hours
+  (kWh)**, but normalised to an annual consumption of **1,000,000
+  kWh**.[⁴](#fn4)
+
+To give users a single, consistent interface we convert all values to
+watts normalised to 1,000 kWh/a. This conversion is applied once, at
+data-build time, in `data-raw/DATASET.R`. As a result,
+[`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
+always returns watts regardless of which profile is requested. We can
+verify that the normalisation holds for a 2025 profile just as it does
+for a 1999 profile:
+
+``` r
+P25_2026 <- slp_generate("P25", "2026-01-01", "2026-12-31")
+sum(P25_2026$watts / 4 / 1000)
+#> [1] 1000.08
+```
+
+### Converting the output to kWh
+
+The values returned by
+[`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
+represent **average electric power** during each 15-minute interval. To
+obtain the **energy consumed** during that interval in kWh you can wrap
+[`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
+once:
+
+``` r
+slp_generate_kwh <- function(...) {
+  out <- slp_generate(...)
+  out$kwh <- out$watts / 4 / 1000
+  out
+}
+
+H0_kwh <- slp_generate_kwh("H0", "2026-01-01", "2026-12-31")
+sum(H0_kwh$kwh)
+#> [1] 998.1163
 ```
 
 ## Algorithm step by step
@@ -87,15 +138,14 @@ you generate (surprise!) a standard load profile. These are the steps
 that are then performed:
 
 1.  Generate a date sequence from `start_date` to `end_date`.
-
 2.  Map each day to combination of `day` and `period` (1999 profiles:
     seasonal period; 2025 profiles: calendar month).
+3.  Use result from 2nd step to extract values from `slp`.[⁵](#fn5)
 
-3.  Use result from 2nd step to extract values from `slp`.[³](#fn3)
+&nbsp;
 
 4.  Apply polynomial function to values of profile identifiers `H0`,
     `H25`, `P25`, and `S25`.
-
 5.  Return data.
 
 ### Generate a date sequence
@@ -127,11 +177,11 @@ For the **2025 profiles**, each calendar month is treated as its own
 period (`january` … `december`) rather than grouping months into
 seasons.
 
-It was also found that there was no significant difference in
-consumption on weekdays from Monday to Friday for any group. For this
-reason, the days Monday to Friday are grouped together as ‘workdays’.
-December 24th and 31st are considered Saturdays too if they are not
-Sundays. Public holidays are regarded as Sundays.
+The 1999 study also found no significant difference in consumption on
+weekdays from Monday to Friday for any group. For this reason, the days
+Monday to Friday are grouped together as `workday`. December 24th and
+31st are considered Saturdays too if they are not Sundays. Public
+holidays are regarded as Sundays.
 
 *Note*: The package standardlastprofile supports only public holidays
 for Germany. Those were retrieved from the [nager.Date
@@ -148,10 +198,15 @@ for 2024:
 - Dec 25: Christmas Day
 - Dec 26: Boxing Day
 
-Use the optional `holidays` argument to supply your own vector of ISO
-8601 dates that should be treated as public holidays. When provided, the
-built-in holiday data are ignored entirely, giving you full control over
-which dates count as holidays.
+> State-level holidays are **not** included by default, as these vary by
+> state and can change over time. Use the optional `holidays` argument
+> to pass your own vector of dates and take full control over which
+> dates are treated as public holidays; the built-in data are then
+> ignored entirely. See the
+> [README](https://flrd.github.io/standardlastprofile/index.html#public-holidays)
+> for an example of how to fetch state-level holidays from the
+> [nager.Date API](https://date.nager.at) and pass them to
+> [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md).
 
 The result of this second step is a mapping from each date to a
 so-called characteristic profile day, i.e. a combination of weekday and
@@ -216,12 +271,12 @@ ggplot(G5, aes(start_time, watts)) +
   scale_x_datetime(
     date_breaks = "1 day",
     date_labels = "%b %d") +
+  scale_y_continuous(NULL, labels = \(x) paste(x, "W")) +
   labs(
     title = "'G5': bakery with bakehouse",
     subtitle = "1/4h measurements, based on consumption of 1,000 kWh/a",
     caption = "data: www.bdew.de",
-    x = NULL,
-    y = "[watts]") +
+    x = NULL) +
   theme_minimal() +
   theme(
     panel.grid.minor.x = element_blank(),
@@ -273,13 +328,13 @@ for profile `H0`; for a clearer picture, the values are aggregated at
 daily level:
 
 ![Line plot of standard load profile 'H0' (households) aggregated by day
-from January 1st to December 31st, 2023. The plot shows that households
+from January 1st to December 31st, 2026. The plot shows that households
 have a continuously decreasing load from winter to summer and vice
-versa.](algorithm-step-by-step_files/figure-html/H0_2024_plot-1.png)
+versa.](algorithm-step-by-step_files/figure-html/H0_2026_plot-1.png)
 
 This multiplication process aims to generate a representative, dynamic
 load profile. Finally, the following chart compares the dynamic values
-with their static counterparts.[⁴](#fn4)
+with their static counterparts.[⁶](#fn6)
 
 ![A plot of standard load profile 'H0' (households) that shows a
 comparision between the static values, and their dynamic
@@ -293,8 +348,14 @@ counterparts.](algorithm-step-by-step_files/figure-html/H0_dynamic-1.png)
 2.  More information on the data and methodology can be found
     [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
-3.  That is actually a lie. There is an internal data object from which
+3.  See the source Excel file distributed with the step-by-step guide:
+    <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
+
+4.  See the BDEW 2025 publication:
+    <https://www.bdew.de/energie/standardlastprofile-strom/>
+
+5.  That is actually a lie. There is an internal data object from which
     the data is extracted for efficiency.
 
-4.  Refer to page 9 in [Anwendung der Repräsentativen VDEW-Lastprofile
+6.  Refer to page 9 in [Anwendung der Repräsentativen VDEW-Lastprofile
     step-by-step](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).

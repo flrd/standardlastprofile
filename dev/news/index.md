@@ -25,12 +25,6 @@
   entirely, giving callers full control over which dates count as
   holidays.
 
-- [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
-  gains a `unit` argument (`"W"` or `"KWH"`, default `"W"`). `"KWH"`
-  converts the `watts` column from average power (W) to energy consumed
-  per 15-minute interval (kWh). Matching is case-insensitive, so `"kWh"`
-  is accepted silently.
-
 ### Deprecations
 
 - The `state_code` argument of
@@ -48,14 +42,8 @@
   `"workday"` instead of `"saturday"`
   ([\#2](https://github.com/flrd/standardlastprofile/issues/2)).
 
-- The christmastide rule (`get_weekday()`) now runs after the
-  public-holiday lookup. The condition checks the already-resolved
-  `weekday` vector (`weekday != "sunday"`) rather than the raw calendar
-  weekday, so a Dec 24 or Dec 31 that is also a public holiday is never
-  redundantly set to `"saturday"` before being overridden.
-
 ## standardlastprofile 1.0.0
 
 CRAN release: 2023-12-11
 
-- Initial CRAN release 🎉
+- Initial CRAN release
