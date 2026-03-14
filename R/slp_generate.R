@@ -172,7 +172,11 @@ slp_generate <- function(
   state_code = deprecated()
 ) {
   if (lifecycle::is_present(state_code)) {
-    lifecycle::deprecate_warn("1.1.0", "slp_generate(state_code)", "slp_generate(holidays)")
+    lifecycle::deprecate_warn(
+      "1.1.0",
+      "slp_generate(state_code)",
+      "slp_generate(holidays)"
+    )
   } else {
     state_code <- NULL
   }
@@ -203,13 +207,50 @@ slp_generate <- function(
     state_code <- toupper(state_code)
 
     # users can provide state code without leading "DE-", for convenience
-    if (state_code %in% c("BW", "BY", "ST", "BE", "MV", "SL", "RP", "NW", "HE", "SH", "NI", "BB", "HH", "HB", "SN", "TH")) {
+    if (
+      state_code %in%
+        c(
+          "BW",
+          "BY",
+          "ST",
+          "BE",
+          "MV",
+          "SL",
+          "RP",
+          "NW",
+          "HE",
+          "SH",
+          "NI",
+          "BB",
+          "HH",
+          "HB",
+          "SN",
+          "TH"
+        )
+    ) {
       state_code <- standardise_state_names(state_code)
     }
 
     state_code <- match.arg(
       state_code,
-      choices = c("DE-BW", "DE-BY", "DE-ST", "DE-BE", "DE-MV", "DE-SL", "DE-RP", "DE-NW", "DE-HE", "DE-SH", "DE-NI", "DE-BB", "DE-HH", "DE-HB", "DE-SN", "DE-TH")
+      choices = c(
+        "DE-BW",
+        "DE-BY",
+        "DE-ST",
+        "DE-BE",
+        "DE-MV",
+        "DE-SL",
+        "DE-RP",
+        "DE-NW",
+        "DE-HE",
+        "DE-SH",
+        "DE-NI",
+        "DE-BB",
+        "DE-HH",
+        "DE-HB",
+        "DE-SN",
+        "DE-TH"
+      )
     )
   }
 
@@ -223,9 +264,16 @@ slp_generate <- function(
   names(vals) <- profile_id
 
   # 1999 profiles use period-based matrix columns (e.g. "saturday_winter")
-  profiles_1999 <- intersect(profile_id, c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"))
+  profiles_1999 <- intersect(
+    profile_id,
+    c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2")
+  )
   if (length(profiles_1999) > 0L) {
-    wkday_period <- get_wkday_period(daily_seq, state_code = state_code, holidays = holidays)
+    wkday_period <- get_wkday_period(
+      daily_seq,
+      state_code = state_code,
+      holidays = holidays
+    )
     for (profile in profiles_1999) {
       vals[[profile]] <- tmp[[profile]][, wkday_period]
     }
@@ -234,7 +282,11 @@ slp_generate <- function(
   # 2025 profiles use month-based matrix columns (e.g. "saturday_january")
   profiles_2025 <- intersect(profile_id, c("H25", "G25", "L25", "P25", "S25"))
   if (length(profiles_2025) > 0L) {
-    wkday_month <- get_wkday_month(daily_seq, state_code = state_code, holidays = holidays)
+    wkday_month <- get_wkday_month(
+      daily_seq,
+      state_code = state_code,
+      holidays = holidays
+    )
     for (profile in profiles_2025) {
       vals[[profile]] <- tmp[[profile]][, wkday_month]
     }

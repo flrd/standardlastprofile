@@ -9,7 +9,9 @@ get_daily_sequence <- function(start_date, end_date) {
   end_date <- as_date(end_date)
 
   if (anyNA(c(start_date, end_date))) {
-    stop("'start_date' and 'end_date' must follow the ISO 8601 date format, i.e. '%Y-%m-%d'.")
+    stop(
+      "'start_date' and 'end_date' must follow the ISO 8601 date format, i.e. '%Y-%m-%d'."
+    )
   }
 
   if (start_date > end_date) {
@@ -179,8 +181,22 @@ match_profile <- function(profile_id) {
       match.arg(
         arg = profile_id,
         choices = c(
-          "H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2",
-          "H25", "G25", "L25", "P25", "S25"
+          "H0",
+          "G0",
+          "G1",
+          "G2",
+          "G3",
+          "G4",
+          "G5",
+          "G6",
+          "L0",
+          "L1",
+          "L2",
+          "H25",
+          "G25",
+          "L25",
+          "P25",
+          "S25"
         ),
         several.ok = TRUE
       )
@@ -192,7 +208,9 @@ match_profile <- function(profile_id) {
   )
 
   if (anyNA(out)) {
-    stop("'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2', 'H25', 'G25', 'L25', 'P25', 'S25'.")
+    stop(
+      "'profile_id' should be one of 'H0', 'G0', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'L0', 'L1', 'L2', 'H25', 'G25', 'L25', 'P25', 'S25'."
+    )
   }
 
   out
@@ -203,7 +221,24 @@ match_profile <- function(profile_id) {
 # This function adds "DE-" as prefixe to state codes if a user did not provide it,
 # see also: [ISO 3166-2:DE](https://en.wikipedia.org/wiki/ISO_3166-2:DE)
 standardise_state_names <- function(state) {
-  tmp <- c("DE-BW", "DE-BY", "DE-ST", "DE-BE", "DE-MV", "DE-SL", "DE-RP", "DE-NW", "DE-HE", "DE-SH", "DE-NI", "DE-BB", "DE-HH", "DE-HB", "DE-SN", "DE-TH")
+  tmp <- c(
+    "DE-BW",
+    "DE-BY",
+    "DE-ST",
+    "DE-BE",
+    "DE-MV",
+    "DE-SL",
+    "DE-RP",
+    "DE-NW",
+    "DE-HE",
+    "DE-SH",
+    "DE-NI",
+    "DE-BB",
+    "DE-HH",
+    "DE-HB",
+    "DE-SN",
+    "DE-TH"
+  )
   state <- match.arg(
     state,
     sub("DE-", "", tmp)
@@ -212,19 +247,29 @@ standardise_state_names <- function(state) {
 }
 
 get_wkday_period <- function(x, state_code = NULL, holidays = NULL) {
-  paste_snake(get_weekday(x, state_code = state_code, holidays = holidays), get_period(x))
+  paste_snake(
+    get_weekday(x, state_code = state_code, holidays = holidays),
+    get_period(x)
+  )
 }
 
 get_wkday_month <- function(x, state_code = NULL, holidays = NULL) {
   month_name <- tolower(month.name[as.integer(format_m(x))])
-  paste_snake(get_weekday(x, state_code = state_code, holidays = holidays), month_name)
+  paste_snake(
+    get_weekday(x, state_code = state_code, holidays = holidays),
+    month_name
+  )
 }
 
 
 # dynamization function ---------------------------------------------------
 
 dynamization_fun <- function(x) {
-  1.24 + 0.0021 * x + -0.0000702 * x^2 + 0.00000032 * x^3 + -0.000000000392 * x^4
+  1.24 +
+    0.0021 * x +
+    -0.0000702 * x^2 +
+    0.00000032 * x^3 +
+    -0.000000000392 * x^4
 }
 
 
