@@ -83,7 +83,11 @@ get_weekday <- \(x, state_code = NULL, holidays = NULL) {
       state_code = state_code
     ))
 
-    holiday_dates <- if (!is.null(holidays)) unique(c(holidays, built_in)) else built_in
+    holiday_dates <- if (!is.null(holidays)) {
+      unique(c(holidays, built_in))
+    } else {
+      built_in
+    }
   }
 
   # public holidays are mapped to a Sunday

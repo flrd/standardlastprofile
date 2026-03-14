@@ -131,7 +131,10 @@ test_that("deprecated state_code + holidays: both sets treated as Sunday", {
   )
 
   expected_sunday <- \(period) {
-    slp[slp$profile_id == "G0" & slp$period == period & slp$day == "sunday", "watts"]
+    slp[
+      slp$profile_id == "G0" & slp$period == period & slp$day == "sunday",
+      "watts"
+    ]
   }
 
   april_1 <- result$watts[as.Date(result$start_time) == "2026-04-01"]
@@ -153,7 +156,7 @@ test_that("holidays: April 1st as custom holiday differs in 2022/2023 but not 20
 
   for (yr in c(2022L, 2023L, 2024L)) {
     date <- paste0(yr, "-04-01")
-    with_hol    <- slp_generate("G0", date, date, holidays = date)
+    with_hol <- slp_generate("G0", date, date, holidays = date)
     without_hol <- slp_generate("G0", date, date)
 
     if (yr == 2024L) {
