@@ -8,7 +8,7 @@ H0_2024 <- slp_generate(
 H0_2024_daily <- by(
   H0_2024,
   INDICES = format(H0_2024$start_time, "%j"),
-  FUN = function(x) {
+  FUN = \(x) {
     data.frame(
       start_time = x[["start_time"]][1],
       watts = mean(x[["watts"]])
@@ -68,13 +68,13 @@ for (i in periods) {
   out[[i]] <- slp_generate("H0", lst[[i]][[1]], lst[[i]][[3]])
 }
 
-out <- lapply(out, function(x) {
+out <- lapply(out, \(x) {
   wday <- as.integer(format(as.Date(x$start_time), "%u"))
   tmp <- ifelse(wday <= 5, "workday", ifelse(wday == 6, "saturday", "sunday"))
   cbind(x, data.frame(day = tmp))
 })
 
-H0 <- lapply(names(out), function(x) {
+H0 <- lapply(names(out), \(x) {
   cbind(out[[x]], data.frame(period = x))
 })
 H0 <- do.call(rbind, H0)

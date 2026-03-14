@@ -7,7 +7,7 @@ label_names <- c(
   "workday" = "Workday"
 )
 
-label_fun <- function(x) label_names[[x]]
+label_fun <- \(x) label_names[[x]]
 
 # 1999 profiles only; reorder facets
 tmp <- slp[

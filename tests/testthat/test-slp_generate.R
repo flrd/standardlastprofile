@@ -112,12 +112,64 @@ test_that("profile_id is required", {
   )
 })
 
+test_that("deprecated state_code + holidays: both sets treated as Sunday", {
+  # 2026-04-01 is a Wednesday (workday) — overridden to Sunday via holidays
+  # 2026-06-04 is Corpus Christi, a Saarland-specific holiday (not nationwide)
+  #            — overridden to Sunday via state_code = "SL"
+  # G0 has no dynamization, so all Sundays in the same period share the same
+  # 96 watt values and can be compared directly against the slp dataset.
+
+  expect_warning(
+    result <- slp_generate(
+      "G0",
+      start_date = "2026-04-01",
+      end_date = "2026-06-04",
+      state_code = "SL",
+      holidays = "2026-04-01"
+    ),
+    "deprecated"
+  )
+
+  expected_sunday <- \(period) {
+    slp[slp$profile_id == "G0" & slp$period == period & slp$day == "sunday", "watts"]
+  }
+
+  april_1 <- result$watts[as.Date(result$start_time) == "2026-04-01"]
+  june_4 <- result$watts[as.Date(result$start_time) == "2026-06-04"]
+
+  # April 1 is in the transition period
+  expect_equal(april_1, expected_sunday("transition"))
+
+  # June 4 is in the summer period
+  expect_equal(june_4, expected_sunday("summer"))
+})
+
+test_that("holidays: April 1st as custom holiday differs in 2022/2023 but not 2024", {
+  # 2022-04-01 is a Friday  (workday)   → becomes Sunday with holiday
+  # 2023-04-01 is a Saturday            → becomes Sunday with holiday
+  # 2024-04-01 is Easter Monday         → already a built-in nationwide holiday
+  #                                       (Sunday), so adding it explicitly
+  #                                       changes nothing
+
+  for (yr in c(2022L, 2023L, 2024L)) {
+    date <- paste0(yr, "-04-01")
+    with_hol    <- slp_generate("G0", date, date, holidays = date)
+    without_hol <- slp_generate("G0", date, date)
+
+    if (yr == 2024L) {
+      expect_equal(with_hol$watts, without_hol$watts)
+    } else {
+      expect_false(identical(with_hol$watts, without_hol$watts))
+    }
+  }
+})
+
 test_that("yearly calls concatenated equal a single call over the full supported range", {
   skip_on_cran()
 
   years <- 1990:2073
 
-  chunks <- lapply(years, function(y) {
+  chunks <- lapply(years, \(y) {
     slp_generate(
       "H0",
       start_date = paste0(y, "-01-01"),
