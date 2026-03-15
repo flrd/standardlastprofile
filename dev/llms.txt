@@ -32,10 +32,9 @@ pak::pkg_install("flrd/standardlastprofile")
 - `slp` – A dataset containing BDEW standard load profiles for
   electricity.
 - [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
-  – An interface for generating a standard load profile for a
-  user-defined time period.
+  – Generate a standard load profile for a user-defined time period.
 - [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md)
-  – A function for retrieving details of standard load profiles.
+  – Retrieve details of standard load profiles.
 
 ## About the Data
 
@@ -199,12 +198,12 @@ State-level holidays are *not* included because they vary by state and
 can change over time. Use the `holidays` argument to supply your own
 dates — the built-in data are then ignored entirely.
 
-The example below fetches all 2027 public holidays for Germany from the
-[nager.Date API](https://date.nager.at), keeps those that apply to
-Berlin (`global == TRUE` or `"DE-BE"` in `counties`), and passes them to
+The example below fetches all 2027 public holidays for Germany and the
+state of Berlin from the [nager.Date API](https://date.nager.at), and
+passes them to
 [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md).
 Berlin observes **International Women’s Day** (8 March) as an additional
-public holiday not shared by most other states.
+public holiday not shared by any other state.
 
 ``` r
 library(httr2)
@@ -228,8 +227,9 @@ H0_berlin_2027 <- slp_generate(
 )
 ```
 
-To generate a separate profile for each of the 16 German states, repeat
-the same pattern in a loop — one API call suffices, re-filter per state:
+To generate a standard load profile including holidays for each of the
+16 German states, repeat the same pattern in a loop — one API call
+suffices, re-filter per state:
 
 ``` r
 states <- c(
@@ -246,17 +246,20 @@ for (state in states) {
   holidays_state <- as.Date(
     vapply(Filter(is_state, resp), \(x) x$date, character(1))
   )
-  results[[state]] <- slp_generate("H0", "2027-01-01", "2027-12-31",
+  results[[state]] <- slp_generate(
+    profile_id = "H0",
+    start_date = "2027-01-01",
+    end_date = "2027-12-31",
     holidays = holidays_state
   )
 }
 ```
 
 For more information, details about the data, and an explanation of the
-algorithm, see the [algorithm step-by-step
-vignette](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
+algorithm, see the
+[vignette](https://flrd.github.io/standardlastprofile/articles/standardlastprofile.html)
 or run
-[`vignette("algorithm-step-by-step", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/dev/articles/algorithm-step-by-step.md)
+[`vignette("standardlastprofile", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/dev/articles/standardlastprofile.md)
 locally.
 
 ## Source
@@ -286,7 +289,7 @@ By participating in this project you agree to abide by its terms.
 ## Functions
 
 - [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
-  : Generate a Standard Load Profile
+  : Generate a Standard Load Profile for Electricity
 - [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md)
   : Retrieve information on standard load profiles
 
@@ -295,4 +298,4 @@ By participating in this project you agree to abide by its terms.
 ### All vignettes
 
 - [Generate a standard load
-  profile](https://flrd.github.io/standardlastprofile/dev/articles/algorithm-step-by-step.md):
+  profile](https://flrd.github.io/standardlastprofile/dev/articles/standardlastprofile.md):

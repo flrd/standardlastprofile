@@ -8,6 +8,6 @@
 ## Functions
 
 - [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
-  : Generate a Standard Load Profile
+  : Generate a Standard Load Profile for Electricity
 - [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md)
   : Retrieve information on standard load profiles
