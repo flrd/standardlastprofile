@@ -7,8 +7,10 @@
 
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
-[![CRAN version](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
-[![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+[![CRAN
+version](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+[![CRAN
+downloads](http://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
 <!-- badges: end -->
 
 This package provides data on standard load profiles for electricity,
@@ -39,11 +41,11 @@ pak::pkg_install("flrd/standardlastprofile")
 
 ## Included Features
 
-- `slp` – A dataset containing BDEW standard load profiles for
+- `slp` — a dataset containing BDEW standard load profiles for
   electricity.
-- `slp_generate()` – Generate a standard load profile for a user-defined
+- `slp_generate()` — generate a standard load profile for a user-defined
   time period.
-- `slp_info()` – Retrieve details of standard load profiles.
+- `slp_info()` — retrieve details of standard load profiles.
 
 ## About the Data
 
