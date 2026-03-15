@@ -41,10 +41,9 @@ pak::pkg_install("flrd/standardlastprofile")
 
 - `slp` – A dataset containing BDEW standard load profiles for
   electricity.
-- `slp_generate()` – An interface for generating a standard load profile
-  for a user-defined time period.
-- `slp_info()` – A function for retrieving details of standard load
-  profiles.
+- `slp_generate()` – Generate a standard load profile for a user-defined
+  time period.
+- `slp_info()` – Retrieve details of standard load profiles.
 
 ## About the Data
 
@@ -201,11 +200,11 @@ State-level holidays are *not* included because they vary by state and
 can change over time. Use the `holidays` argument to supply your own
 dates — the built-in data are then ignored entirely.
 
-The example below fetches all 2027 public holidays for Germany from the
-[nager.Date API](https://date.nager.at), keeps those that apply to
-Berlin (`global == TRUE` or `"DE-BE"` in `counties`), and passes them to
-`slp_generate()`. Berlin observes **International Women’s Day** (8
-March) as an additional public holiday not shared by most other states.
+The example below fetches all 2027 public holidays for Germany and the
+state of Berlin from the [nager.Date API](https://date.nager.at), and
+passes them to `slp_generate()`. Berlin observes **International Women’s
+Day** (8 March) as an additional public holiday not shared by any other
+state.
 
 ``` r
 library(httr2)
@@ -229,8 +228,9 @@ H0_berlin_2027 <- slp_generate(
 )
 ```
 
-To generate a separate profile for each of the 16 German states, repeat
-the same pattern in a loop — one API call suffices, re-filter per state:
+To generate a standard load profile including holidays for each of the
+16 German states, repeat the same pattern in a loop — one API call
+suffices, re-filter per state:
 
 ``` r
 states <- c(
@@ -247,17 +247,20 @@ for (state in states) {
   holidays_state <- as.Date(
     vapply(Filter(is_state, resp), \(x) x$date, character(1))
   )
-  results[[state]] <- slp_generate("H0", "2027-01-01", "2027-12-31",
+  results[[state]] <- slp_generate(
+    profile_id = "H0",
+    start_date = "2027-01-01",
+    end_date = "2027-12-31",
     holidays = holidays_state
   )
 }
 ```
 
 For more information, details about the data, and an explanation of the
-algorithm, see the [algorithm step-by-step
-vignette](https://flrd.github.io/standardlastprofile/articles/algorithm-step-by-step.html)
+algorithm, see the
+[vignette](https://flrd.github.io/standardlastprofile/articles/standardlastprofile.html)
 or run
-`vignette("algorithm-step-by-step", package = "standardlastprofile")`
+`vignette("standardlastprofile", package = "standardlastprofile")`
 locally.
 
 ## Source

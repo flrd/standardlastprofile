@@ -1,6 +1,6 @@
-#' Generate a Standard Load Profile
+#' Generate a Standard Load Profile for Electricity
 #'
-#' Generate a standard load profile, normalised to an annual
+#' Generate a standard load profile in watts, normalised to an annual
 #' consumption of 1,000 kWh.
 #'
 #' @param profile_id load profile identifier, required
@@ -20,7 +20,7 @@
 #' - `start_time`, POSIXct / POSIXlt, start time
 #' - `end_time`, POSIXct / POSIXlt, end time
 #' - `watts`, numeric, average electric power in watts per 15-minute interval,
-#'   normalised to an annual consumption of 1,000 kWh/a
+#'   normalised to an annual consumption of 1,000 kWh
 #'
 #' @details
 #' In the German electricity market, a standard load profile is a
@@ -29,7 +29,8 @@
 #' combination of `profile_id`, `period`, and `day` there are 96 quarter-hourly
 #' measurements of electrical power, normalised to an annual consumption of
 #' 1,000 kWh. This function supports data from 1990 to 2073.
-#' See also `vignette("algorithm-step-by-step")`.
+#'
+#' See `vignette("standardlastprofile")` for more details about the algorithm.
 #'
 #' ## Profile IDs
 #'
@@ -96,8 +97,8 @@
 #'
 #' The 1999 source file stores values in watts (W), normalised to 1,000 kWh/a.
 #' The 2025 source file stores values in kWh per 15-minute interval, normalised
-#' to 1,000,000 kWh/a. To keep all profiles consistent and backwards
-#' compatible, the 2025 values are converted to watts normalised to 1,000 kWh/a.
+#' to 1,000,000 kWh/a. To keep all profiles consistent, the 2025 values
+#' are converted to watts normalised to 1,000 kWh/a.
 #'
 #' To convert to energy consumed per interval in kWh:
 #'
@@ -149,16 +150,17 @@
 #' )
 #' }
 #'
+#' # consider only nationwide public holidays (default)
+#' H0_2026 <- slp_generate("H0", start, end)
+#'
 #' # when the deprecated state_code and holidays are both supplied, both sets
 #' # of dates are treated as Sundays: user-provided dates from holidays and
 #' # state-specific built-in holidays from state_code are merged
 #' suppressWarnings(
-#'   slp_generate("G0", "2026-04-01", "2026-06-04",
-#'     state_code = "SL", holidays = "2026-04-01")
+#'   slp_generate("G0", "2026-04-01", "2026-04-01",
+#'     state_code = "SL", holidays = "2026-04-01") |>
+#'     head()
 #' )
-#'
-#' # consider only nationwide public holidays (default)
-#' H0_2026 <- slp_generate("H0", start, end)
 #'
 #' # electric power values are normalised to consumption of ~1,000 kWh/a
 #' sum(H0_2026$watts / 4 / 1000)

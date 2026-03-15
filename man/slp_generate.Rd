@@ -2,7 +2,7 @@
 % Please edit documentation in R/slp_generate.R
 \name{slp_generate}
 \alias{slp_generate}
-\title{Generate a Standard Load Profile}
+\title{Generate a Standard Load Profile for Electricity}
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
@@ -43,11 +43,11 @@ A data.frame with four variables:
 \item \code{start_time}, POSIXct / POSIXlt, start time
 \item \code{end_time}, POSIXct / POSIXlt, end time
 \item \code{watts}, numeric, average electric power in watts per 15-minute interval,
-normalised to an annual consumption of 1,000 kWh/a
+normalised to an annual consumption of 1,000 kWh
 }
 }
 \description{
-Generate a standard load profile, normalised to an annual
+Generate a standard load profile in watts, normalised to an annual
 consumption of 1,000 kWh.
 }
 \details{
@@ -57,7 +57,8 @@ for customer groups that are not continuously metered. For each distinct
 combination of \code{profile_id}, \code{period}, and \code{day} there are 96 quarter-hourly
 measurements of electrical power, normalised to an annual consumption of
 1,000 kWh. This function supports data from 1990 to 2073.
-See also \code{vignette("algorithm-step-by-step")}.
+
+See \code{vignette("standardlastprofile")} for more details about the algorithm.
 \subsection{Profile IDs}{
 
 There are 16 profile IDs across two generations:
@@ -133,8 +134,8 @@ entirely.
 
 The 1999 source file stores values in watts (W), normalised to 1,000 kWh/a.
 The 2025 source file stores values in kWh per 15-minute interval, normalised
-to 1,000,000 kWh/a. To keep all profiles consistent and backwards
-compatible, the 2025 values are converted to watts normalised to 1,000 kWh/a.
+to 1,000,000 kWh/a. To keep all profiles consistent, the 2025 values
+are converted to watts normalised to 1,000 kWh/a.
 
 To convert to energy consumed per interval in kWh:
 
@@ -180,16 +181,17 @@ H0_berlin_2027 <- slp_generate(
 )
 }
 
+# consider only nationwide public holidays (default)
+H0_2026 <- slp_generate("H0", start, end)
+
 # when the deprecated state_code and holidays are both supplied, both sets
 # of dates are treated as Sundays: user-provided dates from holidays and
 # state-specific built-in holidays from state_code are merged
 suppressWarnings(
-  slp_generate("G0", "2026-04-01", "2026-06-04",
-    state_code = "SL", holidays = "2026-04-01")
+  slp_generate("G0", "2026-04-01", "2026-04-01",
+    state_code = "SL", holidays = "2026-04-01") |>
+    head()
 )
-
-# consider only nationwide public holidays (default)
-H0_2026 <- slp_generate("H0", start, end)
 
 # electric power values are normalised to consumption of ~1,000 kWh/a
 sum(H0_2026$watts / 4 / 1000)

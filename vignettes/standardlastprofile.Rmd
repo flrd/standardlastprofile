@@ -7,13 +7,29 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  out.width = "95%",
-  fig.align = "center"
+  collapse  = TRUE,
+  comment   = "#>",
+  dpi       = 300,
+  fig.asp   = 0.618,
+  fig.width = 6,
+  fig.height = 3,
+  fig.align = "center",
+  out.width = "90%"
 )
+```
+
+```{=html}
+<style>
+  .content h3 {
+    margin-top: -30px !important;
+  }
+  
+  details {
+    margin-bottom: 40px;
+  }
+</style>
 ```
 
 ``` {r, message=FALSE, include=FALSE}

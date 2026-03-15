@@ -6,6 +6,13 @@ template:
     border-radius: 0.5rem
     btn-border-radius: 0.25rem
 
+navbar:
+  components:
+    intro: ~
+    articles:
+      text: Algorithm
+      href: articles/standardlastprofile.html
+
 reference:
 - title: Data
   contents:
