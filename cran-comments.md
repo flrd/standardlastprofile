@@ -10,16 +10,19 @@
 
 ## Test environments
 
-* local Ubuntu 24.04, R 4.4.x
-* win-builder (R devel, R release)
-* macOS builder (R release)
+* local Ubuntu 24.04, R 4.3.3
+* win-builder (R devel): 0 errors | 0 warnings | 1 note
+* macOS builder (R 4.6.0 devel, Apple M1): 0 errors | 0 warnings | 0 notes
 
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
 
-* checking for future file timestamps ... NOTE
-  unable to verify current time
+* checking CRAN incoming feasibility ... NOTE
+  Possibly misspelled words in DESCRIPTION: SLPs, Standardlastprofile, Strom
+  These are domain-specific terms: SLPs is an acronym for Standard Load
+  Profiles; Standardlastprofile and Strom are the German source titles cited
+  in the References section.
 
 ## Reverse dependencies
 
@@ -27,12 +30,6 @@ None.
 
 ## Local-only issues (not expected on CRAN)
 
-* checking for non-standard things in the check directory ... NOTE
-  Found the following files/directories: 'standardlastprofile-manual.tex'
-  Build artefact from PDF manual generation; not present on CRAN's
-  check infrastructure.
-
-The local check also produced two warnings caused by missing system tools
-(qpdf, inconsolata.sty) that are not present on this machine but are standard
-on CRAN infrastructure. The package was additionally checked on win-builder
-and macOS builder with 0 errors, 0 warnings, 0 notes.
+The local check produced additional notes and two warnings caused by missing
+system tools (qpdf, inconsolata.sty) that are not present on this machine
+but are standard on CRAN infrastructure.
