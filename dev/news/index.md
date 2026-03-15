@@ -11,10 +11,7 @@
   [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
   and
   [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md),
-  and are included in the `slp` dataset. Unlike the 1999 profiles, which
-  use seasonal periods (`winter`, `summer`, `transition`), the 2025
-  profiles carry month names in the `period` column (`january` …
-  `december`).
+  and are included in the `slp` dataset.
 
 ### New features
 
