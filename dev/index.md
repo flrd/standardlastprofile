@@ -29,12 +29,12 @@ pak::pkg_install("flrd/standardlastprofile")
 
 ## Included Features
 
-- `slp` – A dataset containing BDEW standard load profiles for
+- `slp` — a dataset containing BDEW standard load profiles for
   electricity.
 - [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
-  – Generate a standard load profile for a user-defined time period.
+  — generate a standard load profile for a user-defined time period.
 - [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md)
-  – Retrieve details of standard load profiles.
+  — retrieve details of standard load profiles.
 
 ## About the Data
 
