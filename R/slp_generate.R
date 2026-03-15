@@ -208,6 +208,17 @@ slp_generate <- \(
     stop("'end_date' must be of length 1.")
   }
 
+  if (
+    is.character(start_date) && !grepl("^\\d{4}-\\d{2}-\\d{2}$", start_date)
+  ) {
+    stop(
+      "'start_date' must be a valid date in ISO 8601 format (\"YYYY-MM-DD\")."
+    )
+  }
+  if (is.character(end_date) && !grepl("^\\d{4}-\\d{2}-\\d{2}$", end_date)) {
+    stop("'end_date' must be a valid date in ISO 8601 format (\"YYYY-MM-DD\").")
+  }
+
   start <- as_date(start_date)
   end <- as_date(end_date)
 
@@ -228,9 +239,21 @@ slp_generate <- \(
   profiles_n <- length(profile_id)
 
   if (!is.null(holidays)) {
+    if (!is.character(holidays) && !is_date(holidays)) {
+      stop("'holidays' must be a character or Date vector.")
+    }
+    if (
+      is.character(holidays) && !all(grepl("^\\d{4}-\\d{2}-\\d{2}$", holidays))
+    ) {
+      stop(
+        "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
+      )
+    }
     holidays <- as_date(holidays)
     if (anyNA(holidays)) {
-      stop("'holidays' must contain valid dates in ISO 8601 format.")
+      stop(
+        "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
+      )
     }
   }
 

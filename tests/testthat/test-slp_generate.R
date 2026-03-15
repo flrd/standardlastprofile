@@ -12,6 +12,20 @@ test_that("start_date: invalid ISO date raises an informative error", {
   )
 })
 
+test_that("start_date: two-digit year raises an error", {
+  expect_error(
+    slp_generate("H0", start_date = "24-01-01", end_date = "2024-12-31"),
+    "'start_date' must be a valid date in ISO 8601 format"
+  )
+})
+
+test_that("end_date: two-digit year raises an error", {
+  expect_error(
+    slp_generate("H0", start_date = "2024-01-01", end_date = "24-12-31"),
+    "'end_date' must be a valid date in ISO 8601 format"
+  )
+})
+
 test_that("start_date: NULL raises an informative error", {
   expect_error(
     slp_generate("H0", start_date = NULL, end_date = "2026-12-31"),
@@ -92,10 +106,29 @@ test_that("deprecated state_code: 'BE' and 'DE-BE' produce same result", {
   expect_equal(out_short, out_full)
 })
 
+test_that("holidays: non-character/Date type raises an error", {
+  expect_error(
+    slp_generate(
+      "G0",
+      "2026-01-01",
+      "2026-01-01",
+      holidays = list("2026-01-01")
+    ),
+    "'holidays' must be a character or Date vector"
+  )
+})
+
 test_that("holidays: invalid dates raise an error", {
   expect_error(
     slp_generate("H0", "2024-01-01", "2024-01-07", holidays = "not-a-date"),
-    "'holidays' must contain valid dates in ISO 8601 format."
+    "'holidays' must contain valid dates in ISO 8601 format"
+  )
+})
+
+test_that("holidays: two-digit year raises an error", {
+  expect_error(
+    slp_generate("H0", "2024-01-01", "2024-01-01", holidays = "24-01-01"),
+    "'holidays' must contain valid dates in ISO 8601 format"
   )
 })
 
