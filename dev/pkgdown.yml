@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   standardlastprofile: standardlastprofile.html
-last_built: 2026-03-15T16:00Z
+last_built: 2026-03-15T16:04Z
 urls:
   reference: https://flrd.github.io/standardlastprofile/reference
   article: https://flrd.github.io/standardlastprofile/articles
