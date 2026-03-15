@@ -16,7 +16,7 @@ Description: Provides representative standard load profiles (SLPs) for
   <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>.
   The 2025 profiles are described in BDEW (2025), "Standardlastprofile
   Strom", <https://www.bdew.de/energie/standardlastprofile-strom/>.
-Version: 1.0.0.9000
+Version: 1.1.0
 Authors@R: 
     person(
     given = "Markus",
