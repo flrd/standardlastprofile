@@ -6,9 +6,9 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/flrd/standardlastprofile/actions/workflows/R-CMD-check.yaml)
-[![](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
-[![](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+[![codecov](https://codecov.io/gh/flrd/standardlastprofile/branch/main/graph/badge.svg)](https://app.codecov.io/gh/flrd/standardlastprofile)
+[![CRAN version](https://www.r-pkg.org/badges/version/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
+[![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/standardlastprofile)](https://cran.r-project.org/package=standardlastprofile)
 <!-- badges: end -->
 
 This package provides data on standard load profiles for electricity,
