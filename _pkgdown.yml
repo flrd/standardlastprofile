@@ -27,4 +27,4 @@ figures:
   dev: ragg::agg_png
 
 development:
-  mode: release
+  mode: auto

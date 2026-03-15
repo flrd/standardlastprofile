@@ -32,10 +32,6 @@ None.
   Build artefact from PDF manual generation; not present on CRAN's
   check infrastructure.
 
-* Found the following (possibly) invalid URLs: README.md → 404
-  The pkgdown documentation site will be redeployed before/upon CRAN
-  release; the URL will resolve once the site is live.
-
 The local check also produced two warnings caused by missing system tools
 (qpdf, inconsolata.sty) that are not present on this machine but are standard
 on CRAN infrastructure. The package was additionally checked on win-builder
