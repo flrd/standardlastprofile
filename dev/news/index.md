@@ -2,6 +2,8 @@
 
 ## standardlastprofile (development version)
 
+## standardlastprofile 1.1.0
+
 ### New profiles
 
 - Added five new standard load profiles published by BDEW in 2025: `H25`
