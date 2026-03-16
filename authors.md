@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/flrd/standardlastprofile/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/flrd/standardlastprofile/blob/v1.1.0/DESCRIPTION)
 
 Döring M (2026). *standardlastprofile: BDEW Standard Load Profiles for
 Electricity*. R package version 1.1.0,
