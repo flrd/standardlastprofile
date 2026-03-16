@@ -67,7 +67,7 @@ slp_plot_1999 <- \() {
     )
 }
 
-slp_plot_2025 <- \(months = c("december", "march", "july")) {
+slp_plot_2025 <- \(months = c("december", "march", "june")) {
   label_names <- c(
     "saturday" = "Saturday",
     "sunday" = "Sunday",
@@ -84,7 +84,7 @@ slp_plot_2025 <- \(months = c("december", "march", "july")) {
 
   month_colours <- c(
     "december" = "#961BFA",
-    "july" = "#FA9529",
+    "june" = "#FA9529",
     "march" = "#0CC792"
   )
 
