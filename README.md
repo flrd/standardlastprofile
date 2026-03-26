@@ -86,13 +86,13 @@ generations of profiles:
 low-voltage electricity consumers in Germany:
 
 - `H0`: households (German: “Haushalte”)
-- `G0` to `G6`: commerce (“Gewerbe”)
+- `G0` to `G6`: commercial (“Gewerbe”)
 - `L0` to `L2`: agriculture (“Landwirtschaft”)
 
 **2025 profiles** — an updated set published by BDEW reflecting changes
 in consumption patterns:
 
-- `H25`, `G25`, `L25`: updated household, commerce, and agriculture
+- `H25`, `G25`, `L25`: updated household, commercial, and agriculture
   profiles
 - `P25`: households with a photovoltaic (PV) system
 - `S25`: households with a PV system and battery storage
@@ -119,7 +119,7 @@ reflecting changes in electricity consumption patterns since the
 original 1999 study. Five new profiles are included:
 
 - `H25`: households — updated version of `H0`
-- `G25`: commerce (general) — updated version of `G0`
+- `G25`: commercial (general) — updated version of `G0`
 - `L25`: agriculture — updated version of `L0`
 - `P25`: combination profile for households with a photovoltaic (PV)
   system
@@ -188,15 +188,15 @@ head(G5)
 By default, `slp_generate()` treats the nine public holidays observed
 nationwide in Germany as Sundays:
 
-- New Year’s (Jan 1)
+- New Year’s Day (1 January)
 - Good Friday
 - Easter Monday
-- Labour Day (May 1)
+- Labour Day (1 May)
 - Ascension Day
 - Whit Monday
-- German Unity Day (Oct 3)
-- Christmas Day (Dec 25)
-- Boxing Day (Dec 26)
+- German Unity Day (3 October)
+- Christmas Day (25 December)
+- Boxing Day (26 December)
 
 State-level holidays are *not* included because they vary by state and
 can change over time. Use the `holidays` argument to supply your own

@@ -6,31 +6,40 @@
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
-\url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
-
-\url{https://www.bdew.de/media/documents/Zuordnung_der_VDEW-Lastprofile_zum_Kundengruppenschluessel.pdf}
+\url{https://www.bdew.de/energie/standardlastprofile-gas/}
 }
 \usage{
 slp_info(profile_id, language = c("EN", "DE"))
 }
 \arguments{
-\item{profile_id}{load profile identifier, required}
+\item{profile_id}{character vector of profile identifiers. Electricity and
+gas IDs can be mixed freely.}
 
-\item{language}{one of \code{"EN"} (default) or \code{"DE"}}
+\item{language}{one of \code{"EN"} (default) or \code{"DE"}.}
 }
 \value{
-A named list with one element per \code{profile_id}. Each element is
-itself a list with three character components: \code{profile} (the identifier),
-\code{description} (a short label), and \code{details} (a longer explanation).
+A named list with one element per \code{profile_id}. Each element is a
+list with character components \code{profile} (the identifier), \code{description}
+(a short label), and — for electricity profiles only — \code{details} (a
+longer explanation).
 }
 \description{
-Information and examples on standard load profiles from the
-German Association of Energy and Water Industries (BDEW
-Bundesverband der Energie- und Wasserwirtschaft e.V.)
+Returns descriptions for electricity and gas standard load profiles defined
+by BDEW. Accepts both electricity profile IDs (\code{H0}, \code{G0}–\code{G6}, \code{L0}–\code{L2},
+\code{H25}, \code{G25}, \code{L25}, \code{P25}, \code{S25}) and gas profile IDs (\code{HEF}, \code{HMF},
+\code{HKO}, \code{GKO}, \code{GHA}, \code{GMK}, \code{GBD}, \code{GBH}, \code{GWA}, \code{GGA}, \code{GBA}, \code{GGB},
+\code{GPD}, \code{GMF}, \code{GHD}).
 }
 \examples{
-slp_info("G5", language = "DE")
+# Electricity profile
+slp_info("H0")
 
-# multiple profile IDs are supported
-slp_info(c("G0", "G5"))
+# Gas profile
+slp_info("HEF")
+
+# Mixed
+slp_info(c("H0", "HEF", "GKO"))
+
+# German descriptions
+slp_info("HEF", language = "DE")
 }

@@ -65,7 +65,7 @@
 #' watts normalised to 1,000 kWh/a.
 #'
 #' As a result, the `watts` column in both this dataset and the output of
-#' [slp_generate()] always represents average electric power in watts,
+#' [slp_electricity()] always represents average electric power in watts,
 #' normalised to 1,000 kWh/a. To convert to energy consumed per 15-minute
 #' interval in kWh, divide by 4 and by 1,000:
 #'

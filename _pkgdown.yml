@@ -1,17 +1,44 @@
 url: https://flrd.github.io/standardlastprofile/
 template:
   bootstrap: 5
+  math-rendering: mathjax
   bslib:
     primary: "#0CC792"
     border-radius: 0.5rem
     btn-border-radius: 0.25rem
 
 navbar:
+  structure:
+    left:  [get-started, articles, reference]
+    right: [search, github]
   components:
     intro: ~
+    get-started:
+      text: Get started
+      href: articles/get-started.html
     articles:
-      text: Algorithm
-      href: articles/standardlastprofile.html
+      text: Articles
+      menu:
+      - text: SLP Electricity
+        href: articles/slp-electricity.html
+      - text: SLP Gas
+        href: articles/slp-gas.html
+      - text: "---"
+      - text: More articles...
+        href: articles/index.html
+
+articles:
+- title: Algorithms
+  contents:
+  - slp-electricity
+  - slp-gas
+- title: Gas profile function and parameters
+  contents:
+  - slp-gas-parameters
+  - kundenwert-gas
+- title: ""
+  contents:
+  - articles/get-started
 
 reference:
 - title: Data
@@ -20,7 +47,10 @@ reference:
 
 - title: Functions
   contents:
-  - slp_generate
+  - slp_electricity
+  - slp_gas
+  - slp_kundenwert
+  - siglinde
   - slp_info
 
 figures:

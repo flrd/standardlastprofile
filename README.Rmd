@@ -86,12 +86,12 @@ For each unique combination of `profile_id`, `period` and `day` there are 96 x 1
   [^bdew-2]: More information on the data and methodology can be found [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
 - `H0`: households (German: "Haushalte")
-- `G0` to `G6`: commerce ("Gewerbe")
+- `G0` to `G6`: commercial ("Gewerbe")
 - `L0` to `L2`: agriculture ("Landwirtschaft")
 
 **2025 profiles** — an updated set published by BDEW reflecting changes in consumption patterns:
 
-- `H25`, `G25`, `L25`: updated household, commerce, and agriculture profiles
+- `H25`, `G25`, `L25`: updated household, commercial, and agriculture profiles
 - `P25`: households with a photovoltaic (PV) system
 - `S25`: households with a PV system and battery storage
 
@@ -108,7 +108,7 @@ changes in electricity consumption patterns since the original 1999 study. Five
 new profiles are included:
 
 - `H25`: households — updated version of `H0`
-- `G25`: commerce (general) — updated version of `G0`
+- `G25`: commercial (general) — updated version of `G0`
 - `L25`: agriculture — updated version of `L0`
 - `P25`: combination profile for households with a photovoltaic (PV) system
 - `S25`: combination profile for households with a PV system and battery storage

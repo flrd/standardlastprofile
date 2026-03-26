@@ -84,7 +84,7 @@ consistent and backwards compatible, all 2025 values have been converted to
 watts normalised to 1,000 kWh/a.
 
 As a result, the \code{watts} column in both this dataset and the output of
-\code{\link[=slp_generate]{slp_generate()}} always represents average electric power in watts,
+\code{\link[=slp_electricity]{slp_electricity()}} always represents average electric power in watts,
 normalised to 1,000 kWh/a. To convert to energy consumed per 15-minute
 interval in kWh, divide by 4 and by 1,000:
 

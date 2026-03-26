@@ -1,0 +1,159 @@
+---
+title: "SigLinDe Parameters and Weekday Factors for Gas SLP"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Gas SLP — SigLinDe Parameters and Weekday Factors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(standardlastprofile)
+```
+
+This vignette provides machine-readable reference tables for all parameters used
+by `slp_gas()` to compute daily gas consumption under the BDEW/VKU/GEODE
+standard load profile procedure.
+
+## Source
+
+All values are taken from the
+
+> **BDEW/VKU/GEODE Leitfaden — Abwicklung von Standardlastprofilen Gas**,
+> Kooperationsvereinbarung Gas, Anlage XIV.2,
+> Stand vom 28.10.2025, Anhang 6, pages 145–166.
+
+The document is available at
+<https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>.
+
+## Profile overview
+
+The BDEW Leitfaden defines **15 gas standard load profiles**. Three are
+residential (prefix 'H' for "Haushalt") and twelve are commercial or industrial
+ (prefix 'G' for "Gewerbe").
+
+```{r profile_overview}
+pids <- c("HEF", "HMF", "HKO",
+           "GKO", "GHA", "GMK", "GBD", "GBH", "GWA",
+           "GGA", "GBA", "GGB", "GPD", "GMF", "GHD")
+info <- slp_info(pids)
+info_de <- slp_info(pids, language = "DE")
+overview <- data.frame(
+  Profile     = pids,
+  Description = vapply(pids, \(p) info[[p]]$description, character(1)),
+  German      = vapply(pids, \(p) info_de[[p]]$description, character(1)),
+  stringsAsFactors = FALSE, row.names = NULL
+)
+knitr::kable(overview, caption = "Table 1: BDEW gas standard load profile identifiers and descriptions.")
+```
+
+## SigLinDe coefficients
+
+Daily gas consumption is computed using the **SigLinDe** method
+(Sigmoid + Linear + Deutschland). The dimensionless daily heating demand
+$h(\vartheta)$ for an allocation temperature $\vartheta$ (in °C) is:
+
+$$h(\vartheta) = \frac{A}{1 + \left(\frac{B}{\vartheta - \vartheta_0}\right)^C} + D + \max\left(m_H \cdot \vartheta + b_H,\; m_W \cdot \vartheta + b_W\right)$$
+
+Each profile has its own set of nine coefficients. The linear component
+$\max(m_H \vartheta + b_H,\; m_W \vartheta + b_W)$ represents the envelope of
+a space-heating line (*Heizgas-Gerade*) and a hot-water line
+(*Warmwasser-Gerade*). The parameters differ between
+**variant 34** (57 % linear component, default) and **variant 33**
+(45 % linear component).
+
+### Variant 34 (Ausprägung 34)
+
+```{r params_34}
+params_34 <- standardlastprofile:::.gas_profile_params[["34"]]
+df_34 <- do.call(rbind, lapply(names(params_34), \(pid) {
+  p <- params_34[[pid]]
+  data.frame(
+    Profile = pid,
+    A       = p$A,
+    B       = p$B,
+    C       = p$C,
+    D       = p$D,
+    theta_0 = p$theta0,
+    m_H     = p$mH,
+    b_H     = p$bH,
+    m_W     = p$mW,
+    b_W     = p$bW,
+    stringsAsFactors = FALSE
+  )
+}))
+knitr::kable(
+  df_34, digits = 7, row.names = FALSE,
+  caption = "Table 2: SigLinDe coefficients — variant 34 (Ausprägung 34, 57 % linear component). Source: BDEW Leitfaden, Anhang 6, pp. 145–166."
+)
+```
+
+### Variant 33 (Ausprägung 33)
+
+```{r params_33}
+params_33 <- standardlastprofile:::.gas_profile_params[["33"]]
+df_33 <- do.call(rbind, lapply(names(params_33), \(pid) {
+  p <- params_33[[pid]]
+  data.frame(
+    Profile = pid,
+    A       = p$A,
+    B       = p$B,
+    C       = p$C,
+    D       = p$D,
+    theta_0 = p$theta0,
+    m_H     = p$mH,
+    b_H     = p$bH,
+    m_W     = p$mW,
+    b_W     = p$bW,
+    stringsAsFactors = FALSE,
+    row.names = NULL
+  )
+}))
+knitr::kable(
+  df_33, digits = 7, row.names = FALSE,
+  caption = "Table 3: SigLinDe coefficients — variant 33 (Ausprägung 33, 45 % linear component). Source: BDEW Leitfaden, Anhang 6, pp. 145–166."
+)
+```
+
+### Notes
+
+- `HKO` (cooking and hot water only) has $m_H = b_H = m_W = b_W = 0$: the
+  linear part is zero and only the sigmoid remains.
+- `HMF` and `GMF` share identical coefficients in both variants — `GMF` (large
+  multi-family / mixed use) uses the residential multi-family curve.
+- $\vartheta_0 = 40\,°C$ for all profiles (the pole temperature of the
+  sigmoid).
+
+## Weekday factors ($F_{WT}$)
+
+The weekday factor $F_{WT}$ scale daily consumption for day-of-week effects.
+Residential profiles (`HEF`, `HMF`, `HKO`) have all factors equal to 1 — no
+weekday differentiation.
+
+```{r weekday_factors}
+fwt <- standardlastprofile:::.gas_weekday_factors
+df_fwt <- do.call(rbind, lapply(names(fwt), \(pid) {
+  f <- fwt[[pid]]
+  data.frame(
+    Profile = pid,
+    Mo = f[["Mo"]],
+    Tu = f[["Tu"]],
+    We = f[["We"]],
+    Th = f[["Th"]],
+    Fr = f[["Fr"]],
+    Sa = f[["Sa"]],
+    Su = f[["Su"]],
+    stringsAsFactors = FALSE,
+    row.names = NULL
+  )
+}))
+knitr::kable(
+  df_fwt, digits = 4, row.names = FALSE,
+  caption = "Table 4: Weekday factors (F_WT) for all 15 BDEW gas standard load profiles. Mo = Monday, …, Su = Sunday. Source: BDEW Leitfaden, Anhang 6, pp. 145–166."
+)
+```
+
+### Notes
+
+- Weekday factors are the same for both variant 33 and variant 34.

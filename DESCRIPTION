@@ -3,7 +3,7 @@ Title: BDEW Standard Load Profiles for Electricity
 Description: Provides representative standard load profiles (SLPs) for
   electricity published by the German Association of Energy and Water
   Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
-  in a tidy format. Covers the 1999 profiles — households (H0), commerce
+  in a tidy format. Covers the 1999 profiles — households (H0), commercial
   (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25,
   G25, L25, P25, S25), which additionally represent households with
   photovoltaic systems and battery storage. Also provides an interface for
@@ -32,6 +32,8 @@ Suggests:
     covr,
     httr2,
     knitr,
+    leaflet,
+    plotly,
     rmarkdown,
     testthat (>= 3.0.0),
     vdiffr,

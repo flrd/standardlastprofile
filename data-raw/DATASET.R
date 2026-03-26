@@ -1,7 +1,6 @@
 # attach packages ---------------------------------------------------------
 library(readxl)
 library(data.table)
-library(httr2)
 
 
 # 1. Helper function for cleaning and matrix conversion -------------------
@@ -131,54 +130,62 @@ slp_2025 <- lapply(
 slp <- rbind(slp_1999, slp_2025)
 
 
-# fetch public holidays in Germany from nager.Date API --------------------
+# compute nationwide German public holidays algorithmically ---------------
+#
+# Nine public holidays observed in all 16 German states:
+#   1. New Year's Day       yyyy-01-01  (fixed)
+#   2. Good Friday          Easter - 2 days
+#   3. Easter Monday        Easter + 1 day
+#   4. Labour Day           yyyy-05-01  (fixed)
+#   5. Ascension Day        Easter + 39 days
+#   6. Whit Monday          Easter + 50 days
+#   7. German Unity Day     yyyy-10-03  (fixed)
+#   8. Christmas Day        yyyy-12-25  (fixed)
+#   9. Boxing Day           yyyy-12-26  (fixed)
+#
+# Easter Sunday is computed with the Anonymous Gregorian algorithm.
 
-# extract nationwide holidays
-is_nationwide <- \(x) x[["global"]]
-
-get_holidays_DE <- \(year) {
-  if (year < 1990L || year > 2073L) {
-    stop("'API supports 'only' years from 1990 to 2073.")
-  }
-
-  year <- as.character(year)
-  base_url <- "https://date.nager.at/api/v3"
-
-  resp <- httr2::request(base_url = base_url) |>
-    httr2::req_user_agent("https://github.com/flrd/standardlastprofile") |>
-    httr2::req_url_path_append("PublicHolidays") |>
-    httr2::req_url_path_append(year) |>
-    httr2::req_url_path_append("DE") |>
-    httr2::req_perform()
-
-  resp_body <- resp |>
-    httr2::resp_body_json()
-
-  idx_nation <- vapply(resp_body, is_nationwide, logical(1))
-  holidays_nationwide <- data.frame(
-    region = "DE",
-    holiday = vapply(
-      resp_body[idx_nation],
-      FUN = \(x) x[["date"]],
-      FUN.VALUE = character(1)
-    )
-  )
-
-  holidays_states <- lapply(resp_body[!idx_nation], \(x) {
-    data.frame(
-      holiday = x[["date"]],
-      region = unlist(x["counties"], use.names = FALSE)
-    )
-  }) |>
-    do.call(rbind, args = _)
-
-  out <- rbind(holidays_nationwide, holidays_states)
-  cbind(data.frame(year = year), out)
+easter_sunday <- \(year) {
+  a <- year %% 19
+  b <- year %/% 100
+  c <- year %% 100
+  d <- b %/% 4
+  e <- b %% 4
+  f <- (b + 8L) %/% 25
+  g <- (b - f + 1L) %/% 3
+  h <- (19L * a + b - d - g + 15L) %% 30
+  i <- c %/% 4
+  k <- c %% 4
+  l <- (32L + 2L * e + 2L * i - h - k) %% 7
+  m <- (a + 11L * h + 22L * l) %/% 451
+  month <- (h + l - 7L * m + 114L) %/% 31
+  day <- (h + l - 7L * m + 114L) %% 31 + 1L
+  as.Date(paste(year, month, day, sep = "-"))
 }
 
-years <- seq.int(1990, 2073)
-holidays_DE <- lapply(years, get_holidays_DE) |>
-  do.call(rbind, args = _)
+holidays_nationwide_year <- \(year) {
+  easter <- easter_sunday(year)
+  dates <- c(
+    as.Date(paste0(year, "-01-01")),
+    easter - 2L,
+    easter + 1L,
+    as.Date(paste0(year, "-05-01")),
+    easter + 39L,
+    easter + 50L,
+    as.Date(paste0(year, "-10-03")),
+    as.Date(paste0(year, "-12-25")),
+    as.Date(paste0(year, "-12-26"))
+  )
+  data.frame(
+    year = as.character(year),
+    region = "DE",
+    holiday = format(dates, "%Y-%m-%d"),
+    stringsAsFactors = FALSE
+  )
+}
+
+years <- seq.int(1990, 2099)
+holidays_DE <- do.call(rbind, lapply(years, holidays_nationwide_year))
 
 
 # profile descriptions ----------------------------------------------------
@@ -240,10 +247,10 @@ details_DE <- c(
 # English descriptions
 description_EN <- c(
   H0 = "household",
-  G0 = "commerce in general",
-  G1 = "commerce workday from 8am - 6pm",
-  G2 = "commerce with strong to predominant consumption in evening hours",
-  G3 = "commerce continuous",
+  G0 = "commercial in general",
+  G1 = "commercial workday from 8am - 6pm",
+  G2 = "commercial with strong to predominant consumption in evening hours",
+  G3 = "commercial continuous",
   G4 = "shop / hair salon",
   G5 = "bakery with bakehouse",
   G6 = "weekend business",
@@ -251,7 +258,7 @@ description_EN <- c(
   L1 = "agriculture with dairy farming / part-time livestock farming",
   L2 = "other agricultural businesses",
   H25 = "household (2025)",
-  G25 = "commerce in general (2025)",
+  G25 = "commercial in general (2025)",
   L25 = "agricultural (2025)",
   P25 = "combination profile PV (2025)",
   S25 = "combination profile storage and PV (2025)"
