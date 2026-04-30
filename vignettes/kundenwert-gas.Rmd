@@ -1,0 +1,577 @@
+---
+title: "Deriving the Kundenwert from a reference temperature series"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Deriving the Kundenwert from a reference temperature series}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  dpi       = 300,
+  fig.asp   = 0.618,
+  fig.width = 6,
+  fig.align = "center",
+  out.width = "90%"
+)
+library(standardlastprofile)
+library(ggplot2)
+has_plotly  <- requireNamespace("plotly",  quietly = TRUE)
+has_leaflet <- requireNamespace("leaflet", quietly = TRUE)
+```
+
+When `kundenwert = NULL` (the default), `slp_gas()` derives $KW$
+automatically from `annual_consumption` and the supplied temperature series.
+You can also supply a fixed `kundenwert` directly, which is useful when you
+already know the customer's daily baseline and want to bypass the annual
+normalisation.
+
+The daily gas quantity $Q(D)$ is computed as $Q(D) = KW \cdot h(\vartheta_D)
+\cdot F_{WT}$, where $KW$ — the *Kundenwert* (kWh/day) — scales the
+dimensionless profile values to match a customer's actual annual consumption.
+When you pass daily temperatures for a short period (e.g. a single month) to
+`slp_gas()` without supplying `kundenwert`, the function must derive
+$KW$ from that short series alone. Because the denominator
+$\sum_D h(\vartheta_D) \cdot F_{WT,D}$ then reflects only the temperatures
+you happened to observe, $KW$ absorbs the missing seasonal variation — in the
+extreme case of a single day, the $h$ values cancel and `kwh` equals
+`annual_consumption` exactly, regardless of temperature.
+
+The remedy is a **two-step workflow**:
+
+1. Compute $KW$ once from a **full reference year** of temperatures using
+   `slp_gas_kundenwert()`.
+2. Pass the resulting `kundenwert` to `slp_gas()` for any
+   sub-period you care about.
+
+## Built-in reference stations
+
+The package ships with long-term mean daily temperatures (WMO climate normal
+period 1991--2020) for ten representative DWD weather stations covering the
+major German climate regions. Pick the station closest to your customer's
+location and pass it via the `station` argument of `slp_gas_kundenwert()`.
+
+```{r station_map, echo=FALSE}
+if (has_leaflet) {
+  stn <- data.frame(
+    station    = c("Oberstdorf", "Potsdam", "Hamburg", "Freiburg",
+                   "Chemnitz", "Duesseldorf", "Erfurt",
+                   "Frankfurt", "Nuernberg", "Regensburg"),
+    region     = c("Alpenrand / Allgaeu", "Kontinentales Binnenland",
+                   "Maritime Nordseekueste", "Oberrheingraben",
+                   "Erzgebirge / Mittelgebirge", "Niederrhein",
+                   "Thueringer Becken",
+                   "Rhein-Main-Gebiet", "Mittelfranken",
+                   "Oberpfalz / Donau"),
+    dwd_id     = c(3730L, 3987L, 1975L, 1443L, 853L, 1078L, 1270L,
+                   1420L, 3668L, 4104L),
+    elevation  = c(806L, 81L, 11L, 237L, 416L, 37L, 316L,
+                   112L, 314L, 365L),
+    lat        = c(47.4075, 52.3813, 53.5503, 47.9990, 50.7913, 51.2959,
+                   50.9787, 50.0259, 49.5030, 49.0420),
+    lon        = c(10.2783, 13.0622, 9.9872, 7.8523, 12.8726, 6.7681,
+                   10.9632, 8.5958, 11.0549, 12.1018),
+    mean_temp  = c(7.0, 9.8, 9.8, 11.6, 9.0, 11.1, 9.0,
+                   11.1, 9.8, 9.4),
+    stringsAsFactors = FALSE
+  )
+
+  leaflet::leaflet(stn, width = "100%", height = 420) |>
+    leaflet::addTiles() |>
+    leaflet::addCircleMarkers(
+      lng = ~lon, lat = ~lat, radius = 7,
+      color = "#0CC792", fillColor = "#0CC792", fillOpacity = 0.8,
+      stroke = TRUE, weight = 2,
+      label = ~paste0(
+        station, " \u2014 DWD ", dwd_id,
+        " | ", elevation, " m",
+        " | \u00d8 ", format(mean_temp, nsmall = 1), " \u00b0C"
+      ),
+      labelOptions = leaflet::labelOptions(
+        style = list("font-size" = "13px", "padding" = "4px 8px"),
+        direction = "top", offset = c(0, -10)
+      )
+    )
+}
+```
+
+## Explore the SigLinDe profile functions
+
+The dimensionless profile value $h(\vartheta)$ describes how gas demand changes
+with temperature. Select profiles and switch between variants to see how
+the curves differ. Click a legend entry to show or hide a profile; double-click
+to isolate it.
+
+```{r h_curve_precompute, include=FALSE}
+theta <- seq(-15, 30, by = 0.5)
+all_profiles <- c("HEF", "HMF", "HKO", "GKO", "GHA", "GMK", "GBD", "GBH",
+                  "GWA", "GGA", "GBA", "GGB", "GPD", "GMF", "GHD")
+key_profiles <- c("HEF", "HMF", "HKO", "GKO", "GHA")
+
+h_data <- list()
+for (v in c("34", "33")) {
+  for (pid in all_profiles) {
+    p <- standardlastprofile:::.gas_profile_params[[v]][[pid]]
+    h_data[[paste(v, pid, sep = "|")]] <- slp_gas_siglinde(
+      theta, p$A, p$B, p$C, p$D, p$theta0, p$mH, p$bH, p$mW, p$bW
+    )
+  }
+}
+```
+
+```{r h_curve_interactive, echo=FALSE, fig.cap="SigLinDe profile functions h(\u03b8) across temperature. Toggle variant with the buttons; click legend entries to show/hide profiles."}
+if (has_plotly) {
+  n <- length(all_profiles)
+
+  # Colour palette: viridis-like but more distinct
+  pal <- c(
+    "#0CC792", "#1B9E77", "#D95F02", "#7570B3", "#E7298A",
+    "#66A61E", "#E6AB02", "#A6761D", "#666666", "#1F78B4",
+    "#B2DF8A", "#FB9A99", "#FDBF6F", "#CAB2D6", "#FF7F00"
+  )
+
+  fig <- plotly::plot_ly()
+
+  # -- Variant 34 traces (initially visible) --
+  for (i in seq_along(all_profiles)) {
+    pid <- all_profiles[i]
+    vis <- if (pid %in% key_profiles) TRUE else "legendonly"
+    fig <- plotly::add_trace(
+      fig,
+      x = theta, y = h_data[[paste("34", pid, sep = "|")]],
+      type = "scatter", mode = "lines",
+      name = pid, legendgroup = pid,
+      visible = vis, showlegend = TRUE,
+      line = list(width = 2.5, color = pal[i])
+    )
+  }
+
+  # -- Variant 33 traces (initially hidden) --
+  for (i in seq_along(all_profiles)) {
+    pid <- all_profiles[i]
+    fig <- plotly::add_trace(
+      fig,
+      x = theta, y = h_data[[paste("33", pid, sep = "|")]],
+      type = "scatter", mode = "lines",
+      name = pid, legendgroup = pid,
+      visible = FALSE, showlegend = FALSE,
+      line = list(width = 2.5, color = pal[i])
+    )
+  }
+
+  # Visibility arrays for buttons
+  vis_34 <- c(
+    ifelse(all_profiles %in% key_profiles, TRUE, "legendonly"),
+    rep(FALSE, n)
+  )
+  vis_33 <- c(
+    rep(FALSE, n),
+    ifelse(all_profiles %in% key_profiles, TRUE, "legendonly")
+  )
+  vis_both <- c(
+    ifelse(all_profiles %in% key_profiles, TRUE, "legendonly"),
+    ifelse(all_profiles %in% key_profiles, TRUE, "legendonly")
+  )
+  # For "both" mode, show legend only for v34 traces
+  sl_both <- c(rep(TRUE, n), rep(FALSE, n))
+
+  fig <- plotly::layout(
+    fig,
+    xaxis = list(
+      title = "Temperature (\u00b0C)",
+      zeroline = FALSE, gridcolor = "#f0eded"
+    ),
+    yaxis = list(
+      title = "h(\u03b8)",
+      zeroline = FALSE, gridcolor = "#f0eded"
+    ),
+    legend = list(orientation = "h", y = -0.15, x = 0.5, xanchor = "center"),
+    updatemenus = list(
+      list(
+        type = "buttons",
+        direction = "right",
+        x = 0, y = 1.12,
+        xanchor = "left",
+        buttons = list(
+          list(
+            label = "Variant 34 (57% linear)",
+            method = "update",
+            args = list(
+              list(visible = vis_34, showlegend = c(rep(TRUE, n), rep(FALSE, n))),
+              list(title = "SigLinDe profile functions \u2014 Auspr\u00e4gung 34")
+            )
+          ),
+          list(
+            label = "Variant 33 (45% linear)",
+            method = "update",
+            args = list(
+              list(visible = vis_33, showlegend = c(rep(FALSE, n), rep(TRUE, n))),
+              list(title = "SigLinDe profile functions \u2014 Auspr\u00e4gung 33")
+            )
+          ),
+          list(
+            label = "Compare both",
+            method = "update",
+            args = list(
+              list(visible = vis_both, showlegend = sl_both),
+              list(title = "SigLinDe \u2014 solid: Var. 34, same colour: Var. 33")
+            )
+          )
+        )
+      )
+    ),
+    title = list(
+      text = "SigLinDe profile functions \u2014 Auspr\u00e4gung 34",
+      x = 0, xanchor = "left"
+    ),
+    margin = list(t = 60)
+  )
+
+  # In "both" mode, dash variant 33 lines
+  for (i in seq_along(all_profiles)) {
+    fig$x$attrs[[n + i]]$line$dash <- "dot"
+  }
+
+  fig
+}
+```
+
+## Interactive Kundenwert calculator
+
+The Kundenwert is $KW = JVP \;/\; M_{SLP}$ where $JVP$ is the annual
+consumption forecast and $M_{SLP} = \sum_D h(\vartheta_D) \cdot F_{WT,D}$
+integrates the profile function over a full reference year.  Because $M_{SLP}$
+depends on local temperatures, the **same annual consumption produces different
+Kundenwerte in different climate regions** (see Leitfaden p. 37: Niederrhein
+vs. Allgäu).
+
+The Leitfaden recommends computing $M_{SLP}$ from climate-typical
+temperatures — either a multi-year mean (e.g. 3–10 years) or a representative
+planning year.[^mslp_basis] The built-in reference temperatures in this package
+follow that guidance: they are WMO climate normals (1991–2020 mean) for each
+station, providing a 30-year average that smooths out single-year anomalies.
+
+[^mslp_basis]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Abschnitt 3.6.3, p. 38.
+
+Select a profile, variant, and two stations to compare. Enter an annual
+consumption (JVP) to see the resulting Kundenwerte side by side.
+
+```{r mslp_precompute, include=FALSE}
+# Pre-compute M_SLP for every profile x variant x station combination
+all_stations <- unique(slp_gas_normtemperatur$station)
+variants     <- c("34", "33")
+
+mslp_list <- list()
+for (v in variants) {
+  for (s in all_stations) {
+    ref <- slp_gas_normtemperatur[
+      slp_gas_normtemperatur$station == s,
+    ]
+    for (pid in all_profiles) {
+      kw <- slp_gas_kundenwert(pid, dates = ref$date, temperatures = ref$temp_c_mean,
+                            annual_consumption = 1000, variant = v)
+      mslp_list[[paste(v, s, pid, sep = "|")]] <- round(1000 / as.numeric(kw), 4)
+    }
+  }
+}
+
+# Build JSON string (avoid jsonlite dependency)
+json_entries <- vapply(names(mslp_list), function(key) {
+  sprintf('"%s":%.4f', key, mslp_list[[key]])
+}, character(1))
+mslp_json <- paste0("{", paste(json_entries, collapse = ","), "}")
+
+# Profile descriptions for the dropdown
+gas_desc <- c(
+  HEF = "HEF \u2014 Single-family home",
+  HMF = "HMF \u2014 Multi-family home",
+  HKO = "HKO \u2014 Cooking and hot water only",
+  GKO = "GKO \u2014 Small commercial",
+  GHA = "GHA \u2014 Trade and commerce",
+  GMK = "GMK \u2014 Metal and automotive",
+  GBD = "GBD \u2014 Services",
+  GBH = "GBH \u2014 Accommodation",
+  GWA = "GWA \u2014 Laundries",
+  GGA = "GGA \u2014 Gastronomy",
+  GBA = "GBA \u2014 Bakeries",
+  GGB = "GGB \u2014 Mixed commercial",
+  GPD = "GPD \u2014 Paper and printing",
+  GMF = "GMF \u2014 Large multi-family / mixed use",
+  GHD = "GHD \u2014 Trade, commerce and services aggregate"
+)
+```
+
+```{r kw_calculator, echo=FALSE, results='asis'}
+# Build select options
+profile_options <- paste0(
+  vapply(all_profiles, function(pid) {
+    sel <- if (pid == "HEF") " selected" else ""
+    sprintf('        <option value="%s"%s>%s</option>', pid, sel, gas_desc[pid])
+  }, character(1)),
+  collapse = "\n"
+)
+
+station_options_a <- paste0(
+  vapply(all_stations, function(s) {
+    sel <- if (s == "Duesseldorf") " selected" else ""
+    sprintf('          <option value="%s"%s>%s</option>', s, sel, s)
+  }, character(1)),
+  collapse = "\n"
+)
+
+station_options_b <- paste0(
+  vapply(all_stations, function(s) {
+    sel <- if (s == "Oberstdorf") " selected" else ""
+    sprintf('          <option value="%s"%s>%s</option>', s, sel, s)
+  }, character(1)),
+  collapse = "\n"
+)
+
+html_template <- '
+<style>
+.kw-calc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 720px; margin: 1.5em auto; }
+.kw-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: end; }
+.kw-ctrl { display: flex; flex-direction: column; gap: 4px; }
+.kw-ctrl label { font-size: 0.82em; font-weight: 600; color: #555; }
+.kw-ctrl select, .kw-ctrl input[type="number"] { padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95em; background: #fff; }
+.kw-ctrl input[type="number"] { width: 130px; }
+.kw-variant-group { display: flex; gap: 12px; padding-top: 2px; }
+.kw-variant-group label { font-weight: 400; font-size: 0.95em; cursor: pointer; }
+.kw-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.kw-card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; background: #fafafa; }
+.kw-card select { width: 100%%; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95em; margin-bottom: 12px; background: #fff; }
+.kw-card-label { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 6px; font-weight: 600; }
+.kw-metric { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 0.95em; }
+.kw-metric:last-child { border-bottom: none; }
+.kw-metric-label { color: #666; }
+.kw-metric-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+.kw-explanation { font-size: 0.9em; color: #555; line-height: 1.5; padding: 12px 14px; background: #f5f9f7; border-left: 3px solid #0CC792; border-radius: 0 6px 6px 0; }
+</style>
+
+<div class="kw-calc">
+<div class="kw-controls">
+<div class="kw-ctrl">
+<label>Profile</label>
+<select id="kw-profile">
+%s
+</select>
+</div>
+<div class="kw-ctrl">
+<label>Variant</label>
+<div class="kw-variant-group">
+<label><input type="radio" name="kw-variant" value="34" checked> 34 (57%% linear)</label>
+<label><input type="radio" name="kw-variant" value="33"> 33 (45%% linear)</label>
+</div>
+</div>
+<div class="kw-ctrl">
+<label>Annual consumption (kWh/a)</label>
+<input type="number" id="kw-jvp" value="15000" min="0" step="500">
+</div>
+</div>
+<div class="kw-cards">
+<div class="kw-card">
+<div class="kw-card-label">Station A</div>
+<select id="kw-station-a">
+%s
+</select>
+<div class="kw-metric">
+<span class="kw-metric-label">M<sub>SLP</sub></span>
+<span class="kw-metric-value" id="kw-mslp-a">&mdash;</span>
+</div>
+<div class="kw-metric">
+<span class="kw-metric-label">Kundenwert</span>
+<span class="kw-metric-value" id="kw-value-a">&mdash;</span>
+</div>
+</div>
+<div class="kw-card">
+<div class="kw-card-label">Station B</div>
+<select id="kw-station-b">
+%s
+</select>
+<div class="kw-metric">
+<span class="kw-metric-label">M<sub>SLP</sub></span>
+<span class="kw-metric-value" id="kw-mslp-b">&mdash;</span>
+</div>
+<div class="kw-metric">
+<span class="kw-metric-label">Kundenwert</span>
+<span class="kw-metric-value" id="kw-value-b">&mdash;</span>
+</div>
+</div>
+</div>
+<div class="kw-explanation" id="kw-explanation"></div>
+</div>
+
+<script>
+(function() {
+  var mslpData = %s;
+  function fmt(x, d) {
+    return x.toLocaleString("en", {minimumFractionDigits: d, maximumFractionDigits: d});
+  }
+  function update() {
+    var profile = document.getElementById("kw-profile").value;
+    var variant = document.querySelector("input[name=\\"kw-variant\\"]:checked").value;
+    var jvp     = parseFloat(document.getElementById("kw-jvp").value);
+    var stA     = document.getElementById("kw-station-a").value;
+    var stB     = document.getElementById("kw-station-b").value;
+    if (isNaN(jvp) || jvp <= 0) {
+      document.getElementById("kw-explanation").innerHTML =
+        "Please enter a positive annual consumption.";
+      return;
+    }
+    var keyA = variant + "|" + stA + "|" + profile;
+    var keyB = variant + "|" + stB + "|" + profile;
+    var mA   = mslpData[keyA];
+    var mB   = mslpData[keyB];
+    if (!mA || !mB) return;
+    var kwA = jvp / mA;
+    var kwB = jvp / mB;
+    document.getElementById("kw-mslp-a").textContent  = fmt(mA, 1);
+    document.getElementById("kw-mslp-b").textContent  = fmt(mB, 1);
+    document.getElementById("kw-value-a").textContent  = fmt(kwA, 2) + " kWh/day";
+    document.getElementById("kw-value-b").textContent  = fmt(kwB, 2) + " kWh/day";
+    var el = document.getElementById("kw-explanation");
+    if (stA === stB) {
+      el.innerHTML =
+        "An annual consumption of <strong>" + fmt(jvp, 0) + " kWh/a</strong>" +
+        " in " + stA + " yields KW = <strong>" + fmt(kwA, 2) +
+        "</strong> kWh/day (M<sub>SLP</sub> = " + fmt(mA, 1) +
+        "). Select two different stations to compare how climate affects the Kundenwert.";
+      return;
+    }
+    var pctDiff = (Math.abs(kwA - kwB) / Math.min(kwA, kwB) * 100).toFixed(1);
+    var colder = mA > mB ? stA : stB;
+    var milder = mA > mB ? stB : stA;
+    el.innerHTML =
+      "The same annual consumption of <strong>" + fmt(jvp, 0) + " kWh/a</strong>" +
+      " yields KW = <strong>" + fmt(kwA, 2) + "</strong> kWh/day in " + stA +
+      " vs. <strong>" + fmt(kwB, 2) + "</strong> kWh/day in " + stB +
+      " (a difference of " + pctDiff + "%%). " +
+      colder + " has a larger M<sub>SLP</sub> (" +
+      fmt(Math.max(mA, mB), 1) + " vs. " + fmt(Math.min(mA, mB), 1) +
+      "), reflecting its colder climate: the annual consumption is spread " +
+      "across more heating-degree days, so each day receives less gas.";
+  }
+  ["kw-profile", "kw-station-a", "kw-station-b", "kw-jvp"].forEach(function(id) {
+    document.getElementById(id).addEventListener("input", update);
+  });
+  document.querySelectorAll("input[name=\\"kw-variant\\"]").forEach(function(el) {
+    el.addEventListener("change", update);
+  });
+  update();
+})();
+</script>
+'
+cat(sprintf(html_template, profile_options, station_options_a, station_options_b, mslp_json))
+```
+
+## Step-by-step example
+
+### Computing the Kundenwert in R
+
+```{r compute_kw}
+kw_hef <- slp_gas_kundenwert(
+  profile_id         = "HEF",
+  station            = "Hamburg",
+  annual_consumption = 15000       # kWh/a — a typical single-family home
+)
+kw_hef
+```
+
+Verify that applying KW over the full reference year reproduces the annual
+consumption:
+
+```{r verify_kw}
+ref_hh <- slp_gas_normtemperatur[
+  slp_gas_normtemperatur$station == "Hamburg",
+]
+q_ref <- slp_gas("HEF", ref_hh$date, ref_hh$temp_c_mean, kundenwert = kw_hef)
+sum(q_ref$kwh)   # should equal 15 000
+```
+
+### Applying the Kundenwert to a shorter period
+
+With `kundenwert` fixed, `slp_gas()` can be called for any sub-period
+without any short-series scaling artefact:
+
+```{r apply_kw}
+# Synthetic temperatures for January–March 2025
+dates_q1 <- seq.Date(as.Date("2025-01-01"), as.Date("2025-03-31"), by = "day")
+doy_q1   <- as.integer(format(dates_q1, "%j"))
+set.seed(2025)
+temps_q1 <- 10 - 11 * cos(2 * pi * (doy_q1 - 15) / 365) + rnorm(90, sd = 2.5)
+
+q1_hef <- slp_gas("HEF", dates_q1, temps_q1, kundenwert = kw_hef)
+head(q1_hef)
+```
+
+```{r plot_q1, echo=FALSE, fig.retina=2}
+ggplot(q1_hef, aes(date, kwh)) +
+  geom_col(fill = "#0CC792", width = 0.8) +
+  scale_x_date(date_breaks = "2 weeks", date_labels = "%d %b") +
+  scale_y_continuous("Daily gas consumption (kWh)") +
+  labs(
+    title    = "HEF \u2014 daily gas consumption, Q1 2025",
+    subtitle = "Annual consumption 15,000 kWh/a \u00b7 Kundenwert from Hamburg reference station",
+    x        = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid = element_line(linetype = "12", lineend = "round",
+                              colour = "#FAF6F4")
+  )
+```
+
+Compare this with the naive approach that derives KW from the 90-day series
+alone:
+
+```{r compare_naive}
+q1_naive <- suppressMessages(
+  slp_gas("HEF", dates_q1, temps_q1, annual_consumption = 15000)
+)
+
+cat("Reference-station KW \u2014 Q1 total:", round(sum(q1_hef$kwh)),  "kWh\n")
+cat("Naive KW            \u2014 Q1 total:", round(sum(q1_naive$kwh)), "kWh\n")
+```
+
+The naive approach produces a Q1 total of exactly `annual_consumption` (15,000
+kWh) because the denominator contains only winter temperatures, making $KW$
+far too small. The reference-station approach correctly yields a higher Q1
+total — winter months account for a disproportionate share of annual gas
+consumption.
+
+## Using your own temperature data
+
+If the built-in stations do not adequately represent your customer's location,
+you can pass custom `dates` and `temperatures` vectors. The
+most straightforward source is the open-data portal of the Deutscher
+Wetterdienst (DWD). The
+[`rdwd`](https://cran.r-project.org/package=rdwd) package downloads and parses
+DWD data with no registration or API key required:
+
+```{r dwd_download, eval=FALSE}
+library(rdwd)
+
+# Find the download URL for Hamburg (daily climate summary, historical)
+link <- selectDWD("Hamburg-Fuhlsbuettel", res = "daily", var = "kl",
+                  per = "historical")
+file <- dataDWD(link, read = FALSE)
+raw  <- readDWD(file, varnames = FALSE)
+
+# Keep one full calendar year; TMK is the daily mean temperature in degrees C
+raw_2024 <- raw[format(raw$MESS_DATUM, "%Y") == "2024", ]
+dates_ref <- as.Date(raw_2024$MESS_DATUM)
+temps_ref <- raw_2024$TMK
+
+kw <- slp_gas_kundenwert("HEF", dates = dates_ref, temperatures = temps_ref,
+                      annual_consumption = 15000)
+```
+
+The `TMK` column is the arithmetic daily mean temperature — this is the
+*simple daily mean* variant of the *Allokationstemperatur* as defined in
+the BDEW Leitfaden. If you prefer the geometrically-weighted 4-day mean
+recommended for distribution network operators, apply it to the temperature
+vector before proceeding (see the main gas vignette for the formula).

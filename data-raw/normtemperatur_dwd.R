@@ -1,8 +1,8 @@
 # data-raw/normtemperatur_dwd.R
 #
-# Downloads daily mean temperature data from DWD open data for 6 representative
-# German weather stations and computes a 366-day long-term mean over the WMO
-# climate normal period 1991–2020.
+# Downloads daily mean temperature data from DWD open data for 10
+# representative German weather stations and computes a 366-day long-term mean
+# over the WMO climate normal period 1991–2020.
 #
 # Each station represents a distinct German climate region:
 #   Oberstdorf   (3730) — Alpenrand / Allgäu         (806 m)
@@ -16,14 +16,14 @@
 #   Nürnberg     (3668) — Mittelfranken               (314 m)
 #   Regensburg   (4104) — Oberpfalz / Donau           (365 m)
 #
-# The result is a data frame `normtemperatur` with columns:
+# The result is a data frame `slp_gas_normtemperatur` with columns:
 #   station_id  : integer DWD station ID
 #   station     : character station name
 #   region      : character climate region label
-#   date        : Date, using the reference leap year 2000 (2000-01-01 to 2000-12-31)
+#   date        : Date, using the reference leap year 2020 (2020-01-01 to 2020-12-31)
 #   temp_c_mean : numeric long-term mean daily temperature in °C
 #
-# Dates use the year 2000 (a leap year) so that Feb 29 is included. For each
+# Dates use the year 2020 (a leap year) so that Feb 29 is included. For each
 # MM-DD the mean is computed across all years in 1991–2020 that have that date
 # (Feb 29 averages over the 8 leap years in that period).
 #
@@ -98,9 +98,9 @@ all_raw <- lapply(seq_len(nrow(stations)), function(i) {
 # Aggregate by month-day (MM-DD) so that:
 #   - Feb 29 is averaged over the 8 leap years in 1991–2020
 #   - All other days are averaged over all 30 years
-# Dates from the reference leap year 2000 (2000-01-01 to 2000-12-31).
+# Dates from the reference leap year 2020 (2020-01-01 to 2020-12-31).
 
-ref_dates <- seq.Date(as.Date("2000-01-01"), as.Date("2000-12-31"), by = "day")
+ref_dates <- seq.Date(as.Date("2020-01-01"), as.Date("2020-12-31"), by = "day")
 ref_mmdd <- format(ref_dates, "%m-%d")
 
 compute_normals <- function(df) {
@@ -152,26 +152,18 @@ for (i in seq_along(normals_list)) {
   )
 }
 
-normtemperatur <- do.call(rbind, normals_list)
-rownames(normtemperatur) <- NULL
+slp_gas_normtemperatur <- do.call(rbind, normals_list)
+rownames(slp_gas_normtemperatur) <- NULL
 
-# ---- save to sysdata.rda (internal dataset) ---------------------------------
-# normtemperatur is not exported; it is accessed via the `station` argument of
-# slp_kundenwert(). Load existing sysdata objects, add/replace normtemperatur,
-# and re-save.
-sysdata_env <- new.env()
-load("R/sysdata.rda", envir = sysdata_env)
-sysdata_env$normtemperatur <- normtemperatur
-save(
-  list = ls(sysdata_env),
-  envir = sysdata_env,
-  file = "R/sysdata.rda",
-  compress = "xz"
-)
+# ---- save to data/ (exported dataset) --------------------------------------
+# slp_gas_normtemperatur is a user-facing dataset documented in R/data.R and
+# accessed via the `station` argument of slp_gas_kundenwert(). use_data()
+# writes data/slp_gas_normtemperatur.rda with xz compression.
+usethis::use_data(slp_gas_normtemperatur, overwrite = TRUE, compress = "xz")
 message(
   "Done: ",
-  nrow(normtemperatur),
+  nrow(slp_gas_normtemperatur),
   " rows (",
-  nrow(normtemperatur) / 366,
+  nrow(slp_gas_normtemperatur) / 366,
   " stations x 366 days)"
 )

@@ -44,13 +44,14 @@ reference:
 - title: Data
   contents:
   - slp
+  - normtemperatur
 
 - title: Functions
   contents:
   - slp_electricity
   - slp_gas
   - slp_kundenwert
-  - siglinde
+  - slp_gas_siglinde
   - slp_info
 
 figures:

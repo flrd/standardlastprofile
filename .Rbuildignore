@@ -16,3 +16,4 @@
 ^CLAUDE\.md$
 ^\.claude$
 ^air\.toml$
+^figure$

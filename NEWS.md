@@ -14,31 +14,48 @@
 
 * `slp_gas()` implements the BDEW/VKU/GEODE synthetic procedure for gas
   standard load profiles (SigLinDe method). It supports all 15 gas profile IDs
-  defined in the BDEW Leitfaden 2018 (`HEF`, `HMF`, `HKO`, `GKO`, `GHA`,
-  `GMK`, `GBD`, `GBH`, `GWA`, `GGA`, `GBA`, `GGB`, `GPD`, `GMF`, `GHD`).
-  The function accepts daily temperatures (*Allokationstemperatur*) and an
-  annual consumption or a fixed Kundenwert, and returns daily gas consumption
-  in kWh. A `variant` argument selects between SigLinDe Ausprägung `"34"`
+  defined in the BDEW Leitfaden, Stand 28.10.2025 (`HEF`, `HMF`, `HKO`,
+  `GKO`, `GHA`, `GMK`, `GBD`, `GBH`, `GWA`, `GGA`, `GBA`, `GGB`, `GPD`,
+  `GMF`, `GHD`). The function accepts daily temperatures and an annual
+  consumption or a fixed Kundenwert, and returns daily gas consumption in
+  kWh. A `variant` argument selects between SigLinDe Ausprägung `"34"`
   (default, 57 % linear component) and `"33"` (45 % linear component).
 
-* `slp_kundenwert()` derives the Kundenwert (KW, kWh/day) from a full
-  reference year of daily temperatures and an annual consumption target. Use
-  this in a two-step workflow: compute KW once from a representative year,
-  then pass the result as `kundenwert` to `slp_gas()` for any shorter period.
+* `slp_gas_kundenwert()` derives the Kundenwert from a full reference year
+  of daily temperatures and an annual consumption target. You might use this in
+  a two-step workflow: compute KW once from a representative year, then pass
+  the result as `kundenwert` to `slp_gas()` for any shorter period.
   A `station` argument provides convenient access to built-in long-term mean
-  temperatures (WMO climate normal 1991–2020) for ten representative DWD
-  weather stations: Oberstdorf, Potsdam, Hamburg, Freiburg, Chemnitz,
-  Duesseldorf, Erfurt, Frankfurt, Nuernberg, and Regensburg.
+  temperatures (WMO climate normal 1991–2020) for ten DWD weather stations:
+  Oberstdorf, Potsdam, Hamburg, Freiburg, Chemnitz, Düsseldorf, Erfurt,
+  Frankfurt, Nuernberg, and Regensburg.
+
+* `slp_gas_siglinde()` exposes the low-level dimensionless daily heating
+  demand function h(θ) used internally by `slp_gas()`. It is exported so
+  that users with custom or region-specific coefficients (e.g. state-level
+  parameters such as `BW_HEF03` for Baden-Württemberg) can compute h(θ)
+  directly and build their own profiles.
 
 * `slp_info()` now accepts gas profile IDs (`HEF`, `HMF`, `HKO`, etc.)
   in addition to electricity IDs, and respects the `language` argument for
   both. Electricity and gas IDs can be mixed freely in a single call.
 
+## Deprecations
+
+* The dataset `slp` has been renamed to `slp_electricity_profiles`. The old
+  name still works (with a deprecation warning) but will be removed in a
+  future release.
+
+* `slp_kundenwert()` has been renamed to `slp_gas_kundenwert()` so the gas
+  family (`slp_gas()`, `slp_gas_kundenwert()`, `slp_gas_siglinde()`,
+  `slp_gas_normtemperatur`) shares a consistent prefix. The old name still
+  works (with a deprecation warning) but will be removed in a future release.
+
 ## Superseded
 
 * `slp_generate()` is now superseded in favour of `slp_electricity()`. It
-  remains in the package and will not be removed, but new code should use
-  `slp_electricity()` instead.
+  remains in the package and will not be removed for now, but new code should
+  use `slp_electricity()` instead.
 
 ## Breaking changes
 

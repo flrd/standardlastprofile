@@ -336,25 +336,31 @@ paste_snake <- \(...) paste(..., sep = "_")
 
 
 # Gas SLP profile parameters (SigLinDe) ------------------------------------
-# Source: BDEW/VKU/GEODE. Leitfaden Abwicklung von Standardlastprofilen Gas
-#   (KoV XIV.2, Stand: 30.9.2019), Anlage 6, pp. 140–163. Available at
-#   <https://www.bdew.de/service/standardvertraege/kooperationsvereinbarung-gas/>
-#   The underlying research was published as: BDEW/FfE (2015). Weiterentwicklung
-#   des Standardlastprofilverfahrens Gas. Endbericht. Anhang 7.1, p. 24.
-#   The 2019 revision (encoded in the 2025 Leitfaden document) supersedes the
-#   2015 values and is the authoritative parameter source used here.
+# Source: BDEW/VKU/GEODE. Leitfaden Abwicklung von Standardlastprofilen Gas,
+#   Kooperationsvereinbarung Gas, Anlage XIV.2, Stand 28.10.2025, Anhang 6
+#   (per-profile coefficient sheets). The Leitfaden is the operational,
+#   legally-binding KoV reference and is the source of truth for every value
+#   in this table.
+#   <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+#
+# Scientific basis (cited for derivation only, not as a value source):
+#   BDEW/FfE (2015). Weiterentwicklung des Standardlastprofilverfahrens Gas.
+#   Endbericht. Anhang 7.1, p. 24. The 2015 report introduced the SigLinDe
+#   extension on top of the original TU München sigmoid (Geiger/Hellwig 2002)
+#   and supplied the first coefficient set. The Leitfaden 28.10.2025 has since
+#   superseded one value (GBA33 bW: FfE 0.3856589 → Leitfaden 0.3867447).
 #
 # Two variants (German: Ausprägungen) are provided:
-#   "34" — 57 % linear component; BDEW Leitfaden 2018 default
+#   "34" — 57 % linear component; package default
 #   "33" — 45 % linear component; alternative for some distribution network areas
 #
-# Distribution network operators must test individually which variant fits their grid best
-# (2015 report, p. 12). The variant argument in slp_gas() selects
-# between the two; the default is "34".
+# Distribution network operators must test individually which variant fits
+# their grid best. The variant argument in slp_gas() selects between the two;
+# the default is "34".
 #
-# HKO (Kochgasprofil) is a pure sigmoid profile (old Ausprägung 03) that was
-# explicitly excluded from the SigLinDe linearisation. It has no 33/34 variant;
-# the same parameters apply regardless of the variant argument.
+# HKO (Kochgasprofil) is a pure sigmoid profile (old TU München Ausprägung 03)
+# that was explicitly excluded from the SigLinDe linearisation. It has no
+# 33/34 variant; the same parameters apply regardless of the variant argument.
 #
 # theta0 = 40 °C is a fixed constant for all profiles and both variants.
 
@@ -697,8 +703,10 @@ paste_snake <- \(...) paste(..., sep = "_")
 
 
 # Gas SLP weekday factors --------------------------------------------------
-# Source: BDEW/VKU/GEODE Leitfaden 2018, Anlage 6, pp. 140–163
-#         (per-profile data sheets; one F_WT table per profile)
+# Source: BDEW/VKU/GEODE. Leitfaden Abwicklung von Standardlastprofilen Gas,
+#         Kooperationsvereinbarung Gas, Anlage XIV.2, Stand 28.10.2025,
+#         Anhang 6 (per-profile data sheets; one F_WT table per profile).
+#         <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
 # Keys: Mo = Monday, Tu = Tuesday, We = Wednesday, Th = Thursday,
 #       Fr = Friday, Sa = Saturday, Su = Sunday
 

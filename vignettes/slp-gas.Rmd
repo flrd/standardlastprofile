@@ -1,0 +1,886 @@
+---
+title: "Generate a standard load profile for gas"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Generate a standard load profile for gas}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  dpi       = 300,
+  fig.asp   = 0.618,
+  fig.width = 6,
+  fig.height = 3,
+  fig.align = "center",
+  out.width = "90%"
+)
+```
+
+```{=html}
+<style>
+  .content h3 {
+    margin-top: -30px !important;
+  }
+
+  details {
+    margin-bottom: 40px;
+  }
+
+  table {
+    width: 100%;
+    table-layout: auto;
+  }
+
+  table col {
+    width: auto !important;
+  }
+</style>
+```
+
+``` {r, message=FALSE, include=FALSE}
+library(standardlastprofile)
+library(ggplot2)
+```
+
+A standard load profile reflects the typical pattern of gas consumption. It
+is used for forecasting and balancing purposes for various customer types or
+customer groups for which no continuous measurement data is available. In this
+respect, standard load profiles represent a simplification. 
+
+In this vignette we explain how `slp_gas()` implements the algorithm of the
+**synthetic procedure** (German: *synthetisches Verfahren*), following the
+definitions by BDEW, VKU, and GEODE in
+the *Leitfaden Abwicklung von Standardlastprofilen Gas* (2025).[^leitfaden]
+
+[^leitfaden]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin. Available at <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+
+## Synthetic procedure
+
+The synthetic procedure takes a bottom-up approach: the gas consumption for a
+gas network is explained by the sum of the individual gas consumers within that
+network.^[In addition to the synthetic procedure, there is also the analytical
+procedure. In brief, under this procedure, a network operator forecasts
+the proportion of the daily gas volume attributable to *all* SLP customers
+based on the expected temperature for that day and the residual gas amount
+derived from the total gas consumption, minus the gas volume attributable to
+customers with metered consumption. The analytical procedure is not in scope of
+this package.]
+
+For each customer type, i.e. profile, the gas
+consumption of day $D$ is the result of three factors:
+
+1. outside temperature
+2. preferences and habits
+3. the day of the week
+
+Mathematically, this is expressed as:[^procedure]
+
+$$
+Q(D) = h(\vartheta_D) \times KW \times F_{WT, D}
+$$
+where:
+
+* $h(\ldots)$ is a profile function evaluated at the daily
+  temperature $\vartheta_D$.
+* $KW$ (German: "Kundenwert") — a customer-specific scaling factor in kWh/day.
+* $F_{WT}$ is a weekday factor that adjusts for consumption differences across
+  days of the week.
+
+[^procedure]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Allgemeine Begriffsbestimmungen / Erläuterungen, p. VIII
+
+We will discuss these three factors in more detail below.
+
+### Profile function and temperature
+
+Gas consumption is strongly correlated with outdoor temperature; the colder
+it gets, the more gas is consumed. The relationship between outside
+temperature and gas consumption is captured by the profile function $h(\vartheta)$. 
+
+This function was initially published in 2003 as an S-shaped sigmoid function:[^Hellwig2003] 
+
+$$
+h(\vartheta) = \frac{A}{1 + \left(\dfrac{B}{\vartheta - \vartheta_0}\right)^C} + D
+$$
+
+Since then, it has been revised as part of an ongoing debate. In a
+research paper from 2015 it was found that a pure sigmoid approach
+systematically underestimated consumption at very cold temperatures. The authors
+proposed an improved formulation called **SigLinDe**
+(**Sig**moid + **Lin**ear + **De**utschland).[^ffe2015] SigLinDe adds
+a linear component to that sigmoid equation representing space-heating demand
+(German: *Heizgas-Gerade*) and hot water demand (German: *Warmwasser-Gerade*).
+
+$$
+h(\vartheta) = 
+\underbrace{\frac{A}{1 + \left(\dfrac{B}{\vartheta - \vartheta_0}\right)^C} + D}_{\text{sigmoid part}}
++
+\underbrace{\max\!\left(m_H \vartheta + b_H,\; m_W \vartheta + b_W\right)}_{\text{linear part}}
+$$
+
+```{r siglinde-toggle-chart, echo=FALSE, results='asis', eval=knitr::is_html_output()}
+cat('
+<div id="siglinde-widget" style="max-width: 600px; margin: 1.5em auto; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">
+<div style="margin-bottom: 12px;">
+<div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">Higher h(\u03d1) means more gas consumption on that day</div>
+<style>
+.sig-toggle-label {
+  display: inline-block;
+  position: relative;
+}
+.sig-toggle-label > span {
+  position: relative;
+}
+.sig-toggle-label::before {
+  content: attr(data-text);
+  font-weight: 700;
+  visibility: hidden;
+  display: block;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+</style>
+<p style="font-size: 13px; color: #555; margin: 4px 0 0; line-height: 1.4;">Toggle between <span id="siglinde-label-sig" class="sig-toggle-label" data-text="Sigmoid"><span id="siglinde-label-sig-inner" style="font-weight: 700; color: #0CC792;">Sigmoid</span></span>
+<span style="display: inline-block; vertical-align: middle; width: 2.2em; height: 1.2em; margin: 0 2px;">
+<button id="siglinde-toggle" role="switch" aria-checked="false" aria-label="Toggle between a pure Sigmoid and SigLinDe"
+  style="position: relative; width: 100%; height: 100%; background: #fff; outline: 2px solid #333; border: none; border-radius: 0; cursor: pointer; padding: 0;">
+<span id="siglinde-thumb" style="position: absolute; top: 50%; left: 0.15em; width: 0.75em; height: 0.75em; background: #333; border-radius: 0; display: block; transition: transform 0.2s ease; transform: translateY(-50%);"></span>
+</button>
+</span>
+and <span id="siglinde-label-sld" class="sig-toggle-label" data-text="SigLinDe"><span id="siglinde-label-sld-inner" style="font-weight: 400;">SigLinDe</span></span> functions</p>
+</div>
+<div id="siglinde-chart"></div>
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const A = 1.0443538, B = -35.0333754, C = 6.2240634, D = 0.0502917, theta0 = 40;
+const mH = -0.053583, bH = 0.9995901, mW = -0.0021758, bW = 0.1633299;
+
+function sigmoid(t) {
+  return A / (1 + Math.pow(B / (t - theta0), C)) + D;
+}
+function linear(t) {
+  return Math.max(mH * t + bH, mW * t + bW);
+}
+
+const temps = [];
+for (let t = -15; t <= 25; t += 0.25) temps.push(t);
+
+const sigOnly  = temps.map(t => sigmoid(t));
+const siglinde = temps.map(t => sigmoid(t) + linear(t));
+
+const chartEl  = document.getElementById("siglinde-chart");
+const toggle   = document.getElementById("siglinde-toggle");
+const thumb    = document.getElementById("siglinde-thumb");
+const labelSig = document.getElementById("siglinde-label-sig-inner");
+const labelSld = document.getElementById("siglinde-label-sld-inner");
+
+let active = false;
+let blend  = 0;
+let animId = null;
+
+function render(t) {
+  const data = temps.map((temp, i) => ({
+    temp,
+    h: sigOnly[i] + t * (siglinde[i] - sigOnly[i])
+  }));
+
+  const marks = [
+    Plot.lineY(data, {
+      x: "temp", y: "h",
+      stroke: "#0CC792", strokeWidth: 2.5
+    })
+  ];
+
+  const plot = Plot.plot({
+    width: 600,
+    height: 340,
+    marginLeft: 50,
+    marginBottom: 40,
+    x: {
+      label: "Temperature (\u00b0C)",
+      tickFormat: d => d + "\u00b0",
+      grid: true
+    },
+    y: {
+      label: "h(\u03d1)",
+      domain: [0, 3],
+      grid: true
+    },
+    marks,
+    style: {
+      fontSize: "13px",
+      fontFamily: "-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif",
+      background: "transparent"
+    }
+  });
+
+  chartEl.innerHTML = "";
+  chartEl.appendChild(plot);
+}
+
+function animate() {
+  const target = active ? 1 : 0;
+  const step = 0.06;
+  const diff = target - blend;
+  if (Math.abs(diff) < step) {
+    blend = target;
+    render(blend);
+    animId = null;
+    return;
+  }
+  blend += Math.sign(diff) * step;
+  render(blend);
+  animId = requestAnimationFrame(animate);
+}
+
+toggle.addEventListener("click", () => {
+  active = !active;
+  toggle.setAttribute("aria-checked", active);
+  thumb.style.transform = active ? "translateY(-50%) translateX(1.1em)" : "translateY(-50%)";
+  labelSig.style.fontWeight = active ? "400" : "700";
+  labelSig.style.color = active ? "" : "#0CC792";
+  labelSld.style.fontWeight = active ? "700" : "400";
+  labelSld.style.color = active ? "#0CC792" : "";
+  if (animId) cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(animate);
+});
+
+render(0);
+</script>
+')
+```
+
+The SigLinDe approach was adopted by BDEW in 2018 and has since been the binding standard.[^bdew2018]
+`slp_gas()` implements the SigLinDe approach. The parameters $A$,
+$B$, $C$, $D$, $\vartheta_0$, $m_H$, $b_H$, $m_W$, $b_W$ are profile-specific
+constants.[^params_source]
+
+[^params_source]: The coefficients A, B, C, D, m~H~, b~H~, m~W~, b~W~ for each consumption profile are published in Anlage 6 of the BDEW Leitfaden (pp. 140–163).
+
+[^Hellwig2003]: Hellwig, Mark (2003). *Entwicklung und Anwendung parametrisierter Standard-Lastprofile*. Dissertation, TU München.
+
+[^ffe2015]: Hinterstocker, M., Eberl, B., von Roon, S. (2015). *Weiterentwicklung des Standardlastprofilverfahrens Gas*. Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE), available at <https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf>
+
+[^bdew2018]: BDEW/VKU/GEODE-Leitfaden Abwicklung von Standardlastprofilen Gas, Stand 28.10.2025, available at <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+
+The result of $h(\vartheta)$ is a number > 0 without a dimension:
+
+``` {r h-vartheta-minimal-example, message=FALSE}
+# profile "GMF", Ausprägung: 34
+slp_gas_siglinde(
+  theta  =   8.0,
+  A      =   1.0443538,
+  B      = -35.0333754,
+  C      =   6.2240634,
+  D      =   0.0502917,
+  theta0 =  40.0,
+  mH     =  -0.053583,
+  bH     =   0.9995901,
+  mW     =  -0.0021758,
+  bW     =   0.1633299
+)
+```
+
+The output of this function will be scaled to kWh once we add $KW$ into the equation.  
+
+### Customer value 'KW'
+
+The customer value takes into account a customer’s individual consumption behaviour. It is a scaling factor expressed in kWh/day and expresses the average gas consumption at 8°C. We can rearrange the
+gas consumption equation from above and express $KW$ mathematically as:
+
+$$
+KW = \frac{E_a}{\displaystyle\sum_{D} h(\vartheta_D) \times F_{WT,D}}
+$$
+
+Where 
+
+* $E_a$ is the gas consumption (for a certain period of time, usually one year)
+* $\vartheta_D$ is the profile function value for day $D$
+* $F_{WT,D}$ is the scaling factor for weekday $D$
+
+Let's make this concrete on the example of a single-family house (profile ID: `HEF`)
+in Hamburg. We assume that the gas consumption in the previous calendar year
+(or last billing period for that matter) was 15,000 kWh. With that information
+we can calculate $KW$. We know $\vartheta_D$ from the previous section and we can
+fetch the temperature data for Hamburg from the [German Meteorological Service (DWD)](https://www.dwd.de/EN/Home/home_node.html).
+If we put all this information together into the equation above, this is the result:
+
+```{r kundenwert_table, echo=FALSE, message=FALSE}
+# Hamburg built-in reference temperatures (WMO climate normal 1991-2020)
+# Uses the full 366-day climatological series, matching slp_gas_kundenwert()
+ref <- slp_gas_normtemperatur
+ref <- ref[ref$station == "Hamburg", c("date", "temp_c_mean")]
+
+# Compute h(theta) for HEF, variant 34
+p <- standardlastprofile:::.gas_profile_params[["34"]][["HEF"]]
+ref$h <- slp_gas_siglinde(
+  ref$temp_c_mean, p$A, p$B, p$C, p$D, p$theta0,
+  p$mH, p$bH, p$mW, p$bW
+)
+
+# Weekday factors (all 1 for HEF, but include for completeness)
+wt_keys <- standardlastprofile:::get_gas_weekday_key(ref$date)
+fwt <- standardlastprofile:::.gas_weekday_factors[["HEF"]]
+ref$f_wt <- unname(fwt[wt_keys])
+
+# Show first and last few rows with ellipsis
+show <- rbind(
+  head(ref, 1),
+  data.frame(date = NA, temp_c_mean = NA, h = NA, f_wt = NA),
+  ref[floor(nrow(ref) / 2) + c(-1, 0, 1), ],
+  data.frame(date = NA, temp_c_mean = NA, h = NA, f_wt = NA),
+  tail(ref, 1)
+)
+show_df <- data.frame(
+  Date = ifelse(is.na(show$date), "\u22ee", format(show$date, "%b %e")),
+  `°C` = ifelse(is.na(show$temp_c_mean), "\u22ee", round(show$temp_c_mean, 1)),
+  `h(ϑ)` = ifelse(is.na(show$h), "\u22ee", round(show$h, 4)),
+  check.names = FALSE
+)
+knitr::kable(show_df, align = "lrr")
+```
+
+The sum in the denominator across all `r nrow(ref)` days gives
+$\sum_D h(\vartheta_D) \times F_{WT,D}$ = `r round(sum(ref$h * ref$f_wt), 2)`,
+so $KW$ = 15,000 / `r round(sum(ref$h * ref$f_wt), 2)` =
+**`r round(15000 / sum(ref$h * ref$f_wt), 2)` kWh/day**.
+
+We have covered two of the three factors of the equation to predict gas
+consumption for any day $D$ – $Q(D) = KW \times h(\vartheta_D) \times F_{WT, D}$ –;
+the one missing is the weekday factor $F_{WT, D}$.
+
+### Weekday factors
+
+Unlike the electricity profiles, which group Monday–Friday into a single
+`workday` type, the gas procedure uses a separate scaling factor for every weekday 
+from Monday through Sunday.[^fwt]
+
+Public holidays are treated as a Sunday — the Leitfaden notes that
+consumption on public holidays most closely resembles a Sunday.[^holiday_rule]
+24 December and 31 December are treated as Saturday unless they fall
+on a Sunday; this convention mirrors the established rule from the BDEW
+electricity SLP procedure and is applied here by analogy.
+
+[^holiday_rule]: BDEW/VKU/GEODE (2018). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Anlage 3, pp. 129–130.
+
+[^fwt]: BDEW/VKU/GEODE (2018). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Anlage 6, pp. 140–163 (per-profile data sheets).
+
+For the residential profiles `HEF`, `HMF`, and `HKO`, however, all weekday factors
+are equal to 1, that is, gas consumption in households is assumed not to differ
+significantly by day of the week. 
+Commercial profiles on the other hand show visible weekday patterns, the range of
+the weekday factors is `r do.call(rbind, standardlastprofile:::.gas_weekday_factors) |> range() |> paste(collapse = " - ")`,
+illustrated by the chart below:
+
+```{r weekday_factors_data, echo=FALSE}
+days <- c("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")
+profiles_f <- names(standardlastprofile:::.gas_weekday_factors)
+
+fwt <- do.call(rbind, lapply(profiles_f, \(pid) {
+  wfct <- standardlastprofile:::.gas_weekday_factors[[pid]]
+  data.frame(
+    profile_id = pid,
+    day        = factor(names(wfct), levels = days),
+    fct_value  = unname(wfct),
+    category   = if(startsWith(pid, "H")) "household" else "commercial"
+  )
+}))
+```
+
+```{r weekday_factors_heatmap_static, echo=FALSE, fig.asp=1, fig.retina=2, eval=!knitr::is_html_output()}
+ggplot(fwt, aes(day, profile_id, fill = fct_value - 1)) +
+  geom_tile(width = .95, height = .95) +
+  coord_equal(ratio = .75) +
+  scale_fill_gradient2(NULL, labels = scales::label_percent(), midpoint = 0, low = "#311dfc", mid = "#fffafe", high = "#ff005e") +
+  facet_grid(rows = vars(category), scales = "free", space = "free") +
+  labs(
+    title   = NULL,
+    caption = NULL,
+    x       = NULL,
+    y       = NULL,
+    fill    = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position    = "bottom") +
+  theme(legend.key.width = unit(0.099,"npc")) +
+  theme(panel.grid = element_blank())
+```
+
+```{r weekday_factors_heatmap_html, echo=FALSE, results='asis', eval=knitr::is_html_output()}
+fwt_json <- jsonlite::toJSON(
+  data.frame(
+    profile_id = fwt$profile_id,
+    day        = as.character(fwt$day),
+    fct_value  = fwt$fct_value,
+    category   = fwt$category
+  ),
+  dataframe = "rows"
+)
+# Profile descriptions for y-axis tooltips
+desc_pids <- unique(as.character(fwt$profile_id))
+desc_map <- vapply(desc_pids, \(pid) {
+  slp_info(pid)[[pid]]$description
+}, character(1))
+desc_json <- jsonlite::toJSON(as.list(desc_map), auto_unbox = TRUE)
+cat(sprintf('
+<div id="fwt-widget" style="max-width: 600px; margin: 1.5em auto; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">
+<div id="fwt-chart"></div>
+</div>
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const data = %s;
+const descriptions = %s;
+const days = ["Mo","Tu","We","Th","Fr","Sa","Su"];
+const householdIds = [...new Set(data.filter(d => d.category === "household").map(d => d.profile_id))];
+const commerceIds  = [...new Set(data.filter(d => d.category === "commercial").map(d => d.profile_id))];
+const profileOrder = [...householdIds, ...commerceIds];
+
+const chart = Plot.plot({
+  marginLeft: 40,
+  marginBottom: 30,
+  height: profileOrder.length * 32 + 60,
+  x: { domain: days, padding: 0.08, label: null },
+  y: { domain: profileOrder, padding: 0.08, label: null },
+  color: {
+    type: "diverging",
+    domain: [-0.6, 0.3],
+    pivot: 0,
+    range: ["#311dfc", "#fffafe", "#ff005e"],
+    label: "Weekday factors for SLP gas profiles as deviation from 1",
+    tickFormat: "+.0%%",
+    legend: true
+  },
+  marks: [
+    Plot.cell(data, {
+      x: "day",
+      y: "profile_id",
+      fill: d => d.fct_value - 1,
+      tip: true,
+      title: d => {
+        const v = d.fct_value - 1;
+        return v === 0 ? "0%%" : (v > 0 ? "+" : "") + (v * 100).toFixed(1) + "%%";
+      }
+    }),
+    Plot.ruleY([householdIds.length - 0.5], { stroke: "#999", strokeDasharray: "3,3" })
+  ]
+});
+
+document.getElementById("fwt-chart").appendChild(chart);
+
+// Add tooltips to y-axis tick labels
+chart.querySelectorAll("text").forEach(el => {
+  const pid = el.textContent.trim();
+  if (!descriptions[pid]) return;
+  el.style.cursor = "help";
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "title");
+  t.textContent = descriptions[pid];
+  el.prepend(t);
+});
+</script>
+', fwt_json, desc_json))
+```
+
+## Usage
+
+With the algorithm covered, let us see how to use `slp_gas()` in practice.
+
+### A minimal working example
+
+The minimal input is a `profile_id`, a `dates` vector, and a `temperatures`
+vector. By default `kundenwert` is `NULL` and `annual_consumption` is `1000`.
+Below we use a short synthetic temperature series to illustrate the output
+format:
+
+```{r basic_usage, message=FALSE}
+dates <- seq.Date(as.Date("2026-01-12"), as.Date("2026-01-18"), by = "day")
+temps <- c(-3.2, -1.8, 0.4, 2.1, 4.5, 3.8, 1.2)
+
+result <- slp_gas(
+  profile_id = "HEF",
+  dates = dates,
+  temperatures = temps,
+  kundenwert = NULL,        # default
+  annual_consumption = 1000 # default
+  )
+result
+```
+
+> When `kundenwert = NULL` (the default), `slp_gas()` derives $KW$ automatically
+> from `annual_consumption` and the supplied temperature series. 
+
+Without `kundenwert` and without temperature data that covers a whole year
+at least chances are that the result is off – by a lot. The minimal example above
+shall only illustrate the output and below we will discuss a more realistic
+example.
+
+### A full-year example
+
+To produce a meaningful result the temperature series should cover a full
+year at least. In practice you would use measured data from a trustworthy
+institution like the German Meteorological Service, or DWD for short. The
+[`rdwd`](https://cran.r-project.org/package=rdwd) package provides a
+straightforward interface to the open-data portal of the DWD 
+(Deutscher Wetterdienst).[^dwd] No registration or API key is required.
+
+[^dwd]: DWD Open Data: <https://opendata.dwd.de/>
+
+#### rdwd package 
+
+The workflow has three steps:
+
+1. `selectDWD()` — find the download URL for a station and dataset.
+2. `dataDWD()` — download and unzip the file.
+3. `readDWD()` — parse the file into a data frame.
+
+For gas SLPs, we need the **daily climate summary** (`var = "kl"`,
+`res = "daily"`). The column `TMK` contains the daily mean temperature in °C.
+
+### Comparing three climate zones
+
+Germany spans several distinct climate zones that lead to meaningfully
+different gas consumption patterns:
+
+* **Freiburg im Breisgau** — mild oceanic-continental climate in the Upper
+  Rhine Plain, sheltered by the Black Forest; the warmest and sunniest large
+  city in Germany, with comparatively low heating demand.
+* **Hamburg** — maritime climate on the North Sea coast; mild winters but
+  persistent cloud cover and wind, leading to moderate heating demand.
+* **Chemnitz** — continental climate in the Erzgebirge foothills of Saxony;
+  colder winters and greater temperature amplitude than the other two cities,
+  resulting in the highest heating demand of the three.
+
+The example below computes gas consumption for three representative profiles —
+`HEF` (single-family home), `GBD` (services), and `GWA` (laundries). We assume
+a yearly gas consumption of 15.000 kWh for all profiles and cities. With
+`rdwd` installed, replace the embedded temperature series with real DWD station
+data (see code comment):
+
+```{r dwd_cities_download, eval=FALSE}
+# Download real 2024 data with rdwd (requires internet access)
+library(rdwd)
+
+get_temps_dwd <- \(station_name) {
+  link <- selectDWD(station_name, res = "daily", var = "kl", per = "historical")
+  file <- dataDWD(link, read = FALSE)
+  raw  <- readDWD(file, varnames = FALSE)
+  raw  <- raw[format(raw$MESS_DATUM, "%Y") == "2024", ]
+  list(
+    dates = as.Date(raw$MESS_DATUM),
+    temps = raw$TMK
+  )
+}
+
+temps_list <- list(
+  "Freiburg im Breisgau" = get_temps_dwd("Freiburg"),
+  "Hamburg"              = get_temps_dwd("Hamburg-Fuhlsbüttel"),
+  "Chemnitz"             = get_temps_dwd("Chemnitz")
+)
+```
+
+```{r dwd_cities, fig.asp=0.9, fig.retina=2, message=FALSE}
+#| fig.alt = "Facet grid showing monthly gas consumption across three German
+#|  climate zones (Freiburg, Hamburg, Chemnitz) for three gas profiles
+#|  (HEF, GBD, GWA). Chemnitz shows the highest winter peaks."
+
+# Climate-representative temperature series (2024, daily mean °C).
+# Parameters are calibrated to long-term DWD station normals:
+#   mean  = annual mean temperature
+#   amp   = seasonal amplitude (peak-to-mean)
+#   phase = day-of-year offset of the coldest point (~Jan 15)
+set.seed(2024)
+dates_2024 <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
+doy        <- as.integer(format(dates_2024, "%j"))
+
+make_temps <- \(mean, amp, phase = 15, sd = 2.5) {
+  mean - amp * cos(2 * pi * (doy - phase) / 365) + rnorm(366, sd = sd)
+}
+
+# Freiburg: warm (~11.5 °C mean), moderate amplitude — sheltered Upper Rhine
+# Hamburg:  cool-temperate (~10 °C mean), damped amplitude — maritime North Sea
+# Chemnitz: coldest (~9 °C mean), largest amplitude — continental Saxony
+temps_list <- list(
+  "Freiburg im Breisgau" = list(dates = dates_2024, temps = make_temps(11.5,  9.5)),
+  "Hamburg"              = list(dates = dates_2024, temps = make_temps(10.0, 10.0)),
+  "Chemnitz"             = list(dates = dates_2024, temps = make_temps( 9.0, 11.5))
+)
+
+profiles <- c("HEF", "GBD", "GWA")
+
+gas_cities <- do.call(rbind, Map(\(city_data, city) {
+  out      <- slp_gas(profiles, city_data$dates, city_data$temps, annual_consumption = 15000)
+  out$city <- city
+  out
+}, temps_list, names(temps_list)))
+
+# Aggregate to monthly totals for a cleaner visual
+gas_cities$month <- as.Date(format(gas_cities$date, "%Y-%m-01"))
+
+gas_monthly <- aggregate(
+  kwh ~ city + profile_id + month,
+  data = gas_cities,
+  FUN  = sum
+)
+
+# Order cities warm-to-cold (left-to-right in columns)
+gas_monthly$city <- factor(
+  gas_monthly$city,
+  levels = c("Freiburg im Breisgau", "Hamburg", "Chemnitz")
+)
+
+library(ggplot2)
+
+ggplot(gas_monthly, aes(month, kwh, fill = city)) +
+  geom_col(show.legend = FALSE) +
+  facet_grid(city ~ profile_id) +
+  scale_x_date(date_breaks = "3 months", date_labels = "%b") +
+  scale_y_continuous("Monthly gas consumption (kWh)") +
+  scale_fill_manual(values = c(
+    "Freiburg im Breisgau" = "#FA9529",
+    "Hamburg"              = "#0CC792",
+    "Chemnitz"             = "#961BFA"
+  )) +
+  labs(
+    title    = "Gas standard load profiles across three German climate zones",
+    subtitle = "Annual consumption normalised to 1,000 kWh/a \u2022 illustrative temperature series",
+    caption  = "Profile parameters: BDEW Leitfaden 2018",
+    x        = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text         = element_text(face = "bold"),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(
+      linetype = "12", lineend = "round", colour = "#FAF6F4"
+    )
+  )
+```
+
+The facet grid reveals two orthogonal effects:
+
+* **Rows (profile)**: `HEF` shows the strongest winter peak because all gas
+  consumption is heating-driven. `GBD` (offices and services) has a smaller
+  but still marked winter peak. `GWA` (laundries) is the flattest, as
+  industrial washing demand varies little with temperature and its weekday
+  factors strongly suppress weekend consumption.
+* **Columns (city)**: Chemnitz consistently shows higher winter consumption
+  than Hamburg, which in turn exceeds Freiburg — a direct reflection of the
+  colder continental climate in Saxony versus the mild Upper Rhine Plain.
+
+### Computing the geometrically-weighted Allokationstemperatur
+
+If you have raw daily mean temperatures from DWD and want to use the
+geometrically-weighted 4-day mean recommended by BDEW, apply it before calling
+`slp_gas()`. (If you already have GPT values from a meteorological
+service provider, skip this step — GPT is not this formula.)
+
+```{r allokationstemperatur, eval=FALSE}
+# Geometrically weighted 4-day mean:
+# (T_D + 0.5*T_{D-1} + 0.25*T_{D-2} + 0.125*T_{D-3}) / 1.875
+weight_allok <- c(1, 0.5, 0.25, 0.125)
+
+apply_allok <- \(city_data) {
+  theta <- stats::filter(
+    city_data$temps,
+    filter = weight_allok / sum(weight_allok),
+    method = "convolution",
+    sides  = 1                        # only past values
+  )
+  keep <- !is.na(theta)
+  list(dates = city_data$dates[keep], temps = as.numeric(theta[keep]))
+}
+
+temps_list_weighted <- lapply(temps_list, apply_allok)
+```
+
+### Discovering stations
+
+To find the exact station name to pass to `selectDWD()`, use `findID()` or
+open the interactive station map:
+
+```{r dwd_stations, eval=FALSE}
+rdwd::findID("Freiburg")             # returns matching station names and IDs
+rdwd::selectDWD(mapDWD = TRUE)       # opens an interactive map in the browser
+```
+
+## Profile IDs
+
+There are 15 gas profile IDs defined in the BDEW Leitfaden 2018, split into
+residential and commercial / industrial types.
+
+### Residential profiles
+
+Residential profiles share two important characteristics: all weekday factors
+equal 1 (no day-of-week differentiation), and heating load is the dominant
+driver of demand variability.
+
+| Profile | Description | Notes |
+|---------|-------------|-------|
+| `HEF`   | Single-family home (Einfamilienhaus) | Strongest seasonal swing; includes space heating + hot water |
+| `HMF`   | Multi-family home (Mehrfamilienhaus) | Lower per-unit demand than `HEF` due to shared building envelope |
+| `HKO`   | Cooking and hot water only (Kochen / Warmwasser) | No space heating; TUM profile — sigmoid only, linear part is zero |
+
+`HKO` is appropriate for customers whose gas connection serves only a cooker
+or instantaneous water heater. Its flat, temperature-insensitive shape is
+visible in the SigLinDe curve plot above.
+
+### Commercial and industrial profiles
+
+Commercial profiles have profile-specific weekday factors that reflect the
+operating hours and schedules of each sector. They are grouped here by
+consumption pattern:
+
+**Process-heat dominated** (relatively flat seasonal pattern, strong weekday
+structure):
+
+| Profile | Description |
+|---------|-------------|
+| `GWA`   | Laundries — large hot-water demand, insensitive to outdoor temperature |
+| `GBA`   | Bakeries — continuous baking process, pronounced weekday factors |
+| `GPD`   | Paper and printing — industrial process heat |
+
+**Space-heating dominated** (strong winter peak, moderate weekday variation):
+
+| Profile | Description |
+|---------|-------------|
+| `GKO`   | Small commercial (Kleinstgewerbe) |
+| `GHA`   | Trade and commerce (Handel) |
+| `GBD`   | Services (Dienstleistung) |
+| `GBH`   | Accommodation (Beherbergung) |
+| `GGA`   | Gastronomy (Gastronomie) |
+| `GMK`   | Metal and automotive (Metall / Kfz) |
+| `GGB`   | Mixed commercial (gemischtes Gewerbe) |
+| `GMF`   | Large multi-family / mixed use (Mehrfamilienhaus groß) |
+
+**Aggregate / summary profile**:
+
+| Profile | Description |
+|---------|-------------|
+| `GHD`   | Trade, commerce and services aggregate (GHD-Stützpunkt) — weighted mean across all G-types |
+
+`GHD` is used when a customer cannot be assigned to a specific sector. Its
+parameters are a weighted average of the individual commercial profiles and
+its weekday factors are close to but not equal to 1.
+
+
+
+### Customer value (Kundenwert)
+
+The customer value $KW$ scales the dimensionless values $h(\vartheta)$ to
+match a specific customer's consumption.[^kw] It indicates the daily
+consumption of a standard load profile customer at a temperature of 8°C
+This is where the $h(\vartheta)$ returns 1 for all profiles. This is how
+the SigLinDe profiles been specified.
+
+[^kw]: BDEW/VKU/GEODE (2018). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Abschnitt 3.6.1, p. 29; full derivation with worked examples in Anlage 1, pp. 116–122.
+
+When `kundenwert = NULL` (the default), `slp_gas()` derives $KW$
+automatically from `annual_consumption` and the supplied temperature series.
+You can also supply a fixed `kundenwert` directly, which is useful when you
+already know the customer's daily baseline and want to bypass the annual
+normalisation.
+
+
+### 
+
+*Allokationstemperatur* $\vartheta_D$ summarises the temperature for a given
+day. Two approaches are
+defined in the Leitfaden:[^allok]
+
+**Simple daily mean** — the Leitfaden specifies an arithmetic mean of 24 hourly
+values covering the gas day, without writing out an explicit summation formula.
+In standard notation this is:
+
+$$\vartheta_D = \frac{1}{24} \sum_{i=1}^{24} T_i$$
+
+**Geometrically-weighted 4-day mean** — recommended by BDEW for grid
+operators, giving more weight to the current day. The document writes the
+denominator in expanded form:
+
+$$\vartheta_D = \frac{T_D + 0.5 \cdot T_{D-1} + 0.25 \cdot T_{D-2} + 0.125 \cdot T_{D-3}}{1 + 0.5 + 0.25 + 0.125}$$
+
+[^allok]: BDEW/VKU/GEODE (2018). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Abschnitt 3.5.2, p. 22.
+
+`slp_gas()` accepts whichever values you pass in `temperatures` — the
+choice of method is the user's responsibility
+(see [Real temperature data from DWD](#real-temperature-data-from-dwd)).
+
+## The SigLinDe profile function
+
+The profile function $h(\vartheta)$ is the mathematical heart of the synthetic
+procedure. It maps a temperature to a dimensionless load factor. The SigLinDe
+function comes in two variants (German: *Ausprägungen*) — **34** (57 % linear
+component, steeper heating slope) and **33** (45 % linear component) — both
+introduced in the 2015 FfE report.[^siglinde] The BDEW Leitfaden 2018
+recommends that distribution network operators test both and select the better fit for their
+grid. `slp_gas()` uses variant 34 by default and lets you switch
+with `variant = "33"`.
+
+$$
+h(\vartheta) =
+\underbrace{\frac{A}{1 + \left(\dfrac{B}{\vartheta - \vartheta_0}\right)^C} + D}_{\text{sigmoid part}}
++
+\underbrace{\max\!\left(m_H \vartheta + b_H,\; m_W \vartheta + b_W\right)}_{\text{linear part}}
+$$
+
+The **sigmoid part** captures the temperature-dependent space-heating demand
+that dominates in winter but flattens in summer. The **linear part** adds two
+straight lines — a space-heating line (German: *Heizgas-Gerade*, $m_H$, $b_H$)
+and a hot water line (German: *Warmwasser-Gerade*, $m_W$, $b_W$) — representing
+supplementary heating and domestic hot water loads. 
+
+[^siglinde]: BDEW/VKU/GEODE (2018). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Anlage 7, pp. 164–166.
+
+We can inspect the profile function for a selection of
+profiles across the temperature range that is relevant in Germany:
+
+```{r siglinde_curve, echo=TRUE, fig.asp=0.618, fig.retina=2}
+library(standardlastprofile)
+library(ggplot2)
+
+theta <- seq(-15, 25, by = 0.5)
+
+profiles <- c("HEF", "HMF", "GKO", "GHA")
+curves <- do.call(rbind, lapply(profiles, \(pid) {
+  p <- standardlastprofile:::.gas_profile_params[["34"]][[pid]]
+  h <- slp_gas_siglinde(
+    theta, p$A, p$B, p$C, p$D, p$theta0,
+    p$mH, p$bH, p$mW, p$bW
+  )
+  data.frame(profile_id = pid, theta = theta, h = h)
+}))
+
+ggplot(curves, aes(theta, h, colour = profile_id)) +
+  geom_hline(yintercept = 1, linetype = "dotted", colour = "grey70", linewidth = 0.4) +
+  geom_vline(xintercept = 8, linetype = "dotted", colour = "grey70", linewidth = 0.4) +
+  geom_line(linewidth = 0.8) +
+  scale_x_continuous(labels = \(x) paste0(x, "°C"), breaks = c(-10, 0, 8, 20)) +
+  scale_y_continuous("h(ϑ)") +
+  labs(
+    title    = "SigLinDe profile functions",
+    subtitle = "Higher h(ϑ) means more gas consumption on that day",
+    caption  = "data: BDEW Leitfaden 2018, Anlage 6",
+    colour   = NULL,
+    x        = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position    = "top",
+    panel.grid = element_line(
+      linetype = "12", lineend = "round", colour = "#FAF6F4"
+    )
+  )
+```
+
+At low temperatures all profiles show a high load factor because of space
+heating demand. As temperature rises, $h(\vartheta)$ decreases and flattens.
+`HKO` has no space-heating component and therefore shows a much lower and
+flatter curve.
