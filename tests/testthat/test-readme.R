@@ -10,8 +10,8 @@ label_names <- c(
 label_fun <- \(x) label_names[[x]]
 
 # 1999 profiles only; reorder facets
-tmp <- slp[
-  slp$profile_id %in%
+tmp <- slp_electricity_profiles[
+  slp_electricity_profiles$profile_id %in%
     c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2"),
 ]
 tmp$day <- factor(tmp$day, levels = c("workday", "saturday", "sunday"))

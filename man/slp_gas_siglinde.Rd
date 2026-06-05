@@ -53,8 +53,9 @@ exported so that users with custom or region-specific coefficients (e.g.
 state-level parameters such as \code{BW_HEF03} for Baden-Württemberg) can
 compute \eqn{h(\vartheta)} directly and build their own profiles.
 
-Published coefficients for all 15 standard profiles are listed in
-\code{vignette("slp-gas-parameters")}.
+Published coefficients for all 15 standard profiles are listed in the
+\href{https://flrd.github.io/standardlastprofile/articles/slp-gas-parameters.html}{SigLinDe parameters}
+article.
 }
 \examples{
 # h value at 0 °C for HEF (single-family home), variant 34
@@ -78,10 +79,12 @@ slp_gas_siglinde(
 }
 \references{
 BDEW/VKU/GEODE (2025). \emph{Abwicklung von Standardlastprofilen Gas},
-Kooperationsvereinbarung Gas, Anlage XIV.2, Stand vom 28.10.2025, Anhang 6,
+Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28, Anhang 6,
 pp. 145–166.
 \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
 }
 \seealso{
-\code{\link[=slp_gas]{slp_gas()}}, \code{vignette("slp-gas-parameters")}
+\code{\link[=slp_gas]{slp_gas()}};
+\href{https://flrd.github.io/standardlastprofile/articles/slp-gas-parameters.html}{SigLinDe parameters}
+article
 }

@@ -51,7 +51,9 @@ combination of \code{profile_id}, \code{period}, and \code{day} there are 96 qua
 measurements of electrical power, normalised to an annual consumption of
 1,000 kWh.
 
-See \code{vignette("slp-electricity")} for more details about the algorithm.
+See the
+\href{https://flrd.github.io/standardlastprofile/articles/slp-electricity.html}{electricity algorithm}
+article for more details.
 \subsection{Profile IDs}{
 
 There are 16 profile IDs across two generations:

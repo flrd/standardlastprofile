@@ -80,7 +80,7 @@ names(load_profiles_2025) <- sheets_2025
 load_profiles_lst <- c(load_profiles_1999, load_profiles_2025)
 
 
-# 6. Create tidy slp dataset ----------------------------------------------
+# 6. Create tidy slp_electricity_profiles dataset -------------------------
 
 # helper: matrix → long data.table with period column
 mat_to_slp <- \(mat, period_levels) {
@@ -127,66 +127,14 @@ slp_2025 <- lapply(
   setcolorder(c("profile_id", "period", "day", "timestamp", "watts")) |>
   as.data.frame()
 
-slp <- rbind(slp_1999, slp_2025)
+slp_electricity_profiles <- rbind(slp_1999, slp_2025)
 
 
-# compute nationwide German public holidays algorithmically ---------------
-#
-# Nine public holidays observed in all 16 German states:
-#   1. New Year's Day       yyyy-01-01  (fixed)
-#   2. Good Friday          Easter - 2 days
-#   3. Easter Monday        Easter + 1 day
-#   4. Labour Day           yyyy-05-01  (fixed)
-#   5. Ascension Day        Easter + 39 days
-#   6. Whit Monday          Easter + 50 days
-#   7. German Unity Day     yyyy-10-03  (fixed)
-#   8. Christmas Day        yyyy-12-25  (fixed)
-#   9. Boxing Day           yyyy-12-26  (fixed)
-#
-# Easter Sunday is computed with the Anonymous Gregorian algorithm.
-
-easter_sunday <- \(year) {
-  a <- year %% 19
-  b <- year %/% 100
-  c <- year %% 100
-  d <- b %/% 4
-  e <- b %% 4
-  f <- (b + 8L) %/% 25
-  g <- (b - f + 1L) %/% 3
-  h <- (19L * a + b - d - g + 15L) %% 30
-  i <- c %/% 4
-  k <- c %% 4
-  l <- (32L + 2L * e + 2L * i - h - k) %% 7
-  m <- (a + 11L * h + 22L * l) %/% 451
-  month <- (h + l - 7L * m + 114L) %/% 31
-  day <- (h + l - 7L * m + 114L) %% 31 + 1L
-  as.Date(paste(year, month, day, sep = "-"))
-}
-
-holidays_nationwide_year <- \(year) {
-  easter <- easter_sunday(year)
-  dates <- c(
-    as.Date(paste0(year, "-01-01")),
-    easter - 2L,
-    easter + 1L,
-    as.Date(paste0(year, "-05-01")),
-    easter + 39L,
-    easter + 50L,
-    as.Date(paste0(year, "-10-03")),
-    as.Date(paste0(year, "-12-25")),
-    as.Date(paste0(year, "-12-26"))
-  )
-  data.frame(
-    year = as.character(year),
-    region = "DE",
-    holiday = format(dates, "%Y-%m-%d"),
-    stringsAsFactors = FALSE
-  )
-}
-
-years <- seq.int(1990, 2099)
-holidays_DE <- do.call(rbind, lapply(years, holidays_nationwide_year))
-
+# Note: nationwide German public holidays are no longer pre-computed and
+# stored here. They are derived on the fly at runtime via `holidays_de()` in
+# R/utils.R, which uses the Anonymous Gregorian Easter algorithm. This avoids
+# shipping a year-capped lookup table and keeps coverage open-ended from 1990
+# onward.
 
 # profile descriptions ----------------------------------------------------
 profiles_1999 <- c(
@@ -304,13 +252,12 @@ infos_EN <- lapply(profiles, \(p) {
 
 
 # store in data/ to be accessible for users -------------------------------
-usethis::use_data(slp, overwrite = TRUE)
+usethis::use_data(slp_electricity_profiles, overwrite = TRUE)
 
 # store data internally in R/sysdata.rda ----------------------------------
 # see: https://r-pkgs.org/data.html#sec-data-sysdata
 usethis::use_data(
   load_profiles_lst,
-  holidays_DE,
   infos_DE,
   infos_EN,
   internal = TRUE,

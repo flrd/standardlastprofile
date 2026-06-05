@@ -56,25 +56,6 @@ test_that("KW * sum(h * F_WT) equals annual_consumption", {
   expect_equal(q_total, annual, tolerance = 1e-6)
 })
 
-test_that("KW from slp_gas_kundenwert matches internal KW in slp_gas", {
-  kw <- slp_gas_kundenwert(
-    "HEF",
-    dates_ref,
-    temps_ref,
-    annual_consumption = 1000,
-    holidays = NA
-  )
-  out_null <- slp_gas(
-    "HEF",
-    dates_ref,
-    temps_ref,
-    annual_consumption = 1000,
-    holidays = NA
-  )
-  out_kw <- slp_gas("HEF", dates_ref, temps_ref, kundenwert = kw, holidays = NA)
-  expect_equal(out_null$kwh, out_kw$kwh, tolerance = 1e-10)
-})
-
 test_that("variant '33' and '34' produce different KW values", {
   kw_34 <- slp_gas_kundenwert("HEF", dates_ref, temps_ref, variant = "34")
   kw_33 <- slp_gas_kundenwert("HEF", dates_ref, temps_ref, variant = "33")
@@ -166,16 +147,10 @@ test_that("annual_consumption: NA raises an informative error", {
   )
 })
 
-test_that("holidays = NA: consistent with slp_gas holidays = NA", {
+test_that("applying the derived KW over the reference year reproduces E_a", {
+  # slp_gas_kundenwert() default annual_consumption is 1000; applying that KW
+  # back over the same series with slp_gas() must reproduce 1000 kWh.
   kw <- slp_gas_kundenwert("GKO", dates_ref, temps_ref, holidays = NA)
-  q_ref <- slp_gas(
-    "GKO",
-    dates_ref,
-    temps_ref,
-    annual_consumption = 1000,
-    holidays = NA
-  )
-  expect_equal(sum(q_ref$kwh), 1000, tolerance = 1e-6)
   q_kw <- slp_gas("GKO", dates_ref, temps_ref, kundenwert = kw, holidays = NA)
   expect_equal(sum(q_kw$kwh), 1000, tolerance = 1e-6)
 })
@@ -187,53 +162,9 @@ test_that("holidays: invalid date string raises an error", {
   )
 })
 
-# ---- station argument -------------------------------------------------------
-
-test_that("station argument returns a valid Kundenwert", {
-  kw <- slp_gas_kundenwert(
-    "HEF",
-    station = "Hamburg",
-    annual_consumption = 15000
-  )
-  expect_type(kw, "double")
-  expect_length(kw, 1L)
-  expect_named(kw, "HEF")
-  expect_true(kw > 0)
-})
-
-test_that("station argument is case-insensitive", {
-  kw_lower <- slp_gas_kundenwert("HEF", station = "hamburg")
-  kw_upper <- slp_gas_kundenwert("HEF", station = "Hamburg")
-  expect_equal(kw_lower, kw_upper)
-})
-
-test_that("dates/temperatures take precedence over station", {
-  kw_temps <- slp_gas_kundenwert("HEF", dates_ref, temps_ref)
-  kw_both <- slp_gas_kundenwert(
-    "HEF",
-    dates_ref,
-    temps_ref,
-    station = "Hamburg"
-  )
-  expect_equal(kw_temps, kw_both)
-})
-
-test_that("different stations produce different KW values", {
-  kw_ob <- slp_gas_kundenwert("HEF", station = "Oberstdorf")
-  kw_fr <- slp_gas_kundenwert("HEF", station = "Freiburg")
-  expect_false(identical(kw_ob, kw_fr))
-})
-
-test_that("error when neither dates/temperatures nor station is supplied", {
+test_that("error when neither dates nor temperatures is supplied", {
   expect_error(
     slp_gas_kundenwert("HEF"),
-    "Please supply either"
-  )
-})
-
-test_that("error for invalid station name", {
-  expect_error(
-    slp_gas_kundenwert("HEF", station = "Berlin"),
-    "'station' must be one of"
+    "Please supply 'dates' and 'temperatures'"
   )
 })

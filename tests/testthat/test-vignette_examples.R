@@ -79,10 +79,10 @@ H0 <- lapply(names(out), \(x) {
 })
 H0 <- do.call(rbind, H0)
 H0$timestamp <- format(H0$start_time, "%H:%M")
-H0 <- H0[, names(slp)]
+H0 <- H0[, names(slp_electricity_profiles)]
 H0$type <- "dynamic"
 
-H0_slp <- subset(slp, subset = profile_id == "H0")
+H0_slp <- subset(slp_electricity_profiles, subset = profile_id == "H0")
 H0_slp$type <- "static"
 
 H0_plot <- rbind(H0, H0_slp)

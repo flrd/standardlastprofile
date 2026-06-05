@@ -1,21 +1,25 @@
 Package: standardlastprofile
-Title: BDEW Standard Load Profiles for Electricity
+Title: BDEW Standard Load Profiles for Electricity and Gas
 Description: Provides representative standard load profiles (SLPs) for
-  electricity published by the German Association of Energy and Water
+  electricity and gas published by the German Association of Energy and Water
   Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
-  in a tidy format. Covers the 1999 profiles — households (H0), commercial
-  (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25,
-  G25, L25, P25, S25), which additionally represent households with
-  photovoltaic systems and battery storage. Also provides an interface for
-  generating a standard load profile over a user-defined date range.
-  The 1999 data and methodology are described in VDEW (1999),
-  "Repräsentative VDEW-Lastprofile",
+  in a tidy format. The electricity profiles cover the 1999 profiles —
+  households (H0), commercial (G0–G6), and agriculture (L0–L2) — and the
+  updated 2025 profiles (H25, G25, L25, P25, S25), which additionally
+  represent households with photovoltaic systems and battery storage. An
+  interface generates an electricity load profile over a user-defined date
+  range. A second interface generates daily gas load profiles using the
+  BDEW/VKU/GEODE synthetic 'SigLinDe' procedure from daily temperatures and a
+  customer value ('Kundenwert'). The 1999 data and methodology are described
+  in VDEW (1999), "Repräsentative VDEW-Lastprofile",
   <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>.
-  The generation algorithm is described in VDEW (2000), "Anwendung der
-  Repräsentativen VDEW-Lastprofile step-by-step",
+  The electricity generation algorithm is described in VDEW (2000), "Anwendung
+  der Repräsentativen VDEW-Lastprofile step-by-step",
   <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>.
   The 2025 profiles are described in BDEW (2025), "Standardlastprofile
-  Strom", <https://www.bdew.de/energie/standardlastprofile-strom/>.
+  Strom", <https://www.bdew.de/energie/standardlastprofile-strom/>. The gas
+  procedure is described in BDEW (2025), "Standardlastprofile Gas",
+  <https://www.bdew.de/energie/standardlastprofile-gas/>.
 Version: 1.1.0.9000
 Authors@R: 
     person(
@@ -27,19 +31,21 @@ Authors@R:
 License: CC0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Suggests:
     covr,
     httr2,
-    jsonlite,
-    knitr,
-    leaflet,
-    plotly,
-    rmarkdown,
     testthat (>= 3.0.0),
     vdiffr,
     withr
 Config/testthat/edition: 3
+Config/Needs/website:
+    jsonlite,
+    knitr,
+    leaflet,
+    plotly,
+    rdwd,
+    rmarkdown,
+    scales
 URL: https://github.com/flrd/standardlastprofile,
     https://flrd.github.io/standardlastprofile/
 BugReports: https://github.com/flrd/standardlastprofile/issues
@@ -49,5 +55,5 @@ Imports:
 Depends:
     R (>= 4.1)
 LazyData: true
-VignetteBuilder: knitr
 Language: en-GB
+Config/roxygen2/version: 8.0.0

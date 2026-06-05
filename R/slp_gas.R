@@ -29,12 +29,10 @@
 #'   (VKU SLP evaluation reports 2023, 2025). This function accepts whichever
 #'   temperature values are passed; the choice of method is the caller's
 #'   responsibility.
-#' @param kundenwert optional numeric scalar. Customer value (Kundenwert) in
-#'   kWh/day. When supplied, `annual_consumption` is ignored and may be `NULL`.
-#'   A once-per-session message is shown if both arguments are given.
-#' @param annual_consumption numeric scalar, annual gas consumption in kWh.
-#'   Used to derive the Kundenwert when `kundenwert` is `NULL`. Defaults to
-#'   `NULL`. Ignored when `kundenwert` is supplied.
+#' @param kundenwert numeric scalar, required. Customer value (Kundenwert) in
+#'   kWh/day — the daily gas consumption at the reference temperature of 8 °C.
+#'   Derive it once from a full reference year with [slp_gas_kundenwert()], or
+#'   supply a value you already know. See Details.
 #' @param variant SigLinDe variant (German: *Ausprägung*) to use. Either `"34"`
 #'   (default) or `"33"`. Variant 34 has a 57 % linear component and a
 #'   steeper heating slope; variant 33 has a 45 % linear component. The
@@ -63,14 +61,14 @@
 #' are used to allocate gas volumes to low-pressure customers who are not
 #' continuously metered. The synthetic procedure defined by BDEW/VKU/GEODE
 #' (*Leitfaden Abwicklung von Standardlastprofilen Gas*, Kooperations-
-#' vereinbarung Gas, Anlage XIV.2, Stand 28.10.2025) computes a daily gas
+#' vereinbarung Gas, Anlage XIV.2, as of 2025-10-28) computes a daily gas
 #' quantity as:
 #'
 #' \deqn{Q(D) = KW \times h(\vartheta_D) \times F_{WT}}
 #'
 #' where:
-#' - \eqn{KW} is the customer value (German: *Kundenwert*, kWh/day), a customer-specific scaling
-#'   factor derived from annual consumption and the temperature series.
+#' - \eqn{KW} is the customer value (German: *Kundenwert*, kWh/day), a
+#'   customer-specific scaling factor (see [slp_gas_kundenwert()]).
 #' - \eqn{h(\vartheta_D)} is the SigLinDe profile function value for the
 #'   daily *Allokationstemperatur* \eqn{\vartheta_D}.
 #' - \eqn{F_{WT}} is the weekday factor for the profile and day type.
@@ -82,7 +80,7 @@
 #' the linear envelope on top — together with the 33 / 34 variant split — was
 #' added by FfE in the 2015 research report *Weiterentwicklung des Standard-
 #' lastprofilverfahrens Gas* (Anhang 7.1). The current operational coefficient
-#' set is published in the BDEW Leitfaden, Anhang 6 (Stand 28.10.2025):
+#' set is published in the BDEW Leitfaden, Anhang 6 (as of 2025-10-28):
 #'
 #' \deqn{h(\vartheta) = \frac{A}{1 + \left(\frac{B}{\vartheta - \vartheta_0}\right)^C} + D + \max(m_H \vartheta + b_H,\; m_W \vartheta + b_W)}
 #'
@@ -113,19 +111,21 @@
 #'
 #' ## Kundenwert
 #'
-#' The Kundenwert \eqn{KW} scales the profile to match a customer's annual
-#' consumption. When `kundenwert` is `NULL` (the default), it is derived from
-#' `annual_consumption` over the supplied temperature series:
+#' The Kundenwert \eqn{KW} scales the dimensionless profile to a customer's
+#' actual consumption and is a **required** input. The recommended workflow is
+#' two steps:
 #'
-#' \deqn{KW = \frac{\text{annual\_consumption}}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
+#' 1. Derive \eqn{KW} once from a full reference year of temperatures with
+#'    [slp_gas_kundenwert()]:
+#'    \deqn{KW = \frac{E_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
+#'    where \eqn{E_a} is the annual consumption.
+#' 2. Pass that \eqn{KW} to `slp_gas()` for any period you want to generate.
 #'
-#' For a meaningful Kundenwert the temperature series should ideally represent
-#' a full reference year (e.g. the BDEW reference temperature series for the
-#' relevant climate zone). Output `kwh` values are then proportional to
-#' `annual_consumption`.
-#'
-#' When `kundenwert` is supplied directly, the output reflects that fixed
-#' daily scaling factor regardless of `annual_consumption`.
+#' Keeping the two steps separate is deliberate: the Kundenwert is a property
+#' of the customer and their climate zone, computed from a representative
+#' (ideally multi-year) temperature mean. Deriving it from the same short
+#' series you are generating over would collapse the seasonal denominator and
+#' bias the result — for a single day the \eqn{h} values cancel entirely.
 #'
 #' ## Profile IDs
 #'
@@ -166,24 +166,28 @@
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-gas/>
 #' @source BDEW/VKU/GEODE. *Leitfaden Abwicklung von Standardlastprofilen
-#'   Gas*, Kooperationsvereinbarung Gas, Anlage XIV.2, Stand 28.10.2025,
+#'   Gas*, Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28,
 #'   Anhang 6.
 #'   \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
 #'
 #' @export
 #' @examples
-#' # Minimal example: pass daily dates and temperatures
 #' dates <- seq.Date(as.Date("2026-01-01"), as.Date("2026-01-07"), by = "day")
 #' temps <- c(2.1, -1.3, 0.5, 3.8, 5.2, 4.0, 1.9)
 #'
-#' # With a fixed Kundenwert
+#' # Supply the Kundenwert directly (kWh/day)
 #' slp_gas("HEF", dates, temps, kundenwert = 5.3)
 #'
-#' # With an annual consumption target (Kundenwert derived internally)
-#' slp_gas("HEF", dates, temps, annual_consumption = 15000)
-#'
 #' # Multiple profiles
-#' slp_gas(c("HEF", "HMF", "GKO"), dates, temps, annual_consumption = 15000)
+#' slp_gas(c("HEF", "HMF", "GKO"), dates, temps, kundenwert = 5.3)
+#'
+#' # Two-step workflow: derive the Kundenwert from a full reference year,
+#' # then generate a profile for any sub-period
+#' dates_ref <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
+#' doy_ref   <- as.integer(format(dates_ref, "%j"))
+#' temps_ref <- 10 - 11 * cos(2 * pi * (doy_ref - 15) / 365)
+#' kw <- slp_gas_kundenwert("HEF", dates_ref, temps_ref, annual_consumption = 15000)
+#' slp_gas("HEF", dates, temps, kundenwert = kw)
 #'
 #' # Supply custom holiday dates so they are treated as Sunday
 #' slp_gas("GKO", dates, temps, kundenwert = 5.3, holidays = "2026-01-01")
@@ -194,15 +198,14 @@ slp_gas <- \(
   profile_id,
   dates,
   temperatures,
+  kundenwert,
   variant = c("34", "33"),
-  kundenwert = NULL,
-  annual_consumption = NULL,
   holidays = NULL
 ) {
   # ---- validate variant ---------------------------------------------------
   variant <- match.arg(variant)
   # ---- validate profile_id ------------------------------------------------
-  profile_id <- match_profile_gas(profile_id)
+  profile_id <- .match_profile_gas(profile_id)
   profiles_n <- length(profile_id)
 
   # ---- validate dates -----------------------------------------------------
@@ -214,7 +217,7 @@ slp_gas <- \(
     }
     dates <- as.Date(dates)
   }
-  if (!is_date(dates)) {
+  if (!.is_date(dates)) {
     stop(
       "'dates' must be a Date vector or character vector in ISO 8601 format."
     )
@@ -242,36 +245,20 @@ slp_gas <- \(
     stop("'dates' and 'temperatures' must have the same length.")
   }
 
-  # ---- validate kundenwert and annual_consumption -------------------------
-  if (!is.null(kundenwert)) {
-    if (
-      !is.numeric(kundenwert) ||
-        length(kundenwert) != 1L ||
-        !is.finite(kundenwert) ||
-        kundenwert < 0
-    ) {
-      stop("'kundenwert' must be a single finite non-negative numeric value.")
-    }
-    if (!is.null(annual_consumption)) {
-      message_once(
-        "slp_gas_kw_overrides_ac",
-        "'kundenwert' is supplied; 'annual_consumption' is ignored."
-      )
-    }
-  } else {
-    if (is.null(annual_consumption)) {
-      stop("Please supply either 'kundenwert' or 'annual_consumption'.")
-    }
-    if (
-      !is.numeric(annual_consumption) ||
-        length(annual_consumption) != 1L ||
-        !is.finite(annual_consumption) ||
-        annual_consumption <= 0
-    ) {
-      stop(
-        "'annual_consumption' must be a single finite positive numeric value."
-      )
-    }
+  # ---- validate kundenwert ------------------------------------------------
+  if (missing(kundenwert) || is.null(kundenwert)) {
+    stop(
+      "'kundenwert' is required. Derive it from a full reference year with ",
+      "`slp_gas_kundenwert()`, or supply a value you already know."
+    )
+  }
+  if (
+    !is.numeric(kundenwert) ||
+      length(kundenwert) != 1L ||
+      !is.finite(kundenwert) ||
+      kundenwert < 0
+  ) {
+    stop("'kundenwert' must be a single finite non-negative numeric value.")
   }
 
   # ---- validate holidays --------------------------------------------------
@@ -282,7 +269,7 @@ slp_gas <- \(
   }
 
   if (!is.null(holidays)) {
-    if (!is.character(holidays) && !is_date(holidays)) {
+    if (!is.character(holidays) && !.is_date(holidays)) {
       stop("'holidays' must be NA, or a character or Date vector.")
     }
     if (is.character(holidays) && anyNA(holidays)) {
@@ -299,7 +286,7 @@ slp_gas <- \(
         "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
       )
     }
-    holidays <- as_date(holidays)
+    holidays <- .as_date(holidays)
     if (anyNA(holidays)) {
       stop(
         "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
@@ -307,24 +294,8 @@ slp_gas <- \(
     }
   }
 
-  # ---- warn when KW will be derived from a short series -------------------
-  # With fewer than 365 days the denominator sum(h * F_WT) is unrepresentative:
-  # for a single day the h values cancel and kwh == annual_consumption exactly.
-  # A full reference year is needed for a meaningful Kundenwert derivation.
-  if (is.null(kundenwert) && length(dates) < 365L) {
-    warning(
-      "'dates' covers only ",
-      length(dates),
-      " day(s). ",
-      "The Kundenwert derived from 'annual_consumption' is only meaningful ",
-      "over a full reference year. Supply 'kundenwert' directly to avoid ",
-      "this scaling artefact.",
-      call. = FALSE
-    )
-  }
-
   # ---- compute weekday keys -----------------------------------------------
-  wt_keys <- get_gas_weekday_key(dates, holidays = holidays)
+  wt_keys <- .get_gas_weekday_key(dates, holidays = holidays)
 
   # ---- build output -------------------------------------------------------
   out_list <- vector("list", length = profiles_n)
@@ -349,16 +320,10 @@ slp_gas <- \(
 
     f_wt_vals <- unname(fwt[wt_keys])
 
-    kw <- if (!is.null(kundenwert)) {
-      kundenwert
-    } else {
-      annual_consumption / sum(h_vals * f_wt_vals)
-    }
-
     out_list[[i]] <- data.frame(
       profile_id = pid,
       date = dates,
-      kwh = kw * h_vals * f_wt_vals
+      kwh = kundenwert * h_vals * f_wt_vals
     )
   }
 

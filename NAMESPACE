@@ -2,9 +2,10 @@
 
 export(slp_electricity)
 export(slp_gas)
+export(slp_gas_coefficients)
 export(slp_gas_kundenwert)
 export(slp_gas_siglinde)
+export(slp_gas_weekday_factors)
 export(slp_generate)
 export(slp_info)
-export(slp_kundenwert)
 importFrom(lifecycle,deprecated)

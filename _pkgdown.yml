@@ -30,12 +30,11 @@ navbar:
 articles:
 - title: Algorithms
   contents:
-  - slp-electricity
-  - slp-gas
+  - articles/slp-electricity
+  - articles/slp-gas
 - title: Gas profile function and parameters
   contents:
-  - slp-gas-parameters
-  - kundenwert-gas
+  - articles/slp-gas-parameters
 - title: ""
   contents:
   - articles/get-started
@@ -43,16 +42,21 @@ articles:
 reference:
 - title: Data
   contents:
-  - slp
-  - normtemperatur
+  - slp_electricity_profiles
 
 - title: Functions
   contents:
   - slp_electricity
   - slp_gas
-  - slp_kundenwert
+  - slp_gas_kundenwert
   - slp_gas_siglinde
+  - slp_gas_coefficients
+  - slp_gas_weekday_factors
   - slp_info
+
+- title: Superseded
+  contents:
+  - slp_generate
 
 figures:
   dev: ragg::agg_png

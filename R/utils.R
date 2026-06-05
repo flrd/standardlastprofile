@@ -1,24 +1,12 @@
-# once-per-session message ------------------------------------------------
-
-.pkg_env <- new.env(parent = emptyenv())
-
-message_once <- \(id, ...) {
-  if (isTRUE(.pkg_env[[id]])) {
-    return(invisible())
-  }
-  .pkg_env[[id]] <- TRUE
-  message(...)
-}
-
 # create a daily sequence -------------------------------------------------
 
-get_daily_sequence <- \(start_date, end_date) {
+.get_daily_sequence <- \(start_date, end_date) {
   if (length(start_date) != 1L || length(end_date) != 1L) {
     stop("'start_date' and 'end_date' must be of length one.")
   }
 
-  start_date <- as_date(start_date)
-  end_date <- as_date(end_date)
+  start_date <- .as_date(start_date)
+  end_date <- .as_date(end_date)
 
   if (anyNA(c(start_date, end_date))) {
     stop(
@@ -35,10 +23,10 @@ get_daily_sequence <- \(start_date, end_date) {
 
 # date helpers ------------------------------------------------------------
 
-is_date <- \(x) inherits(x, "Date")
+.is_date <- \(x) inherits(x, "Date")
 
-as_date <- \(x) {
-  if (is_date(x)) {
+.as_date <- \(x) {
+  if (.is_date(x)) {
     return(x)
   }
 
@@ -53,47 +41,95 @@ as_date <- \(x) {
   )
 }
 
-# Holiday resolution helpers ----------------------------------------------
+# Holiday computation ------------------------------------------------------
+#
+# Nine nationwide German public holidays observed in all 16 states from 1990
+# onward (the year Tag der Deutschen Einheit was introduced):
+#   1. Neujahr               yyyy-01-01  (fixed)
+#   2. Karfreitag            Easter - 2 days
+#   3. Ostermontag           Easter + 1 day
+#   4. Tag der Arbeit        yyyy-05-01  (fixed)
+#   5. Christi Himmelfahrt   Easter + 39 days
+#   6. Pfingstmontag         Easter + 50 days
+#   7. Tag der Deutschen Einheit  yyyy-10-03  (fixed, since 1990)
+#   8. 1. Weihnachtstag      yyyy-12-25  (fixed)
+#   9. 2. Weihnachtstag      yyyy-12-26  (fixed)
+#
+# Easter Sunday is computed with the Anonymous Gregorian algorithm. Years
+# before 1990 are silently dropped (the holiday set was different then).
 
-get_holidays <- \(x, years) {
-  idx <- x[["year"]] %in% years & x[["region"]] == "DE"
-  x[idx, "holiday"]
+.easter_sunday <- \(year) {
+  a <- year %% 19
+  b <- year %/% 100
+  c <- year %% 100
+  d <- b %/% 4
+  e <- b %% 4
+  f <- (b + 8L) %/% 25
+  g <- (b - f + 1L) %/% 3
+  h <- (19L * a + b - d - g + 15L) %% 30
+  i <- c %/% 4
+  k <- c %% 4
+  l <- (32L + 2L * e + 2L * i - h - k) %% 7
+  m <- (a + 11L * h + 22L * l) %/% 451
+  month <- (h + l - 7L * m + 114L) %/% 31
+  day <- (h + l - 7L * m + 114L) %% 31 + 1L
+  as.Date(paste(year, month, day, sep = "-"))
+}
+
+.holidays_de <- \(years) {
+  years <- as.integer(years)
+  years <- years[years >= 1990L]
+  if (length(years) == 0L) {
+    return(as.Date(character(0L)))
+  }
+  e <- .easter_sunday(years)
+  c(
+    as.Date(paste0(years, "-01-01")),
+    e - 2L,
+    e + 1L,
+    as.Date(paste0(years, "-05-01")),
+    e + 39L,
+    e + 50L,
+    as.Date(paste0(years, "-10-03")),
+    as.Date(paste0(years, "-12-25")),
+    as.Date(paste0(years, "-12-26"))
+  )
 }
 
 # Resolve the effective set of holiday dates for a Date vector x.
-# - holidays NULL:  fetch nationwide built-in data for the years spanned by x
+# - holidays NULL:  compute nationwide DE holidays for the years spanned by x
 # - holidays other: use as-is (may be an empty Date vector when the caller
 #   has already converted holidays = NA to as.Date(character(0L)))
-resolve_holiday_dates <- \(x, holidays) {
+.resolve_holiday_dates <- \(x, holidays) {
   if (!is.null(holidays)) {
     return(holidays)
   }
   yrs_seq <- seq.int(
-    as.integer(min(format_Y(x))),
-    as.integer(max(format_Y(x)))
+    as.integer(min(.format_Y(x))),
+    as.integer(max(.format_Y(x)))
   )
-  as.Date(get_holidays(x = holidays_DE, years = yrs_seq))
+  .holidays_de(yrs_seq)
 }
 
 # Map a date to an electricity weekday ------------------------------------
 # Returns "workday", "saturday", or "sunday".
 
-get_weekday <- \(x, holidays = NULL) {
-  if (!is_date(x)) {
+.get_weekday <- \(x, holidays = NULL) {
+  if (!.is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
   }
 
   # weekday as a decimal number (1–7, Monday is 1), see ?strptime
   # avoid format.Date(..., %A) because it depends on the locale
-  wkday_decimal <- format_u(x)
+  wkday_decimal <- .format_u(x)
 
   weekday <- rep("workday", length(x))
   weekday[wkday_decimal == "6"] <- "saturday"
   weekday[wkday_decimal == "7"] <- "sunday"
 
-  x_md <- format_md(x)
+  x_md <- .format_md(x)
 
-  holiday_dates <- resolve_holiday_dates(x, holidays)
+  holiday_dates <- .resolve_holiday_dates(x, holidays)
 
   # public holidays are mapped to a Sunday
   weekday[x %in% holiday_dates] <- "sunday"
@@ -114,13 +150,13 @@ get_weekday <- \(x, holidays = NULL) {
 # Public holidays and Dec 24 / Dec 31 follow the same rules as electricity:
 # holidays -> "Su", Dec 24 & 31 -> "Sa" (unless already "Su").
 
-get_gas_weekday_key <- \(x, holidays = NULL) {
-  if (!is_date(x)) {
+.get_gas_weekday_key <- \(x, holidays = NULL) {
+  if (!.is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
   }
 
   # %u: weekday decimal 1 (Monday) to 7 (Sunday)
-  wkday_decimal <- format_u(x)
+  wkday_decimal <- .format_u(x)
 
   key_map <- c(
     "1" = "Mo",
@@ -133,9 +169,9 @@ get_gas_weekday_key <- \(x, holidays = NULL) {
   )
   keys <- unname(key_map[wkday_decimal])
 
-  x_md <- format_md(x)
+  x_md <- .format_md(x)
 
-  holiday_dates <- resolve_holiday_dates(x, holidays)
+  holiday_dates <- .resolve_holiday_dates(x, holidays)
 
   # public holidays -> Sunday
   keys[x %in% holiday_dates] <- "Su"
@@ -149,15 +185,15 @@ get_gas_weekday_key <- \(x, holidays = NULL) {
 
 # Map date to consumption period ------------------------------------------
 
-get_period <- \(x) {
-  if (!is_date(x)) {
+.get_period <- \(x) {
+  if (!.is_date(x)) {
     stop("'x' must be an object of class 'Date'.")
   }
 
   # range(x) returns first and last values of 'x'
   yrs_rng <- range(x) |>
     unique() |>
-    format_Y() |>
+    .format_Y() |>
     as.integer()
 
   # extending 'yrs_rng' by +-1 year on each side to ensure
@@ -193,14 +229,14 @@ get_period <- \(x) {
   # creates a vector of break points covering the years
   # defined in 'yrs_rng_extended'
   tmp <- expand.grid(yrs_rng_extended, names(bp))
-  x_bp <- do.call(paste_dash, tmp) |>
+  x_bp <- do.call(.paste_dash, tmp) |>
     as.Date() |>
     sort()
 
   # create a vector of length: length(x_bp) which maps name of
   # each break point to the respective value in 'bp', i.e.
   # the name of the period
-  x_bp_names <- bp[format_md(x_bp)] |>
+  x_bp_names <- bp[.format_md(x_bp)] |>
     unname()
 
   # magic, see: https://stackoverflow.com/a/64666688
@@ -212,7 +248,7 @@ get_period <- \(x) {
 
 # Validate profile IDs ----------------------------------------------------
 
-match_profile <- \(profile_id) {
+.match_profile <- \(profile_id) {
   valid <- c(
     "H0",
     "G0",
@@ -250,7 +286,7 @@ match_profile <- \(profile_id) {
   profile_id
 }
 
-match_profile_gas <- \(profile_id) {
+.match_profile_gas <- \(profile_id) {
   valid <- c(
     "HEF",
     "HMF",
@@ -289,17 +325,17 @@ match_profile_gas <- \(profile_id) {
 
 # Composite weekday + period/month helpers --------------------------------
 
-get_wkday_period <- \(x, holidays = NULL) {
-  paste_snake(
-    get_weekday(x, holidays = holidays),
-    get_period(x)
+.get_wkday_period <- \(x, holidays = NULL) {
+  .paste_snake(
+    .get_weekday(x, holidays = holidays),
+    .get_period(x)
   )
 }
 
-get_wkday_month <- \(x, holidays = NULL) {
-  month_name <- tolower(month.name[as.integer(format_m(x))])
-  paste_snake(
-    get_weekday(x, holidays = holidays),
+.get_wkday_month <- \(x, holidays = NULL) {
+  month_name <- tolower(month.name[as.integer(.format_m(x))])
+  .paste_snake(
+    .get_weekday(x, holidays = holidays),
     month_name
   )
 }
@@ -307,7 +343,7 @@ get_wkday_month <- \(x, holidays = NULL) {
 
 # Dynamization function ---------------------------------------------------
 
-dynamization_fun <- \(x) {
+.dynamization_fun <- \(x) {
   1.24 +
     0.0021 * x +
     -0.0000702 * x^2 +
@@ -318,26 +354,26 @@ dynamization_fun <- \(x) {
 
 # Date format helpers -----------------------------------------------------
 
-format_u <- \(x) format.Date(x, "%u") # Weekday as a decimal number (1–7, Monday is 1).
-format_md <- \(x) format.Date(x, "%m-%d") # Month as decimal number - Day of the month
-format_m <- \(x) format.Date(x, "%m") # Month as decimal number (01–12)
-format_Y <- \(x) format.Date(x, "%Y") # Year with century
-format_j <- \(x) format.Date(x, "%j") # Day of year as decimal number (001–366)
+.format_u <- \(x) format.Date(x, "%u") # Weekday as a decimal number (1–7, Monday is 1).
+.format_md <- \(x) format.Date(x, "%m-%d") # Month as decimal number - Day of the month
+.format_m <- \(x) format.Date(x, "%m") # Month as decimal number (01–12)
+.format_Y <- \(x) format.Date(x, "%Y") # Year with century
+.format_j <- \(x) format.Date(x, "%j") # Day of year as decimal number (001–366)
 
-get_15min_seq <- \(start, end) {
+.get_15min_seq <- \(start, end) {
   seq.POSIXt(as.POSIXlt(start), as.POSIXlt(end), by = "15 min")
 }
 
 
 # String helpers ----------------------------------------------------------
 
-paste_dash <- \(...) paste(..., sep = "-")
-paste_snake <- \(...) paste(..., sep = "_")
+.paste_dash <- \(...) paste(..., sep = "-")
+.paste_snake <- \(...) paste(..., sep = "_")
 
 
 # Gas SLP profile parameters (SigLinDe) ------------------------------------
 # Source: BDEW/VKU/GEODE. Leitfaden Abwicklung von Standardlastprofilen Gas,
-#   Kooperationsvereinbarung Gas, Anlage XIV.2, Stand 28.10.2025, Anhang 6
+#   Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28, Anhang 6
 #   (per-profile coefficient sheets). The Leitfaden is the operational,
 #   legally-binding KoV reference and is the source of truth for every value
 #   in this table.
@@ -347,7 +383,7 @@ paste_snake <- \(...) paste(..., sep = "_")
 #   BDEW/FfE (2015). Weiterentwicklung des Standardlastprofilverfahrens Gas.
 #   Endbericht. Anhang 7.1, p. 24. The 2015 report introduced the SigLinDe
 #   extension on top of the original TU München sigmoid (Geiger/Hellwig 2002)
-#   and supplied the first coefficient set. The Leitfaden 28.10.2025 has since
+#   and supplied the first coefficient set. The Leitfaden (as of 2025-10-28) has since
 #   superseded one value (GBA33 bW: FfE 0.3856589 → Leitfaden 0.3867447).
 #
 # Two variants (German: Ausprägungen) are provided:
@@ -704,7 +740,7 @@ paste_snake <- \(...) paste(..., sep = "_")
 
 # Gas SLP weekday factors --------------------------------------------------
 # Source: BDEW/VKU/GEODE. Leitfaden Abwicklung von Standardlastprofilen Gas,
-#         Kooperationsvereinbarung Gas, Anlage XIV.2, Stand 28.10.2025,
+#         Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28,
 #         Anhang 6 (per-profile data sheets; one F_WT table per profile).
 #         <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
 # Keys: Mo = Monday, Tu = Tuesday, We = Wednesday, Th = Thursday,

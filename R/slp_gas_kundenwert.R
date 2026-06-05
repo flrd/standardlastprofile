@@ -12,17 +12,9 @@
 #' @param dates a Date vector or character vector in ISO 8601 format
 #'   (`"YYYY-MM-DD"`), representing a **full reference year** of daily dates.
 #'   For a meaningful Kundenwert the series should ideally cover 365 (or 366)
-#'   days. Must have the same length as `temperatures`. When both
-#'   `dates`/`temperatures` and `station` are supplied,
-#'   `dates`/`temperatures` take precedence.
+#'   days. Must have the same length as `temperatures`.
 #' @param temperatures a numeric vector of daily temperatures in degrees
 #'   Celsius. Must have the same length as `dates`.
-#' @param station character scalar, name of a built-in DWD reference weather
-#'   station. One of `"Oberstdorf"`, `"Potsdam"`, `"Hamburg"`, `"Freiburg"`,
-#'   `"Chemnitz"`, `"Duesseldorf"`, `"Erfurt"`, `"Frankfurt"`, `"Nuernberg"`,
-#'   or `"Regensburg"`. When supplied (and `dates`/`temperatures` are
-#'   `NULL`), the long-term mean daily temperatures (WMO climate normal period
-#'   1991–2020) for that station are used as the reference series.
 #' @param annual_consumption numeric scalar, annual gas consumption in kWh.
 #'   Defaults to `1000`.
 #' @param variant SigLinDe variant, either `"34"` (default) or `"33"`. Must
@@ -45,109 +37,65 @@
 #' the temperature series. For the result to be meaningful the denominator must
 #' reflect a full seasonal cycle; with fewer than 365 days a message is shown.
 #'
-#' ## Built-in reference stations
+#' ## Reference temperature series
 #'
-#' The package ships with long-term mean daily temperatures for ten
-#' representative DWD weather stations (WMO climate normal period 1991–2020).
-#' Using a climatological mean avoids any single-year anomaly influencing the
-#' Kundenwert. Available stations:
-#'
-#' | Station      | Region                     |
-#' |--------------|----------------------------|
-#' | Oberstdorf   | Alpenrand / Allgaeu        |
-#' | Potsdam      | Kontinentales Binnenland   |
-#' | Hamburg      | Maritime Nordseekueste     |
-#' | Freiburg     | Oberrheingraben            |
-#' | Chemnitz     | Erzgebirge / Mittelgebirge |
-#' | Duesseldorf  | Niederrhein                |
-#' | Erfurt       | Thueringer Becken          |
-#' | Frankfurt    | Rhein-Main-Gebiet          |
-#' | Nuernberg    | Mittelfranken              |
-#' | Regensburg   | Oberpfalz / Donau          |
+#' For a robust Kundenwert the temperature series should represent a **full
+#' reference year**, ideally a multi-year climatological mean rather than a
+#' single year, so that no individual-year anomaly distorts the scaling factor.
+#' Daily mean temperatures can be downloaded from the DWD (Deutscher
+#' Wetterdienst) open-data archive, e.g. via the
+#' \href{https://bookdown.org/brry/rdwd/}{rdwd} package. The
+#' \href{https://flrd.github.io/standardlastprofile/articles/slp-gas.html}{gas SLP}
+#' article on the package website walks through fetching DWD data, deriving the
+#' Kundenwert, and generating profiles.
 #'
 #' ## Recommended workflow
 #'
 #' ```r
-#' # Step 1 — derive KW from a built-in reference station
-#' kw <- slp_gas_kundenwert("HEF", station = "Hamburg", annual_consumption = 15000)
+#' # Step 1 — derive KW from a full-year reference temperature series
+#' kw <- slp_gas_kundenwert("HEF", dates_year, temps_year, annual_consumption = 15000)
 #'
 #' # Step 2 — generate a profile for any shorter period
 #' slp_gas("HEF", dates_jan_mar, temps_jan_mar, kundenwert = kw)
 #' ```
 #'
-#' Alternatively, pass your own full-year date and temperature vectors via
-#' `dates` and `temperatures` (e.g. downloaded from DWD via the `rdwd`
-#' package).
-#'
 #' @seealso [slp_gas()]
 #' @export
 #' @examples
-#' # Using a built-in reference station
-#' slp_gas_kundenwert("HEF", station = "Hamburg", annual_consumption = 15000)
-#'
-#' # Multiple profiles at once
-#' slp_gas_kundenwert(c("HEF", "GKO", "GWA"), station = "Potsdam",
-#'                    annual_consumption = 15000)
-#'
-#' # Using custom temperatures
+#' # Derive KW from a full-year reference temperature series
 #' dates_ref <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
 #' doy       <- as.integer(format(dates_ref, "%j"))
 #' temps_ref <- 10 - 11 * cos(2 * pi * (doy - 15) / 365)
 #' slp_gas_kundenwert("HEF", dates = dates_ref, temperatures = temps_ref,
 #'                    annual_consumption = 15000)
+#'
+#' # Multiple profiles at once
+#' slp_gas_kundenwert(c("HEF", "GKO", "GWA"), dates_ref, temps_ref,
+#'                    annual_consumption = 15000)
 slp_gas_kundenwert <- \(
   profile_id,
   dates = NULL,
   temperatures = NULL,
-  station = NULL,
   annual_consumption = 1000,
   variant = c("34", "33"),
   holidays = NULL
 ) {
-  # ---- available stations (for messages and validation) ----------------------
-  available_stations <- unique(slp_gas_normtemperatur$station)
-
   # ---- validate variant ---------------------------------------------------
   variant <- match.arg(variant)
 
   # ---- validate profile_id ------------------------------------------------
-  profile_id <- match_profile_gas(profile_id)
+  profile_id <- .match_profile_gas(profile_id)
 
-  # ---- resolve dates / temperatures / station ------------------------------
+  # ---- resolve dates / temperatures ----------------------------------------
   has_dates <- !is.null(dates)
   has_temps <- !is.null(temperatures)
 
-  if (!has_dates && !has_temps && is.null(station)) {
-    stop(
-      "Please supply either 'dates' and 'temperatures', or 'station'. ",
-      "Built-in reference stations are: ",
-      paste0("\"", available_stations, "\"", collapse = ", "),
-      "."
-    )
+  if (!has_dates && !has_temps) {
+    stop("Please supply 'dates' and 'temperatures'.")
   }
 
   if (has_dates != has_temps) {
     stop("'dates' and 'temperatures' must both be supplied or both be NULL.")
-  }
-
-  if (!has_dates && !has_temps && !is.null(station)) {
-    if (!is.character(station) || length(station) != 1L) {
-      stop("'station' must be a single character string.")
-    }
-    station_match <- match(tolower(station), tolower(available_stations))
-    if (is.na(station_match)) {
-      stop(
-        "'station' must be one of: ",
-        paste0("\"", available_stations, "\"", collapse = ", "),
-        "."
-      )
-    }
-    station_name <- available_stations[station_match]
-    ref <- slp_gas_normtemperatur[
-      slp_gas_normtemperatur$station == station_name,
-    ]
-    dates <- ref$date
-    temperatures <- ref$temp_c_mean
   }
 
   # ---- validate dates -----------------------------------------------------
@@ -159,7 +107,7 @@ slp_gas_kundenwert <- \(
     }
     dates <- as.Date(dates)
   }
-  if (!is_date(dates)) {
+  if (!.is_date(dates)) {
     stop(
       "'dates' must be a Date vector or character vector in ISO 8601 format."
     )
@@ -203,7 +151,7 @@ slp_gas_kundenwert <- \(
   }
 
   if (!is.null(holidays)) {
-    if (!is.character(holidays) && !is_date(holidays)) {
+    if (!is.character(holidays) && !.is_date(holidays)) {
       stop("'holidays' must be NA, or a character or Date vector.")
     }
     if (is.character(holidays) && anyNA(holidays)) {
@@ -220,7 +168,7 @@ slp_gas_kundenwert <- \(
         "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
       )
     }
-    holidays <- as_date(holidays)
+    holidays <- .as_date(holidays)
     if (anyNA(holidays)) {
       stop(
         "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
@@ -242,7 +190,7 @@ slp_gas_kundenwert <- \(
   }
 
   # ---- compute weekday keys -----------------------------------------------
-  wt_keys <- get_gas_weekday_key(dates, holidays = holidays)
+  wt_keys <- .get_gas_weekday_key(dates, holidays = holidays)
 
   # ---- compute KW for each profile ----------------------------------------
   out <- vapply(

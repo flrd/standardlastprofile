@@ -28,7 +28,9 @@
 #' measurements of electrical power, normalised to an annual consumption of
 #' 1,000 kWh.
 #'
-#' See `vignette("slp-electricity")` for more details about the algorithm.
+#' See the
+#' \href{https://flrd.github.io/standardlastprofile/articles/slp-electricity.html}{electricity algorithm}
+#' article for more details.
 #'
 #' ## Profile IDs
 #'
@@ -200,8 +202,8 @@ slp_electricity <- \(
     stop("'end_date' must be a valid date in ISO 8601 format (\"YYYY-MM-DD\").")
   }
 
-  start <- as_date(start_date)
-  end <- as_date(end_date)
+  start <- .as_date(start_date)
+  end <- .as_date(end_date)
 
   if (is.na(start)) {
     stop(
@@ -212,7 +214,7 @@ slp_electricity <- \(
     stop("'end_date' must be a valid date in ISO 8601 format (\"YYYY-MM-DD\").")
   }
 
-  profile_id <- match_profile(profile_id)
+  profile_id <- .match_profile(profile_id)
   profiles_n <- length(profile_id)
 
   # NA means "no holidays at all" — convert to empty Date vector so the
@@ -222,7 +224,7 @@ slp_electricity <- \(
   }
 
   if (!is.null(holidays)) {
-    if (!is.character(holidays) && !is_date(holidays)) {
+    if (!is.character(holidays) && !.is_date(holidays)) {
       stop("'holidays' must be NA, or a character or Date vector.")
     }
     if (is.character(holidays) && anyNA(holidays)) {
@@ -238,7 +240,7 @@ slp_electricity <- \(
         "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
       )
     }
-    holidays <- as_date(holidays)
+    holidays <- .as_date(holidays)
     if (anyNA(holidays)) {
       stop(
         "'holidays' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
@@ -247,7 +249,7 @@ slp_electricity <- \(
   }
 
   # returns vector of class 'Date'
-  daily_seq <- get_daily_sequence(start_date, end_date)
+  daily_seq <- .get_daily_sequence(start_date, end_date)
 
   # subset of load_profiles_lst
   tmp <- load_profiles_lst[profile_id]
@@ -261,7 +263,7 @@ slp_electricity <- \(
     c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2")
   )
   if (length(profiles_1999) > 0L) {
-    wkday_period <- get_wkday_period(
+    wkday_period <- .get_wkday_period(
       daily_seq,
       holidays = holidays
     )
@@ -273,7 +275,7 @@ slp_electricity <- \(
   # 2025 profiles use month-based matrix columns (e.g. "saturday_january")
   profiles_2025 <- intersect(profile_id, c("H25", "G25", "L25", "P25", "S25"))
   if (length(profiles_2025) > 0L) {
-    wkday_month <- get_wkday_month(
+    wkday_month <- .get_wkday_month(
       daily_seq,
       holidays = holidays
     )
@@ -287,8 +289,8 @@ slp_electricity <- \(
   # https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
   dynamic_profiles <- intersect(profile_id, c("H0", "H25", "P25", "S25"))
   if (length(dynamic_profiles) > 0L) {
-    days_decimal <- as.integer(format_j(daily_seq))
-    dyn_factors <- dynamization_fun(days_decimal)
+    days_decimal <- as.integer(.format_j(daily_seq))
+    dyn_factors <- .dynamization_fun(days_decimal)
     for (profile in dynamic_profiles) {
       mat <- vals[[profile]]
       vals[[profile]] <- suppressWarnings(
@@ -298,7 +300,7 @@ slp_electricity <- \(
   }
 
   # timestamp for output
-  time_seq <- get_15min_seq(start, end + 1)
+  time_seq <- .get_15min_seq(start, end + 1)
   time_seq_n <- length(time_seq)
 
   out <- data.frame(

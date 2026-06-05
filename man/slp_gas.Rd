@@ -7,7 +7,7 @@
 \url{https://www.bdew.de/energie/standardlastprofile-gas/}
 
 BDEW/VKU/GEODE. \emph{Leitfaden Abwicklung von Standardlastprofilen
-Gas}, Kooperationsvereinbarung Gas, Anlage XIV.2, Stand 28.10.2025,
+Gas}, Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28,
 Anhang 6.
 \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
 }
@@ -16,9 +16,8 @@ slp_gas(
   profile_id,
   dates,
   temperatures,
+  kundenwert,
   variant = c("34", "33"),
-  kundenwert = NULL,
-  annual_consumption = NULL,
   holidays = NULL
 )
 }
@@ -54,6 +53,11 @@ systematic seasonal allocation bias of pure temperature-based profiles
 temperature values are passed; the choice of method is the caller's
 responsibility.}
 
+\item{kundenwert}{numeric scalar, required. Customer value (Kundenwert) in
+kWh/day — the daily gas consumption at the reference temperature of 8 °C.
+Derive it once from a full reference year with \code{\link[=slp_gas_kundenwert]{slp_gas_kundenwert()}}, or
+supply a value you already know. See Details.}
+
 \item{variant}{SigLinDe variant (German: \emph{Ausprägung}) to use. Either \code{"34"}
 (default) or \code{"33"}. Variant 34 has a 57 \% linear component and a
 steeper heating slope; variant 33 has a 45 \% linear component. The
@@ -63,14 +67,6 @@ See Details.
 
 The \code{"HKO"} profile is a pure sigmoid with no linear part and is
 unaffected by this argument.}
-
-\item{kundenwert}{optional numeric scalar. Customer value (Kundenwert) in
-kWh/day. When supplied, \code{annual_consumption} is ignored and may be \code{NULL}.
-A once-per-session message is shown if both arguments are given.}
-
-\item{annual_consumption}{numeric scalar, annual gas consumption in kWh.
-Used to derive the Kundenwert when \code{kundenwert} is \code{NULL}. Defaults to
-\code{NULL}. Ignored when \code{kundenwert} is supplied.}
 
 \item{holidays}{controls public holiday treatment:
 \itemize{
@@ -100,15 +96,15 @@ In the German gas market, standard load profiles (Standardlastprofile, SLP)
 are used to allocate gas volumes to low-pressure customers who are not
 continuously metered. The synthetic procedure defined by BDEW/VKU/GEODE
 (\emph{Leitfaden Abwicklung von Standardlastprofilen Gas}, Kooperations-
-vereinbarung Gas, Anlage XIV.2, Stand 28.10.2025) computes a daily gas
+vereinbarung Gas, Anlage XIV.2, as of 2025-10-28) computes a daily gas
 quantity as:
 
 \deqn{Q(D) = KW \times h(\vartheta_D) \times F_{WT}}
 
 where:
 \itemize{
-\item \eqn{KW} is the customer value (German: \emph{Kundenwert}, kWh/day), a customer-specific scaling
-factor derived from annual consumption and the temperature series.
+\item \eqn{KW} is the customer value (German: \emph{Kundenwert}, kWh/day), a
+customer-specific scaling factor (see \code{\link[=slp_gas_kundenwert]{slp_gas_kundenwert()}}).
 \item \eqn{h(\vartheta_D)} is the SigLinDe profile function value for the
 daily \emph{Allokationstemperatur} \eqn{\vartheta_D}.
 \item \eqn{F_{WT}} is the weekday factor for the profile and day type.
@@ -122,7 +118,7 @@ The pure sigmoid term was introduced by TU München (Geiger / Hellwig 2002);
 the linear envelope on top — together with the 33 / 34 variant split — was
 added by FfE in the 2015 research report \emph{Weiterentwicklung des Standard-
 lastprofilverfahrens Gas} (Anhang 7.1). The current operational coefficient
-set is published in the BDEW Leitfaden, Anhang 6 (Stand 28.10.2025):
+set is published in the BDEW Leitfaden, Anhang 6 (as of 2025-10-28):
 
 \deqn{h(\vartheta) = \frac{A}{1 + \left(\frac{B}{\vartheta - \vartheta_0}\right)^C} + D + \max(m_H \vartheta + b_H,\; m_W \vartheta + b_W)}
 
@@ -155,19 +151,22 @@ This function accepts whichever temperature values the user provides in
 
 \subsection{Kundenwert}{
 
-The Kundenwert \eqn{KW} scales the profile to match a customer's annual
-consumption. When \code{kundenwert} is \code{NULL} (the default), it is derived from
-\code{annual_consumption} over the supplied temperature series:
+The Kundenwert \eqn{KW} scales the dimensionless profile to a customer's
+actual consumption and is a \strong{required} input. The recommended workflow is
+two steps:
+\enumerate{
+\item Derive \eqn{KW} once from a full reference year of temperatures with
+\code{\link[=slp_gas_kundenwert]{slp_gas_kundenwert()}}:
+\deqn{KW = \frac{E_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
+where \eqn{E_a} is the annual consumption.
+\item Pass that \eqn{KW} to \code{slp_gas()} for any period you want to generate.
+}
 
-\deqn{KW = \frac{\text{annual\_consumption}}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
-
-For a meaningful Kundenwert the temperature series should ideally represent
-a full reference year (e.g. the BDEW reference temperature series for the
-relevant climate zone). Output \code{kwh} values are then proportional to
-\code{annual_consumption}.
-
-When \code{kundenwert} is supplied directly, the output reflects that fixed
-daily scaling factor regardless of \code{annual_consumption}.
+Keeping the two steps separate is deliberate: the Kundenwert is a property
+of the customer and their climate zone, computed from a representative
+(ideally multi-year) temperature mean. Deriving it from the same short
+series you are generating over would collapse the seasonal denominator and
+bias the result — for a single day the \eqn{h} values cancel entirely.
 }
 
 \subsection{Profile IDs}{
@@ -214,18 +213,22 @@ this range, \code{holidays = NULL} will yield no public holiday adjustments; pas
 }
 }
 \examples{
-# Minimal example: pass daily dates and temperatures
 dates <- seq.Date(as.Date("2026-01-01"), as.Date("2026-01-07"), by = "day")
 temps <- c(2.1, -1.3, 0.5, 3.8, 5.2, 4.0, 1.9)
 
-# With a fixed Kundenwert
+# Supply the Kundenwert directly (kWh/day)
 slp_gas("HEF", dates, temps, kundenwert = 5.3)
 
-# With an annual consumption target (Kundenwert derived internally)
-slp_gas("HEF", dates, temps, annual_consumption = 15000)
-
 # Multiple profiles
-slp_gas(c("HEF", "HMF", "GKO"), dates, temps, annual_consumption = 15000)
+slp_gas(c("HEF", "HMF", "GKO"), dates, temps, kundenwert = 5.3)
+
+# Two-step workflow: derive the Kundenwert from a full reference year,
+# then generate a profile for any sub-period
+dates_ref <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
+doy_ref   <- as.integer(format(dates_ref, "\%j"))
+temps_ref <- 10 - 11 * cos(2 * pi * (doy_ref - 15) / 365)
+kw <- slp_gas_kundenwert("HEF", dates_ref, temps_ref, annual_consumption = 15000)
+slp_gas("HEF", dates, temps, kundenwert = kw)
 
 # Supply custom holiday dates so they are treated as Sunday
 slp_gas("GKO", dates, temps, kundenwert = 5.3, holidays = "2026-01-01")

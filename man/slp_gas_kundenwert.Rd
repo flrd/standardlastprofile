@@ -8,7 +8,6 @@ slp_gas_kundenwert(
   profile_id,
   dates = NULL,
   temperatures = NULL,
-  station = NULL,
   annual_consumption = 1000,
   variant = c("34", "33"),
   holidays = NULL
@@ -22,19 +21,10 @@ named numeric vector with one element per profile.}
 \item{dates}{a Date vector or character vector in ISO 8601 format
 (\code{"YYYY-MM-DD"}), representing a \strong{full reference year} of daily dates.
 For a meaningful Kundenwert the series should ideally cover 365 (or 366)
-days. Must have the same length as \code{temperatures}. When both
-\code{dates}/\code{temperatures} and \code{station} are supplied,
-\code{dates}/\code{temperatures} take precedence.}
+days. Must have the same length as \code{temperatures}.}
 
 \item{temperatures}{a numeric vector of daily temperatures in degrees
 Celsius. Must have the same length as \code{dates}.}
-
-\item{station}{character scalar, name of a built-in DWD reference weather
-station. One of \code{"Oberstdorf"}, \code{"Potsdam"}, \code{"Hamburg"}, \code{"Freiburg"},
-\code{"Chemnitz"}, \code{"Duesseldorf"}, \code{"Erfurt"}, \code{"Frankfurt"}, \code{"Nuernberg"},
-or \code{"Regensburg"}. When supplied (and \code{dates}/\code{temperatures} are
-\code{NULL}), the long-term mean daily temperatures (WMO climate normal period
-1991–2020) for that station are used as the reference series.}
 
 \item{annual_consumption}{numeric scalar, annual gas consumption in kWh.
 Defaults to \code{1000}.}
@@ -67,54 +57,39 @@ The Kundenwert is defined as:
 where \eqn{E_a} is \code{annual_consumption} and the sum runs over all days in
 the temperature series. For the result to be meaningful the denominator must
 reflect a full seasonal cycle; with fewer than 365 days a message is shown.
-\subsection{Built-in reference stations}{
+\subsection{Reference temperature series}{
 
-The package ships with long-term mean daily temperatures for ten
-representative DWD weather stations (WMO climate normal period 1991–2020).
-Using a climatological mean avoids any single-year anomaly influencing the
-Kundenwert. Available stations:\tabular{ll}{
-   Station \tab Region \cr
-   Oberstdorf \tab Alpenrand / Allgaeu \cr
-   Potsdam \tab Kontinentales Binnenland \cr
-   Hamburg \tab Maritime Nordseekueste \cr
-   Freiburg \tab Oberrheingraben \cr
-   Chemnitz \tab Erzgebirge / Mittelgebirge \cr
-   Duesseldorf \tab Niederrhein \cr
-   Erfurt \tab Thueringer Becken \cr
-   Frankfurt \tab Rhein-Main-Gebiet \cr
-   Nuernberg \tab Mittelfranken \cr
-   Regensburg \tab Oberpfalz / Donau \cr
-}
-
+For a robust Kundenwert the temperature series should represent a \strong{full
+reference year}, ideally a multi-year climatological mean rather than a
+single year, so that no individual-year anomaly distorts the scaling factor.
+Daily mean temperatures can be downloaded from the DWD (Deutscher
+Wetterdienst) open-data archive, e.g. via the
+\href{https://bookdown.org/brry/rdwd/}{rdwd} package. The
+\href{https://flrd.github.io/standardlastprofile/articles/slp-gas.html}{gas SLP}
+article on the package website walks through fetching DWD data, deriving the
+Kundenwert, and generating profiles.
 }
 
 \subsection{Recommended workflow}{
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{# Step 1 — derive KW from a built-in reference station
-kw <- slp_gas_kundenwert("HEF", station = "Hamburg", annual_consumption = 15000)
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# Step 1 — derive KW from a full-year reference temperature series
+kw <- slp_gas_kundenwert("HEF", dates_year, temps_year, annual_consumption = 15000)
 
 # Step 2 — generate a profile for any shorter period
 slp_gas("HEF", dates_jan_mar, temps_jan_mar, kundenwert = kw)
 }\if{html}{\out{</div>}}
-
-Alternatively, pass your own full-year date and temperature vectors via
-\code{dates} and \code{temperatures} (e.g. downloaded from DWD via the \code{rdwd}
-package).
 }
 }
 \examples{
-# Using a built-in reference station
-slp_gas_kundenwert("HEF", station = "Hamburg", annual_consumption = 15000)
-
-# Multiple profiles at once
-slp_gas_kundenwert(c("HEF", "GKO", "GWA"), station = "Potsdam",
-                   annual_consumption = 15000)
-
-# Using custom temperatures
+# Derive KW from a full-year reference temperature series
 dates_ref <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
 doy       <- as.integer(format(dates_ref, "\%j"))
 temps_ref <- 10 - 11 * cos(2 * pi * (doy - 15) / 365)
 slp_gas_kundenwert("HEF", dates = dates_ref, temperatures = temps_ref,
+                   annual_consumption = 15000)
+
+# Multiple profiles at once
+slp_gas_kundenwert(c("HEF", "GKO", "GWA"), dates_ref, temps_ref,
                    annual_consumption = 15000)
 }
 \seealso{
