@@ -77,5 +77,19 @@
 #' @source <https://www.bdew.de/media/documents/Profile.zip>
 #' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 #'
-#' @aliases slp
 "slp_electricity_profiles"
+
+#' The `slp` dataset was renamed
+#'
+#' `r lifecycle::badge("deprecated")`
+#'
+#' The electricity dataset `slp` was renamed to [slp_electricity_profiles] in
+#' version 2.0.0 and is no longer exported under the old name. Accessing `slp`
+#' still returns the data for now, but emits a deprecation warning. Use
+#' `slp_electricity_profiles`, or `standardlastprofile::slp_electricity_profiles`,
+#' instead.
+#'
+#' @seealso [slp_electricity_profiles]
+#' @name slp
+#' @keywords internal
+NULL

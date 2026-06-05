@@ -173,71 +173,75 @@ slp_gas("HEF", dates_2027, temps_2027, kundenwert = kw,
 
 `slp_gas()` implements the [BDEW/VKU/GEODE synthetic procedure (SigLinDe
 method)](https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf)
-for daily gas consumption. It takes daily temperatures and a customer
-value (`kundenwert`), and supports all 15 gas profile IDs.
+for daily gas consumption. It takes daily mean temperatures and a
+customer value (`kundenwert`, kWh/day), and supports all 15 gas profile
+IDs.
 
-The recommended workflow has two steps: derive the Kundenwert (kWh/day)
-once from a **full reference year** of temperatures, then apply it to
-any period. The example below uses Düsseldorf (DWD station 1078,
-Niederrhein) as the reference location.
-
-Download the daily mean temperature data with the
-[`rdwd`](https://cran.r-project.org/package=rdwd) package (no API key
-required):
+Take a single-family home (profile `HEF`) in Düsseldorf with a
+Kundenwert of 55.1 kWh/day. First grab the daily mean temperatures for
+the period of interest — here the 2025/26 heating season — from the DWD
+open-data archive via [`rdwd`](https://cran.r-project.org/package=rdwd)
+(no API key required; `TMK` is the daily mean temperature in °C):
 
 ``` r
 library(rdwd)
 
-link <- selectDWD("Duesseldorf", res = "daily", var = "kl", per = "historical")
-raw  <- readDWD(dataDWD(link, read = FALSE), varnames = FALSE)
+dates <- seq.Date(as.Date("2025-10-01"), as.Date("2026-04-30"), by = "day")
 
-# Keep one full calendar year; TMK is the daily mean temperature in °C
-raw_2024       <- raw[format(raw$MESS_DATUM, "%Y") == "2024", ]
-dates_duesseldorf <- as.Date(raw_2024$MESS_DATUM)
-temps_duesseldorf <- raw_2024$TMK
+# Düsseldorf = DWD station 1078. The "recent" file is a rolling ~550-day
+# window, so combine it with "historical" to cover any period; force = TRUE
+# avoids reusing a stale cached download.
+link  <- selectDWD("Duesseldorf", res = "daily", var = "kl",
+                   per = c("historical", "recent"))
+raw   <- do.call(rbind, readDWD(dataDWD(link, read = FALSE, force = TRUE),
+                                varnames = FALSE))
+temps <- raw$TMK[match(dates, as.Date(raw$MESS_DATUM))]
+stopifnot(!anyNA(temps))   # fail loudly if the period isn't fully covered
 ```
+
+Then pass `dates` and `temps` to `slp_gas()` together with the
+Kundenwert:
 
 ``` r
-# Düsseldorf WMO climate normal 1991–2020 (DWD station 1078, Niederrhein)
-# Annual mean 11.1 °C, seasonal amplitude 9 °C — replace with rdwd output above
-# for a single-year series or your own measured data.
-dates_duesseldorf <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
-doy               <- as.integer(format(dates_duesseldorf, "%j"))
-temps_duesseldorf <- 11.1 - 9.0 * cos(2 * pi * (doy - 15) / 365)
-
-# Step 1: derive Kundenwert for a single-family home, 15,000 kWh/a
-kw_hef <- slp_gas_kundenwert(
-  "HEF",
-  dates        = dates_duesseldorf,
-  temperatures = temps_duesseldorf,
-  annual_consumption = 15000
-)
-kw_hef
-#>      HEF 
-#> 51.43209
-
-# Step 2: generate a profile for January 2025
-dates_jan <- seq.Date(as.Date("2025-01-01"), as.Date("2025-01-31"), by = "day")
-doy_jan   <- as.integer(format(dates_jan, "%j"))
-temps_jan <- 11.1 - 9.0 * cos(2 * pi * (doy_jan - 15) / 365)
-
-slp_gas("HEF", dates_jan, temps_jan, kundenwert = kw_hef) |> 
-  head()
+gas <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
+head(gas)
 #>   profile_id       date      kwh
-#> 1        HEF 2025-01-01 87.51761
-#> 2        HEF 2025-01-02 87.74484
-#> 3        HEF 2025-01-03 87.95540
-#> 4        HEF 2025-01-04 88.14927
-#> 5        HEF 2025-01-05 88.32640
-#> 6        HEF 2025-01-06 88.48675
+#> 1        HEF 2025-10-01 40.95047
+#> 2        HEF 2025-10-02 32.50304
+#> 3        HEF 2025-10-03 31.91795
+#> 4        HEF 2025-10-04 27.32729
+#> 5        HEF 2025-10-05 32.50304
+#> 6        HEF 2025-10-06 30.17767
+
+# total gas consumption over the heating season (1 Oct 2025 – 30 Apr 2026)
+sum(gas$kwh)
+#> [1] 12191.35
 ```
 
-<img src="man/figures/README-slp_gas_variants-1.png" alt="Small multiple chart showing daily gas consumption (HEF profile,
- 15,000 kWh/a) for variant 34 and variant 33 across three German climate
- zones (Freiburg, Hamburg, Chemnitz), faceted by calendar month." width="95%" style="display: block; margin: auto;" />
+The Kundenwert of 55.1 kWh/day is itself derived once, from the
+customer’s annual consumption and a reference temperature series. See
+the [gas
+article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
+for that step and the full method.
 
-For a detailed walkthrough of the SigLinDe parameters and a full climate
-zone comparison, see the [gas
+The same customer would consume differently in another climate. Keeping
+that Kundenwert fixed, the chart below uses **real DWD temperatures for
+the same 2025/26 heating season** to compare their daily gas consumption
+in Chemnitz, Freiburg, and Hamburg (columns) against Düsseldorf, one
+point per day, for each month (rows). Points above the 45° line mean
+more gas than in Düsseldorf. That winter all three cities ran colder
+than Düsseldorf, so every cloud sits above the line — most for Chemnitz
+(the coldest, ~35 % more gas over the season), least for Freiburg (~11
+%), with Hamburg in between (~25 %):
+
+<img src="man/figures/README-slp_gas_cities-1.png" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
+ rows are months October to April. Each point is a day; the x-axis is daily
+ gas consumption in Düsseldorf, the y-axis in the comparison city, with a
+ 45-degree reference line. All three cities' point clouds sit above the line
+ in winter, most clearly for Chemnitz." width="95%" style="display: block; margin: auto;" />
+
+For a detailed walkthrough of the SigLinDe parameters and the full
+climate zone comparison, see the [gas
 articles](https://flrd.github.io/standardlastprofile/articles/index.html)
 on the package website.
 

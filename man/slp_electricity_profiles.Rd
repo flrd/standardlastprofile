@@ -3,7 +3,6 @@
 \docType{data}
 \name{slp_electricity_profiles}
 \alias{slp_electricity_profiles}
-\alias{slp}
 \title{Standard Load Profile Data for Electricity from BDEW}
 \format{
 A data.frame with 26,784 observations and 5 variables:
