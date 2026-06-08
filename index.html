@@ -5,14 +5,20 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>BDEW Standard Load Profiles for Electricity • standardlastprofile</title>
-<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<title>BDEW Standard Load Profiles for Electricity and Gas • standardlastprofile</title>
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="BDEW Standard Load Profiles for Electricity">
-<meta name="description" content='Provides representative standard load profiles (SLPs) for electricity published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. Covers the 1999 profiles — households (H0), commerce (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25, G25, L25, P25, S25), which additionally represent households with photovoltaic systems and battery storage. Also provides an interface for generating a standard load profile over a user-defined date range. The 1999 data and methodology are described in VDEW (1999), "Repräsentative VDEW-Lastprofile", &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;. The generation algorithm is described in VDEW (2000), "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step", &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;. The 2025 profiles are described in BDEW (2025), "Standardlastprofile Strom", &lt;https://www.bdew.de/energie/standardlastprofile-strom/&gt;.'>
-<meta property="og:description" content='Provides representative standard load profiles (SLPs) for electricity published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. Covers the 1999 profiles — households (H0), commerce (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25, G25, L25, P25, S25), which additionally represent households with photovoltaic systems and battery storage. Also provides an interface for generating a standard load profile over a user-defined date range. The 1999 data and methodology are described in VDEW (1999), "Repräsentative VDEW-Lastprofile", &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;. The generation algorithm is described in VDEW (2000), "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step", &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;. The 2025 profiles are described in BDEW (2025), "Standardlastprofile Strom", &lt;https://www.bdew.de/energie/standardlastprofile-strom/&gt;.'>
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="BDEW Standard Load Profiles for Electricity and Gas">
+<meta name="description" content='Provides representative standard load profiles (SLPs) for electricity and gas published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The electricity profiles cover the 1999 profiles — households (H0), commercial (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25, G25, L25, P25, S25), which additionally represent households with photovoltaic systems and battery storage. An interface generates an electricity load profile over a user-defined date range. A second interface generates daily gas load profiles using the BDEW/VKU/GEODE synthetic SigLinDe procedure from daily temperatures and a customer value (Kundenwert). The 1999 data and methodology are described in VDEW (1999), "Repräsentative VDEW-Lastprofile", &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;. The electricity generation algorithm is described in VDEW (2000), "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step", &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;. The 2025 profiles are described in BDEW (2025), "Standardlastprofile Strom", &lt;https://www.bdew.de/energie/standardlastprofile-strom/&gt;. The gas procedure is described in BDEW (2025), "Standardlastprofile Gas", &lt;https://www.bdew.de/energie/standardlastprofile-gas/&gt;.'>
+<meta property="og:description" content='Provides representative standard load profiles (SLPs) for electricity and gas published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The electricity profiles cover the 1999 profiles — households (H0), commercial (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25, G25, L25, P25, S25), which additionally represent households with photovoltaic systems and battery storage. An interface generates an electricity load profile over a user-defined date range. A second interface generates daily gas load profiles using the BDEW/VKU/GEODE synthetic SigLinDe procedure from daily temperatures and a customer value (Kundenwert). The 1999 data and methodology are described in VDEW (1999), "Repräsentative VDEW-Lastprofile", &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;. The electricity generation algorithm is described in VDEW (2000), "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step", &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;. The 2025 profiles are described in BDEW (2025), "Standardlastprofile Strom", &lt;https://www.bdew.de/energie/standardlastprofile-strom/&gt;. The gas procedure is described in BDEW (2025), "Standardlastprofile Gas", &lt;https://www.bdew.de/energie/standardlastprofile-gas/&gt;.'>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">standardlastprofile</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,9 +37,17 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/get-started.html">Get started</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/slp-electricity.html">SLP Electricity</a></li>
+    <li><a class="dropdown-item" href="articles/slp-gas.html">SLP Gas</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="articles/index.html">More articles...</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/standardlastprofile.html">Algorithm</a></li>
-<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -52,134 +66,112 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This package provides data on standard load profiles for electricity, published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.).</p>
-<p><img src="reference/figures/README-bdew-1999-small_multiples-1.png" alt="Small multiple line chart of 11 standard load profiles
- published by the German Association of Energy and Water Industries (BDEW
- Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
- the consumption for three different periods over a year, and
- also compare the consumption between different days of a week." width="95%" style="display: block; margin: auto;"></p>
+<p>Standard load profiles (SLPs) for electricity and gas, published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.). SLPs are used by utilities, distribution network operators, and the energy industry to forecast demand for customer groups that are not continuously metered.</p>
+<p><img src="reference/figures/README-bdew-1999-small_multiples-1.png" alt="Small multiple line chart of 11 electricity standard load profiles
+ from 1999 published by the German Association of Energy and Water Industries
+ (BDEW). Lines compare three seasonal periods across different day types." width="95%" style="display: block; margin: auto;"></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install standardlastprofile from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"standardlastprofile"</span><span class="op">)</span></span></code></pre></div>
-<p>To install the development version from <a href="https://github.com/" class="external-link">GitHub</a> use:</p>
+</div>
+<div class="section level2">
+<h2 id="included-features">Included features<a class="anchor" aria-label="anchor" href="#included-features"></a>
+</h2>
+<ul>
+<li>
+<code><a href="reference/slp_info.html">slp_info()</a></code> — descriptions for all electricity and gas profile IDs</li>
+</ul>
+<p><strong>Electricity</strong></p>
+<ul>
+<li>
+<code>slp_electricity_profiles</code> — dataset of BDEW electricity SLPs in tidy format</li>
+<li>
+<code><a href="reference/slp_electricity.html">slp_electricity()</a></code> — generate a 15-minute profile for any date range</li>
+</ul>
+<p><strong>Gas</strong></p>
+<ul>
+<li>
+<code><a href="reference/slp_gas.html">slp_gas()</a></code> — generate daily gas consumption via the SigLinDe method</li>
+<li>
+<code><a href="reference/slp_gas_coefficients.html">slp_gas_coefficients()</a></code> — retrieve SigLinDe coefficients for gas SLPs</li>
+<li>
+<code><a href="reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code> — derive the customer value (German: Kundenwert) from a reference temperature series</li>
+<li>
+<code><a href="reference/slp_gas_siglinde.html">slp_gas_siglinde()</a></code> — low-level SigLinDe function, can be useful for custom or region-specific SigLinDe coefficients</li>
+<li>
+<code><a href="reference/slp_gas_weekday_factors.html">slp_gas_weekday_factors()</a></code> — retrieve weekday factors for gas SLPs</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="electricity">Electricity<a class="anchor" aria-label="anchor" href="#electricity"></a>
+</h2>
+<p>The dataset <code>slp_electricity_profiles</code> contains 26,784 observations across 5 variables:</p>
+<ul>
+<li>
+<code>profile_id</code>: load profile identifier</li>
+<li>
+<code>period</code>: <code>"summer"</code>, <code>"winter"</code>, or <code>"transition"</code> for 1999 profiles; a lowercase month name for 2025 profiles</li>
+<li>
+<code>day</code>: <code>"workday"</code>, <code>"saturday"</code>, or <code>"sunday"</code>
+</li>
+<li>
+<code>timestamp</code>: quarter-hour start time in <code>"%H:%M"</code> format</li>
+<li>
+<code>watts</code>: average electric power, normalised to 1,000 kWh/a</li>
+</ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"flrd/standardlastprofile"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="included-features">Included Features<a class="anchor" aria-label="anchor" href="#included-features"></a>
-</h2>
-<ul>
-<li>
-<code>slp</code> — a dataset containing BDEW standard load profiles for electricity.</li>
-<li>
-<code><a href="reference/slp_generate.html">slp_generate()</a></code> — generate a standard load profile for a user-defined time period.</li>
-<li>
-<code><a href="reference/slp_info.html">slp_info()</a></code> — retrieve details of standard load profiles.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="about-the-data">About the Data<a class="anchor" aria-label="anchor" href="#about-the-data"></a>
-</h2>
-<p>The dataset <code>slp</code> contains 26,784 observations across 5 variables:</p>
-<ul>
-<li>
-<code>profile_id</code>: identifier of a standard load profile</li>
-<li>
-<code>period</code>: one of <code>"summer"</code>, <code>"winter"</code>, <code>"transition"</code> for the 1999 profiles; a lowercase month name (<code>"january"</code> … <code>"december"</code>) for the 2025 profiles</li>
-<li>
-<code>day</code>: one of <code>"workday"</code>, <code>"saturday"</code>, <code>"sunday"</code>
-</li>
-<li>
-<code>timestamp</code>: format <code>"%H:%M"</code>
-</li>
-<li>
-<code>watts</code>: electric power</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flrd/standardlastprofile" class="external-link">standardlastprofile</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">slp</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">slp_electricity_profiles</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    26784 obs. of  5 variables:</span></span>
 <span><span class="co">#&gt;  $ profile_id: chr  "H0" "H0" "H0" "H0" ...</span></span>
 <span><span class="co">#&gt;  $ period    : chr  "winter" "winter" "winter" "winter" ...</span></span>
 <span><span class="co">#&gt;  $ day       : chr  "saturday" "saturday" "saturday" "saturday" ...</span></span>
 <span><span class="co">#&gt;  $ timestamp : chr  "00:00" "00:15" "00:30" "00:45" ...</span></span>
 <span><span class="co">#&gt;  $ watts     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...</span></span></code></pre></div>
-<p>In the context of the German electricity market, the term <em>Standard Load Profile</em> denotes a representative pattern of electricity consumption over a specific period. These profiles portray anticipated electricity consumption for diverse customer groups, like households or businesses. While not an exact match for an individual customer’s consumption profile, they serve as a valid approximation for larger groups of similar customers.</p>
-<p>For each unique combination of <code>profile_id</code>, <code>period</code> and <code>day</code> there are 96 x 1/4 hour measurements in watts. The dataset covers two generations of profiles:</p>
-<p><strong>1999 profiles</strong><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the data and methodology can be found &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link"&gt;here&lt;/a&gt;.&lt;/p&gt;'><sup>1</sup></a> — based on an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany:</p>
+<div class="section level3">
+<h3 id="id_1999-profiles">1999 profiles<a class="anchor" aria-label="anchor" href="#id_1999-profiles"></a>
+</h3>
+<p>Based on an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Methodology: &lt;a href="https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a>:</p>
 <ul>
 <li>
-<code>H0</code>: households (German: “Haushalte”)</li>
+<code>H0</code>: households</li>
 <li>
-<code>G0</code> to <code>G6</code>: commerce (“Gewerbe”)</li>
+<code>G0</code>–<code>G6</code>: commercial</li>
 <li>
-<code>L0</code> to <code>L2</code>: agriculture (“Landwirtschaft”)</li>
+<code>L0</code>–<code>L2</code>: agriculture</li>
 </ul>
-<p><strong>2025 profiles</strong> — an updated set published by BDEW reflecting changes in consumption patterns:</p>
+</div>
+<div class="section level3">
+<h3 id="id_2025-profiles">2025 profiles<a class="anchor" aria-label="anchor" href="#id_2025-profiles"></a>
+</h3>
+<p>An updated set published by BDEW in 2025, reflecting changes in consumption patterns since the original study. Unlike the 1999 profiles (three seasonal periods), the 2025 profiles provide values for each calendar month:</p>
 <ul>
 <li>
-<code>H25</code>, <code>G25</code>, <code>L25</code>: updated household, commerce, and agriculture profiles</li>
+<code>H25</code>, <code>G25</code>, <code>L25</code>: updated household, commercial, and agriculture profiles</li>
 <li>
 <code>P25</code>: households with a photovoltaic (PV) system</li>
 <li>
 <code>S25</code>: households with a PV system and battery storage</li>
 </ul>
-<p>For more details, call the <code><a href="reference/slp_info.html">slp_info()</a></code> function.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/slp_info.html">slp_info</a></span><span class="op">(</span>profile_id <span class="op">=</span> <span class="st">"H0"</span>, language <span class="op">=</span> <span class="st">"DE"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $H0</span></span>
-<span><span class="co">#&gt; $H0$profile</span></span>
-<span><span class="co">#&gt; [1] "H0"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $H0$description</span></span>
-<span><span class="co">#&gt; [1] "Haushalt"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $H0$details</span></span>
-<span><span class="co">#&gt; [1] "In dieses Profil werden alle Haushalte mit ausschließlichem und überwiegendem Privatverbrauch eingeordnet. Haushalte mit überwiegend privatem elektrischen Verbrauch, d.h. auch mit geringfügigem gewerblichen Bedarf sind z.B. Handelsvertreter, Heimarbeiter u.ä. mit Büro im Haushalt. Das Profil Haushalt ist nicht anwendbar bei Sonderanwendungen wie z.B. elektrischen Speicherheizungen oder Wärmepumpen."</span></span></code></pre></div>
+<p><img src="reference/figures/README-bdew-2025-small_multiples-1.png" alt="Small multiple line chart of five electricity standard load profiles
+ published by BDEW in 2025. Lines are coloured by calendar month and faceted
+ by profile and day type." width="95%" style="display: block; margin: auto;"></p>
+<p>The chart below compares cumulative energy consumption of the 2025 household profiles against <code>H0</code> over a full year. <code>H25</code> tracks <code>H0</code> closely; <code>P25</code> and <code>S25</code> flatten from spring through summer as solar generation and storage reduce grid draw.</p>
+<p><img src="reference/figures/README-H0_vs_2025-1.png" alt="Faceted line plot with four panels for H0, H25, P25, and S25.
+ Each panel shows cumulative energy consumption in kWh over 2026.
+ A grey reference line shows H0. H25 tracks H0 closely, while P25 and S25
+ diverge from spring onwards due to photovoltaic generation and battery storage." width="95%" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level2">
-<h2 id="id_2025-profiles">2025 Profiles<a class="anchor" aria-label="anchor" href="#id_2025-profiles"></a>
-</h2>
-<p>In 2025, BDEW published an updated set of standard load profiles reflecting changes in electricity consumption patterns since the original 1999 study. Five new profiles are included:</p>
-<ul>
-<li>
-<code>H25</code>: households — updated version of <code>H0</code>
-</li>
-<li>
-<code>G25</code>: commerce (general) — updated version of <code>G0</code>
-</li>
-<li>
-<code>L25</code>: agriculture — updated version of <code>L0</code>
-</li>
-<li>
-<code>P25</code>: combination profile for households with a photovoltaic (PV) system</li>
-<li>
-<code>S25</code>: combination profile for households with a PV system and battery storage</li>
-</ul>
-<p>Unlike the 1999 profiles, which group days into three seasonal periods (<code>winter</code>, <code>summer</code>, <code>transition</code>), the 2025 profiles provide a separate set of values for each calendar month. <code>P25</code> and <code>S25</code> are entirely new profile types with no 1999 equivalent, capturing the growing role of distributed generation and storage in residential electricity consumption.</p>
-<p><img src="reference/figures/README-bdew-2025-small_multiples-1.png" alt="Small multiple line chart of five standard load profiles published
- by the German Association of Energy and Water Industries (BDEW) in 2025.
- Lines are coloured by calendar month and faceted by profile and day type." width="95%" style="display: block; margin: auto;"></p>
-<p>The chart below places the 2025 household profiles side by side against <code>H0</code> as a reference, showing how cumulative energy consumption diverges over the course of a year.</p>
-<p><img src="reference/figures/README-H0_vs_2025-1.png" alt="Faceted line plot with three panels for profiles H25, P25, and
- S25. Each panel shows cumulative energy consumption in kWh over 2026.
- A grey reference line shows H0 in every panel. H25 tracks H0 closely,
- while P25 and S25 diverge due to photovoltaic generation and battery
- storage respectively." width="95%" style="display: block; margin: auto;"></p>
-<p><code>H25</code> tracks <code>H0</code> almost exactly, confirming that the updated household profile represents a similar consumption pattern to its 1999 predecessor. <code>P25</code> and <code>S25</code>, on the other hand, show a flattening of the cumulative curve from spring through summer: households with a photovoltaic system — and even more so those with additional battery storage — draw less energy from the grid during the months of high solar yield.</p>
 <div class="section level3">
-<h3 id="generate-a-standard-load-profile">Generate a Standard Load Profile<a class="anchor" aria-label="anchor" href="#generate-a-standard-load-profile"></a>
+<h3 id="generate-a-profile">Generate a profile<a class="anchor" aria-label="anchor" href="#generate-a-profile"></a>
 </h3>
-<p>To create a standard load profile for a specified time period, call the <code><a href="reference/slp_generate.html">slp_generate()</a></code> function:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">G5</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_generate.html">slp_generate</a></span><span class="op">(</span></span>
+<p><code><a href="reference/slp_electricity.html">slp_electricity()</a></code> returns a data frame with one row per 15-minute interval:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">G5</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span></span>
 <span>  profile_id <span class="op">=</span> <span class="st">"G5"</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="st">"2023-12-22"</span>,</span>
-<span>  end_date <span class="op">=</span> <span class="st">"2023-12-27"</span></span>
+<span>  end_date   <span class="op">=</span> <span class="st">"2023-12-27"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">G5</span><span class="op">)</span></span>
@@ -190,30 +182,14 @@
 <span><span class="co">#&gt; 4         G5 2023-12-22 00:45:00 2023-12-22 01:00:00  43.3</span></span>
 <span><span class="co">#&gt; 5         G5 2023-12-22 01:00:00 2023-12-22 01:15:00  43.0</span></span>
 <span><span class="co">#&gt; 6         G5 2023-12-22 01:15:00 2023-12-22 01:30:00  43.8</span></span></code></pre></div>
-<p><img src="reference/figures/README-G5_plot_readme-1.png" alt="Line plot of the standard load profile 'G5' (i.e. Bakery
- with a bakehouse) based on data from the German Association of Energy
- and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft
- e.V.) from December 22nd to December 27th 2023; values
- are normalised to an annual consumption of 1,000 kWh." width="95%" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/README-G5_plot_readme-1.png" alt="Line plot of the electricity standard load profile 'G5' (bakery
+ with a bakehouse) from December 22nd to 27th 2023, normalised to 1,000 kWh/a." width="95%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
-<h3 id="public-holidays">Public Holidays<a class="anchor" aria-label="anchor" href="#public-holidays"></a>
+<h3 id="public-holidays">Public holidays<a class="anchor" aria-label="anchor" href="#public-holidays"></a>
 </h3>
-<p>By default, <code><a href="reference/slp_generate.html">slp_generate()</a></code> treats the nine public holidays observed nationwide in Germany as Sundays:</p>
-<ul>
-<li>New Year’s (Jan 1)</li>
-<li>Good Friday</li>
-<li>Easter Monday</li>
-<li>Labour Day (May 1)</li>
-<li>Ascension Day</li>
-<li>Whit Monday</li>
-<li>German Unity Day (Oct 3)</li>
-<li>Christmas Day (Dec 25)</li>
-<li>Boxing Day (Dec 26)</li>
-</ul>
-<p>State-level holidays are <em>not</em> included because they vary by state and can change over time. Use the <code>holidays</code> argument to supply your own dates — the built-in data are then ignored entirely.</p>
-<p>The example below fetches all 2027 public holidays for Germany and the state of Berlin from the <a href="https://date.nager.at" class="external-link">nager.Date API</a>, and passes them to <code><a href="reference/slp_generate.html">slp_generate()</a></code>. Berlin observes <strong>International Women’s Day</strong> (8 March) as an additional public holiday not shared by any other state.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>Both <code><a href="reference/slp_electricity.html">slp_electricity()</a></code> and <code><a href="reference/slp_gas.html">slp_gas()</a></code> use the same holiday logic: nine nationwide German public holidays are treated as Sundays by default (New Year’s, Good Friday, Easter Monday, Labour Day, Ascension Day, Whit Monday, German Unity Day, Christmas Day, Boxing Day). State-level holidays are not included because they vary by state and can change. Use the <code>holidays</code> argument in either function to supply your own dates — the built-in data are then ignored entirely:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr2.r-lib.org" class="external-link">httr2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://httr2.r-lib.org/reference/request.html" class="external-link">request</a></span><span class="op">(</span><span class="st">"https://date.nager.at"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -221,48 +197,82 @@
 <span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/req_perform.html" class="external-link">req_perform</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/resp_body_raw.html" class="external-link">resp_body_json</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># global == TRUE  →  nationwide holiday (counties is NULL)</span></span>
-<span><span class="co"># global == FALSE →  counties lists the states that observe it</span></span>
+<span><span class="co"># Berlin observes International Women's Day (8 March) in addition to all</span></span>
+<span><span class="co"># nationwide holidays; global == TRUE means observed in all states</span></span>
 <span><span class="va">is_berlin</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">global</span><span class="op">)</span> <span class="op">||</span> <span class="st">"DE-BE"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">counties</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">holidays_berlin_2027</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="va">is_berlin</span>, <span class="va">resp</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">date</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">H0_berlin_2027</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_generate.html">slp_generate</a></span><span class="op">(</span></span>
-<span>  <span class="st">"H0"</span>, <span class="st">"2027-01-01"</span>, <span class="st">"2027-12-31"</span>,</span>
-<span>  holidays <span class="op">=</span> <span class="va">holidays_berlin_2027</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>To generate a standard load profile including holidays for each of the 16 German states, repeat the same pattern in a loop — one API call suffices, re-filter per state:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">states</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"DE-BB"</span>, <span class="st">"DE-BE"</span>, <span class="st">"DE-BW"</span>, <span class="st">"DE-BY"</span>, <span class="st">"DE-HB"</span>, <span class="st">"DE-HE"</span>,</span>
-<span>  <span class="st">"DE-HH"</span>, <span class="st">"DE-MV"</span>, <span class="st">"DE-NI"</span>, <span class="st">"DE-NW"</span>, <span class="st">"DE-RP"</span>, <span class="st">"DE-SH"</span>,</span>
-<span>  <span class="st">"DE-SL"</span>, <span class="st">"DE-SN"</span>, <span class="st">"DE-ST"</span>, <span class="st">"DE-TH"</span></span>
-<span><span class="op">)</span></span>
+<span><span class="co"># electricity</span></span>
+<span><span class="fu"><a href="reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"2027-01-01"</span>, <span class="st">"2027-12-31"</span>,</span>
+<span>                holidays <span class="op">=</span> <span class="va">holidays_berlin_2027</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a></span><span class="op">(</span><span class="st">"list"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">states</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">states</span></span>
-<span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">state</span> <span class="kw">in</span> <span class="va">states</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">is_state</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">global</span><span class="op">)</span> <span class="op">||</span> <span class="va">state</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">counties</span><span class="op">)</span></span>
-<span>  <span class="va">holidays_state</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">resp</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">date</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span>  <span class="va">results</span><span class="op">[[</span><span class="va">state</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_generate.html">slp_generate</a></span><span class="op">(</span></span>
-<span>    profile_id <span class="op">=</span> <span class="st">"H0"</span>,</span>
-<span>    start_date <span class="op">=</span> <span class="st">"2027-01-01"</span>,</span>
-<span>    end_date <span class="op">=</span> <span class="st">"2027-12-31"</span>,</span>
-<span>    holidays <span class="op">=</span> <span class="va">holidays_state</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<p>For more information, details about the data, and an explanation of the algorithm, see the <a href="https://flrd.github.io/standardlastprofile/articles/standardlastprofile.html">vignette</a> or run <code><a href="articles/standardlastprofile.html">vignette("standardlastprofile", package = "standardlastprofile")</a></code> locally.</p>
+<span><span class="co"># gas — same holidays argument, same semantics</span></span>
+<span><span class="fu"><a href="reference/slp_gas.html">slp_gas</a></span><span class="op">(</span><span class="st">"HEF"</span>, <span class="va">dates_2027</span>, <span class="va">temps_2027</span>, kundenwert <span class="op">=</span> <span class="va">kw</span>,</span>
+<span>        holidays <span class="op">=</span> <span class="va">holidays_berlin_2027</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
-<h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a>
+<h2 id="gas">Gas<a class="anchor" aria-label="anchor" href="#gas"></a>
 </h2>
-<p>You can access the studies and data on standard load profiles for electricity on the website of the BDEW: <a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link uri">https://www.bdew.de/energie/standardlastprofile-strom/</a></p>
+<p><code><a href="reference/slp_gas.html">slp_gas()</a></code> implements the <a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link">BDEW/VKU/GEODE synthetic procedure (SigLinDe method)</a> for daily gas consumption. It takes daily mean temperatures and a customer value (<code>kundenwert</code>, kWh/day), and supports all 15 gas profile IDs.</p>
+<p>Take a single-family home (profile <code>HEF</code>) in Düsseldorf with a Kundenwert of 55.1 kWh/day. First grab the daily mean temperatures for the period of interest — here the 2025/26 heating season — from the DWD open-data archive via <a href="https://cran.r-project.org/package=rdwd" class="external-link"><code>rdwd</code></a> (no API key required; <code>TMK</code> is the daily mean temperature in °C):</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://brry.github.io/rdwd/" class="external-link">rdwd</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html" class="external-link">seq.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2025-10-01"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2026-04-30"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Düsseldorf = DWD station 1078. The "recent" file is a rolling ~550-day</span></span>
+<span><span class="co"># window, so combine it with "historical" to cover any period; force = TRUE</span></span>
+<span><span class="co"># avoids reusing a stale cached download.</span></span>
+<span><span class="va">link</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD</a></span><span class="op">(</span><span class="st">"Duesseldorf"</span>, res <span class="op">=</span> <span class="st">"daily"</span>, var <span class="op">=</span> <span class="st">"kl"</span>,</span>
+<span>                   per <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"historical"</span>, <span class="st">"recent"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">raw</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/readDWD.html" class="external-link">readDWD</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/dataDWD.html" class="external-link">dataDWD</a></span><span class="op">(</span><span class="va">link</span>, read <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>                                varnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">temps</span> <span class="op">&lt;-</span> <span class="va">raw</span><span class="op">$</span><span class="va">TMK</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">dates</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">raw</span><span class="op">$</span><span class="va">MESS_DATUM</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="va">temps</span><span class="op">)</span><span class="op">)</span>   <span class="co"># fail loudly if the period isn't fully covered</span></span></code></pre></div>
+<p>Then pass <code>dates</code> and <code>temps</code> to <code><a href="reference/slp_gas.html">slp_gas()</a></code> together with the Kundenwert:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">HEF</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_gas.html">slp_gas</a></span><span class="op">(</span><span class="st">"HEF"</span>, <span class="va">dates</span>, <span class="va">temps</span>, kundenwert <span class="op">=</span> <span class="fl">55.1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">HEF</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   profile_id       date      kwh</span></span>
+<span><span class="co">#&gt; 1        HEF 2025-10-01 40.95047</span></span>
+<span><span class="co">#&gt; 2        HEF 2025-10-02 32.50304</span></span>
+<span><span class="co">#&gt; 3        HEF 2025-10-03 31.91795</span></span>
+<span><span class="co">#&gt; 4        HEF 2025-10-04 27.32729</span></span>
+<span><span class="co">#&gt; 5        HEF 2025-10-05 32.50304</span></span>
+<span><span class="co">#&gt; 6        HEF 2025-10-06 30.17767</span></span>
+<span></span>
+<span><span class="co"># total gas consumption over the heating season (1 Oct 2025 – 30 Apr 2026)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">HEF</span><span class="op">$</span><span class="va">kwh</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 12191.35</span></span></code></pre></div>
+<blockquote>
+<p>The Kundenwert of 55.1 kWh/day is itself derived once, from the customer’s annual consumption and a reference temperature series. See the <a href="https://flrd.github.io/standardlastprofile/articles/slp-gas.html">gas article</a> for that step and the full method.</p>
+</blockquote>
+<p><img src="reference/figures/README-slp_gas_readme_plot-1.png" alt="Line chart of daily gas consumption in kilowatt-hours for a
+ single-family home in Düsseldorf across the 2025/26 heating season. Demand
+ peaks in the cold winter months and is lowest in the mild shoulder months of
+ October and April." width="95%" style="display: block; margin: auto;"></p>
+<p>Let’s assume that same customer (i.e. fixed <code>kundenwert</code>) would live in another place with a different climate. The chart below uses temperature data for the same heating season (October ’25 to April ’26) to compare their daily gas consumption in: - Chemnitz - Freiburg im Breisgau - Hamburg against Düsseldorf.</p>
+<p>Points above the 45° line mean that customer would have consumed more gas than in Düsseldorf due to different climate and temperatures. We see that in that winter all three cities ran colder than Düsseldorf, so every cloud sits above the line — most for Chemnitz (~35% more gas over the season), least for Freiburg (~11% more), with Hamburg in between (~25% more):</p>
+<p><img src="reference/figures/README-slp_gas_cities-1.png" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
+ rows are months October to April. Each point is a day; the x-axis is daily
+ gas consumption in Düsseldorf, the y-axis in the comparison city, with a
+ 45-degree reference line. All three cities' point clouds sit above the line
+ in winter, most clearly for Chemnitz." width="95%" style="display: block; margin: auto;"></p>
+<p>For a detailed walkthrough of the SigLinDe parameters and the full climate zone comparison, see the <a href="https://flrd.github.io/standardlastprofile/articles/index.html">gas articles</a> on the package website.</p>
+</div>
+<div class="section level2">
+<h2 id="sources">Sources<a class="anchor" aria-label="anchor" href="#sources"></a>
+</h2>
+<ul>
+<li>Electricity SLPs: <a href="https://www.bdew.de/energie/standardlastprofile-strom/" class="external-link uri">https://www.bdew.de/energie/standardlastprofile-strom/</a>
+</li>
+<li>Gas SLPs: <a href="https://www.bdew.de/energie/standardlastprofile-gas/" class="external-link uri">https://www.bdew.de/energie/standardlastprofile-gas/</a>
+</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

@@ -1,56 +1,65 @@
 # standardlastprofile
 
-This package provides data on standard load profiles for electricity,
-published by the German Association of Energy and Water Industries (BDEW
-Bundesverband der Energie- und Wasserwirtschaft e.V.).
+Standard load profiles (SLPs) for electricity and gas, published by the
+German Association of Energy and Water Industries (BDEW Bundesverband
+der Energie- und Wasserwirtschaft e.V.). SLPs are used by utilities,
+distribution network operators, and the energy industry to forecast
+demand for customer groups that are not continuously metered.
 
-![Small multiple line chart of 11 standard load profiles published by
-the German Association of Energy and Water Industries (BDEW
-Bundesverband der Energie- und Wasserwirtschaft e.V.). The lines compare
-the consumption for three different periods over a year, and also
-compare the consumption between different days of a
-week.](reference/figures/README-bdew-1999-small_multiples-1.png)
+![Small multiple line chart of 11 electricity standard load profiles
+from 1999 published by the German Association of Energy and Water
+Industries (BDEW). Lines compare three seasonal periods across different
+day types.](reference/figures/README-bdew-1999-small_multiples-1.png)
 
 ## Installation
 
-You can install standardlastprofile from CRAN with:
-
 ``` r
+
 install.packages("standardlastprofile")
 ```
 
-To install the development version from [GitHub](https://github.com/)
-use:
+## Included features
 
-``` r
-# install.packages("pak")
-pak::pkg_install("flrd/standardlastprofile")
-```
-
-## Included Features
-
-- `slp` — a dataset containing BDEW standard load profiles for
-  electricity.
-- [`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
-  — generate a standard load profile for a user-defined time period.
 - [`slp_info()`](https://flrd.github.io/standardlastprofile/reference/slp_info.md)
-  — retrieve details of standard load profiles.
+  — descriptions for all electricity and gas profile IDs
 
-## About the Data
+**Electricity**
 
-The dataset `slp` contains 26,784 observations across 5 variables:
+- `slp_electricity_profiles` — dataset of BDEW electricity SLPs in tidy
+  format
+- [`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
+  — generate a 15-minute profile for any date range
 
-- `profile_id`: identifier of a standard load profile
-- `period`: one of `"summer"`, `"winter"`, `"transition"` for the 1999
-  profiles; a lowercase month name (`"january"` … `"december"`) for the
-  2025 profiles
-- `day`: one of `"workday"`, `"saturday"`, `"sunday"`
-- `timestamp`: format `"%H:%M"`
-- `watts`: electric power
+**Gas**
+
+- [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
+  — generate daily gas consumption via the SigLinDe method
+- [`slp_gas_coefficients()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_coefficients.md)
+  — retrieve SigLinDe coefficients for gas SLPs
+- [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_kundenwert.md)
+  — derive the customer value (German: Kundenwert) from a reference
+  temperature series
+- [`slp_gas_siglinde()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_siglinde.md)
+  — low-level SigLinDe function, can be useful for custom or
+  region-specific SigLinDe coefficients
+- [`slp_gas_weekday_factors()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_weekday_factors.md)
+  — retrieve weekday factors for gas SLPs
+
+## Electricity
+
+The dataset `slp_electricity_profiles` contains 26,784 observations
+across 5 variables:
+
+- `profile_id`: load profile identifier
+- `period`: `"summer"`, `"winter"`, or `"transition"` for 1999 profiles;
+  a lowercase month name for 2025 profiles
+- `day`: `"workday"`, `"saturday"`, or `"sunday"`
+- `timestamp`: quarter-hour start time in `"%H:%M"` format
+- `watts`: average electric power, normalised to 1,000 kWh/a
 
 ``` r
-library(standardlastprofile)
-str(slp)
+
+str(slp_electricity_profiles)
 #> 'data.frame':    26784 obs. of  5 variables:
 #>  $ profile_id: chr  "H0" "H0" "H0" "H0" ...
 #>  $ period    : chr  "winter" "winter" "winter" "winter" ...
@@ -59,105 +68,54 @@ str(slp)
 #>  $ watts     : num  70.8 68.2 65.9 63.3 59.5 55 50.5 46.6 43.9 42.3 ...
 ```
 
-In the context of the German electricity market, the term *Standard Load
-Profile* denotes a representative pattern of electricity consumption
-over a specific period. These profiles portray anticipated electricity
-consumption for diverse customer groups, like households or businesses.
-While not an exact match for an individual customer’s consumption
-profile, they serve as a valid approximation for larger groups of
-similar customers.
+### 1999 profiles
 
-For each unique combination of `profile_id`, `period` and `day` there
-are 96 x 1/4 hour measurements in watts. The dataset covers two
-generations of profiles:
+Based on an analysis of 1,209 load profiles of low-voltage electricity
+consumers in Germany[^1]:
 
-**1999 profiles**[¹](#fn1) — based on an analysis of 1,209 load profiles
-of low-voltage electricity consumers in Germany:
+- `H0`: households
+- `G0`–`G6`: commercial
+- `L0`–`L2`: agriculture
 
-- `H0`: households (German: “Haushalte”)
-- `G0` to `G6`: commerce (“Gewerbe”)
-- `L0` to `L2`: agriculture (“Landwirtschaft”)
+### 2025 profiles
 
-**2025 profiles** — an updated set published by BDEW reflecting changes
-in consumption patterns:
+An updated set published by BDEW in 2025, reflecting changes in
+consumption patterns since the original study. Unlike the 1999 profiles
+(three seasonal periods), the 2025 profiles provide values for each
+calendar month:
 
-- `H25`, `G25`, `L25`: updated household, commerce, and agriculture
+- `H25`, `G25`, `L25`: updated household, commercial, and agriculture
   profiles
 - `P25`: households with a photovoltaic (PV) system
 - `S25`: households with a PV system and battery storage
 
-For more details, call the
-[`slp_info()`](https://flrd.github.io/standardlastprofile/reference/slp_info.md)
-function.
-
-``` r
-slp_info(profile_id = "H0", language = "DE")
-#> $H0
-#> $H0$profile
-#> [1] "H0"
-#> 
-#> $H0$description
-#> [1] "Haushalt"
-#> 
-#> $H0$details
-#> [1] "In dieses Profil werden alle Haushalte mit ausschließlichem und überwiegendem Privatverbrauch eingeordnet. Haushalte mit überwiegend privatem elektrischen Verbrauch, d.h. auch mit geringfügigem gewerblichen Bedarf sind z.B. Handelsvertreter, Heimarbeiter u.ä. mit Büro im Haushalt. Das Profil Haushalt ist nicht anwendbar bei Sonderanwendungen wie z.B. elektrischen Speicherheizungen oder Wärmepumpen."
-```
-
-## 2025 Profiles
-
-In 2025, BDEW published an updated set of standard load profiles
-reflecting changes in electricity consumption patterns since the
-original 1999 study. Five new profiles are included:
-
-- `H25`: households — updated version of `H0`
-- `G25`: commerce (general) — updated version of `G0`
-- `L25`: agriculture — updated version of `L0`
-- `P25`: combination profile for households with a photovoltaic (PV)
-  system
-- `S25`: combination profile for households with a PV system and battery
-  storage
-
-Unlike the 1999 profiles, which group days into three seasonal periods
-(`winter`, `summer`, `transition`), the 2025 profiles provide a separate
-set of values for each calendar month. `P25` and `S25` are entirely new
-profile types with no 1999 equivalent, capturing the growing role of
-distributed generation and storage in residential electricity
-consumption.
-
-![Small multiple line chart of five standard load profiles published by
-the German Association of Energy and Water Industries (BDEW) in 2025.
-Lines are coloured by calendar month and faceted by profile and day
+![Small multiple line chart of five electricity standard load profiles
+published by BDEW in 2025. Lines are coloured by calendar month and
+faceted by profile and day
 type.](reference/figures/README-bdew-2025-small_multiples-1.png)
 
-The chart below places the 2025 household profiles side by side against
-`H0` as a reference, showing how cumulative energy consumption diverges
-over the course of a year.
+The chart below compares cumulative energy consumption of the 2025
+household profiles against `H0` over a full year. `H25` tracks `H0`
+closely; `P25` and `S25` flatten from spring through summer as solar
+generation and storage reduce grid draw.
 
-![Faceted line plot with three panels for profiles H25, P25, and S25.
-Each panel shows cumulative energy consumption in kWh over 2026. A grey
-reference line shows H0 in every panel. H25 tracks H0 closely, while P25
-and S25 diverge due to photovoltaic generation and battery storage
-respectively.](reference/figures/README-H0_vs_2025-1.png)
+![Faceted line plot with four panels for H0, H25, P25, and S25. Each
+panel shows cumulative energy consumption in kWh over 2026. A grey
+reference line shows H0. H25 tracks H0 closely, while P25 and S25
+diverge from spring onwards due to photovoltaic generation and battery
+storage.](reference/figures/README-H0_vs_2025-1.png)
 
-`H25` tracks `H0` almost exactly, confirming that the updated household
-profile represents a similar consumption pattern to its 1999
-predecessor. `P25` and `S25`, on the other hand, show a flattening of
-the cumulative curve from spring through summer: households with a
-photovoltaic system — and even more so those with additional battery
-storage — draw less energy from the grid during the months of high solar
-yield.
+### Generate a profile
 
-### Generate a Standard Load Profile
-
-To create a standard load profile for a specified time period, call the
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
-function:
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
+returns a data frame with one row per 15-minute interval:
 
 ``` r
-G5 <- slp_generate(
+
+G5 <- slp_electricity(
   profile_id = "G5",
   start_date = "2023-12-22",
-  end_date = "2023-12-27"
+  end_date   = "2023-12-27"
 )
 
 head(G5)
@@ -170,42 +128,25 @@ head(G5)
 #> 6         G5 2023-12-22 01:15:00 2023-12-22 01:30:00  43.8
 ```
 
-![Line plot of the standard load profile 'G5' (i.e. Bakery with a
-bakehouse) based on data from the German Association of Energy and Water
-Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.)
-from December 22nd to December 27th 2023; values are normalised to an
-annual consumption of 1,000
-kWh.](reference/figures/README-G5_plot_readme-1.png)
+![Line plot of the electricity standard load profile 'G5' (bakery with a
+bakehouse) from December 22nd to 27th 2023, normalised to 1,000
+kWh/a.](reference/figures/README-G5_plot_readme-1.png)
 
-### Public Holidays
+### Public holidays
 
-By default,
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
-treats the nine public holidays observed nationwide in Germany as
-Sundays:
-
-- New Year’s (Jan 1)
-- Good Friday
-- Easter Monday
-- Labour Day (May 1)
-- Ascension Day
-- Whit Monday
-- German Unity Day (Oct 3)
-- Christmas Day (Dec 25)
-- Boxing Day (Dec 26)
-
-State-level holidays are *not* included because they vary by state and
-can change over time. Use the `holidays` argument to supply your own
-dates — the built-in data are then ignored entirely.
-
-The example below fetches all 2027 public holidays for Germany and the
-state of Berlin from the [nager.Date API](https://date.nager.at), and
-passes them to
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md).
-Berlin observes **International Women’s Day** (8 March) as an additional
-public holiday not shared by any other state.
+Both
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
+and
+[`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
+use the same holiday logic: nine nationwide German public holidays are
+treated as Sundays by default (New Year’s, Good Friday, Easter Monday,
+Labour Day, Ascension Day, Whit Monday, German Unity Day, Christmas Day,
+Boxing Day). State-level holidays are not included because they vary by
+state and can change. Use the `holidays` argument in either function to
+supply your own dates — the built-in data are then ignored entirely:
 
 ``` r
+
 library(httr2)
 
 resp <- request("https://date.nager.at") |>
@@ -213,60 +154,118 @@ resp <- request("https://date.nager.at") |>
   req_perform() |>
   resp_body_json()
 
-# global == TRUE  →  nationwide holiday (counties is NULL)
-# global == FALSE →  counties lists the states that observe it
+# Berlin observes International Women's Day (8 March) in addition to all
+# nationwide holidays; global == TRUE means observed in all states
 is_berlin <- \(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
 
 holidays_berlin_2027 <- as.Date(
   vapply(Filter(is_berlin, resp), \(x) x$date, character(1))
 )
 
-H0_berlin_2027 <- slp_generate(
-  "H0", "2027-01-01", "2027-12-31",
-  holidays = holidays_berlin_2027
-)
+# electricity
+slp_electricity("H0", "2027-01-01", "2027-12-31",
+                holidays = holidays_berlin_2027)
+
+# gas — same holidays argument, same semantics
+slp_gas("HEF", dates_2027, temps_2027, kundenwert = kw,
+        holidays = holidays_berlin_2027)
 ```
 
-To generate a standard load profile including holidays for each of the
-16 German states, repeat the same pattern in a loop — one API call
-suffices, re-filter per state:
+## Gas
+
+[`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
+implements the [BDEW/VKU/GEODE synthetic procedure (SigLinDe
+method)](https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf)
+for daily gas consumption. It takes daily mean temperatures and a
+customer value (`kundenwert`, kWh/day), and supports all 15 gas profile
+IDs.
+
+Take a single-family home (profile `HEF`) in Düsseldorf with a
+Kundenwert of 55.1 kWh/day. First grab the daily mean temperatures for
+the period of interest — here the 2025/26 heating season — from the DWD
+open-data archive via [`rdwd`](https://cran.r-project.org/package=rdwd)
+(no API key required; `TMK` is the daily mean temperature in °C):
 
 ``` r
-states <- c(
-  "DE-BB", "DE-BE", "DE-BW", "DE-BY", "DE-HB", "DE-HE",
-  "DE-HH", "DE-MV", "DE-NI", "DE-NW", "DE-RP", "DE-SH",
-  "DE-SL", "DE-SN", "DE-ST", "DE-TH"
-)
 
-results <- vector("list", length(states))
-names(results) <- states
+library(rdwd)
 
-for (state in states) {
-  is_state <- \(x) isTRUE(x$global) || state %in% unlist(x$counties)
-  holidays_state <- as.Date(
-    vapply(Filter(is_state, resp), \(x) x$date, character(1))
-  )
-  results[[state]] <- slp_generate(
-    profile_id = "H0",
-    start_date = "2027-01-01",
-    end_date = "2027-12-31",
-    holidays = holidays_state
-  )
-}
+dates <- seq.Date(as.Date("2025-10-01"), as.Date("2026-04-30"), by = "day")
+
+# Düsseldorf = DWD station 1078. The "recent" file is a rolling ~550-day
+# window, so combine it with "historical" to cover any period; force = TRUE
+# avoids reusing a stale cached download.
+link  <- selectDWD("Duesseldorf", res = "daily", var = "kl",
+                   per = c("historical", "recent"))
+raw   <- do.call(rbind, readDWD(dataDWD(link, read = FALSE, force = TRUE),
+                                varnames = FALSE))
+temps <- raw$TMK[match(dates, as.Date(raw$MESS_DATUM))]
+stopifnot(!anyNA(temps))   # fail loudly if the period isn't fully covered
 ```
 
-For more information, details about the data, and an explanation of the
-algorithm, see the
-[vignette](https://flrd.github.io/standardlastprofile/articles/standardlastprofile.html)
-or run
-[`vignette("standardlastprofile", package = "standardlastprofile")`](https://flrd.github.io/standardlastprofile/articles/standardlastprofile.md)
-locally.
+Then pass `dates` and `temps` to
+[`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
+together with the Kundenwert:
 
-## Source
+``` r
 
-You can access the studies and data on standard load profiles for
-electricity on the website of the BDEW:
-<https://www.bdew.de/energie/standardlastprofile-strom/>
+HEF <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
+head(HEF)
+#>   profile_id       date      kwh
+#> 1        HEF 2025-10-01 40.95047
+#> 2        HEF 2025-10-02 32.50304
+#> 3        HEF 2025-10-03 31.91795
+#> 4        HEF 2025-10-04 27.32729
+#> 5        HEF 2025-10-05 32.50304
+#> 6        HEF 2025-10-06 30.17767
+
+# total gas consumption over the heating season (1 Oct 2025 – 30 Apr 2026)
+sum(HEF$kwh)
+#> [1] 12191.35
+```
+
+> The Kundenwert of 55.1 kWh/day is itself derived once, from the
+> customer’s annual consumption and a reference temperature series. See
+> the [gas
+> article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
+> for that step and the full method.
+
+![Line chart of daily gas consumption in kilowatt-hours for a
+single-family home in Düsseldorf across the 2025/26 heating season.
+Demand peaks in the cold winter months and is lowest in the mild
+shoulder months of October and
+April.](reference/figures/README-slp_gas_readme_plot-1.png)
+
+Let’s assume that same customer (i.e. fixed `kundenwert`) would live in
+another place with a different climate. The chart below uses temperature
+data for the same heating season (October ’25 to April ’26) to compare
+their daily gas consumption in: - Chemnitz - Freiburg im Breisgau -
+Hamburg against Düsseldorf.
+
+Points above the 45° line mean that customer would have consumed more
+gas than in Düsseldorf due to different climate and temperatures. We see
+that in that winter all three cities ran colder than Düsseldorf, so
+every cloud sits above the line — most for Chemnitz (~35% more gas over
+the season), least for Freiburg (~11% more), with Hamburg in between
+(~25% more):
+
+![Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
+rows are months October to April. Each point is a day; the x-axis is
+daily gas consumption in Düsseldorf, the y-axis in the comparison city,
+with a 45-degree reference line. All three cities' point clouds sit
+above the line in winter, most clearly for
+Chemnitz.](reference/figures/README-slp_gas_cities-1.png)
+
+For a detailed walkthrough of the SigLinDe parameters and the full
+climate zone comparison, see the [gas
+articles](https://flrd.github.io/standardlastprofile/articles/index.html)
+on the package website.
+
+## Sources
+
+- Electricity SLPs:
+  <https://www.bdew.de/energie/standardlastprofile-strom/>
+- Gas SLPs: <https://www.bdew.de/energie/standardlastprofile-gas/>
 
 ## Code of Conduct
 
@@ -274,7 +273,5 @@ Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/flrd/standardlastprofile/blob/main/CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
-------------------------------------------------------------------------
-
-1.  More information on the data and methodology can be found
-    [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
+[^1]: Methodology:
+    <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
