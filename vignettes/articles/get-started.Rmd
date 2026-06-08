@@ -1,0 +1,69 @@
+---
+title: "Get started"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+A **standard load profile** (German: *Standardlastprofil*, SLP) is a
+representative pattern of energy consumption used by the German energy industry
+to forecast demand for customer groups that are not continuously metered. The
+profiles are published by the BDEW (Bundesverband der Energie- und
+Wasserwirtschaft e.V.) and form the basis of balancing and settlement in the
+German electricity and gas markets.
+
+This package provides functions to generate standard load profiles for
+**electricity** and **gas**.
+
+## Electricity
+
+`slp_electricity()` produces a 15-minute resolution load profile in watts,
+normalised to an annual consumption of 1,000 kWh.
+
+```{r electricity}
+library(standardlastprofile)
+
+G5 <- slp_electricity(
+  profile_id = "G5",
+  start_date = "2026-01-12",
+  end_date   = "2026-01-18"
+)
+
+head(G5)
+```
+
+See `?slp_electricity` for the full list of profile IDs, and the
+[electricity algorithm article](slp-electricity.html) for a detailed
+explanation of the algorithm.
+
+## Gas
+
+`slp_gas()` produces daily gas consumption in kWh. It requires daily (mean)
+temperatures and a `kundenwert` (customer value, kWh/day). The Kundenwert is
+derived once from a full reference year with `slp_gas_kundenwert()`; here we
+pass a known value:
+
+```{r gas}
+dates <- seq.Date(as.Date("2026-01-12"), as.Date("2026-01-18"), by = "day")
+temps <- c(-3.2, -1.8, 0.4, 2.1, 4.5, 3.8, 1.2)
+
+slp_gas(
+  profile_id   = "HEF",
+  dates        = dates,
+  temperatures = temps,
+  kundenwert   = 3.055241
+)
+```
+
+See `?slp_gas` for the full list of gas profile IDs, and the
+[gas algorithm article](slp-gas.html) for a detailed explanation of the
+parameters and the algorithm.
+
+## Further reading
+
+- [Electricity SLP algorithm](slp-electricity.html) — in detail
+- [Gas SLP algorithm](slp-gas.html) — SigLinDe method, Kundenwert, and
+  climate zone comparison in detail
+- [SigLinDe parameters](slp-gas-parameters.html) — reference tables of all
+  SigLinDe coefficients and weekday factors
