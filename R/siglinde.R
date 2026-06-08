@@ -1,9 +1,7 @@
 #' Compute Dimensionless Daily Heating Demand (SigLinDe)
 #'
 #' Computes the dimensionless daily heating demand \eqn{h(\vartheta)} for a
-#' given outdoor temperature using the SigLinDe
-#' (Sigmoid + Linear + Deutschland) method defined in the BDEW/VKU/GEODE
-#' Leitfaden.
+#' given outdoor temperature using the SigLinDe method.
 #'
 #' The function value is the sum of a sigmoid part and a linear part:
 #'
@@ -21,7 +19,7 @@
 #' the sigmoid part remains.
 #'
 #' @param theta Numeric vector of daily mean outdoor temperatures in °C
-#'   (*Allokationstemperatur*).
+#'   (the allocation temperature).
 #' @param A,B,C,D Numeric scalars — sigmoid coefficients.
 #' @param theta0 Numeric scalar — pole temperature (40 °C for all published
 #'   profiles). The function is undefined at \eqn{\vartheta = \vartheta_0} and
@@ -46,8 +44,9 @@
 #'
 #' @references
 #' BDEW/VKU/GEODE (2025). *Abwicklung von Standardlastprofilen Gas*,
-#' Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28, Anhang 6,
-#' pp. 145–166.
+#' Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28. The unified
+#' SigLinDe profile function is shown on p. 42 (Abbildung 12; PDF page 54); the
+#' per-profile coefficients are tabulated in Appendix 6, pp. 145–166.
 #' \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
 #'
 #' @seealso [slp_gas()];
@@ -80,6 +79,12 @@ slp_gas_siglinde <- \(theta, A, B, C, D, theta0, mH, bH, mW, bW) {
   # negative number to a non-integer C produces NaN in R.
   # Both cases are physically unrealistic (no German outdoor temperature
   # reaches 40 °C) but we guard defensively.
+  if (!is.numeric(theta)) {
+    stop("'theta' must be a numeric vector.")
+  }
+  if (!all(is.finite(theta))) {
+    stop("'theta' must contain only finite values (no NA, NaN, or Inf).")
+  }
   if (any(theta >= theta0)) {
     stop(
       "'theta' must be below the pole temperature (",

@@ -1,8 +1,7 @@
 #' Retrieve SigLinDe Coefficients for Gas Standard Load Profiles
 #'
 #' Returns the SigLinDe profile function coefficients for one or more gas
-#' standard load profiles as a data frame. These are the values published in
-#' Anlage 6 of the BDEW/VKU/GEODE Leitfaden (as of 2025-10-28) and used
+#' standard load profiles as a data frame. These are the values used
 #' internally by [slp_gas()] and [slp_gas_siglinde()].
 #'
 #' @param profile_id character vector of gas profile identifiers. One or more
@@ -41,8 +40,8 @@
 #' ```
 #'
 #' @source BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen
-#'   Gas*, Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28,
-#'   Anhang 6.
+#'   Gas*, Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28,
+#'   Appendix 6.
 #'   \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
 #'
 #' @seealso [slp_gas_siglinde()], [slp_gas()], [slp_gas_weekday_factors()];
@@ -62,9 +61,6 @@
 #'
 #' # Both variants explicitly — same as NULL
 #' slp_gas_coefficients(c("HEF", "GKO"), variant = c("34", "33"))
-#'
-#' # Duplicate variants are silently deduplicated
-#' slp_gas_coefficients("HEF", variant = c("33", "34", "33"))
 slp_gas_coefficients <- \(
   profile_id = NULL,
   variant = NULL
@@ -116,8 +112,7 @@ slp_gas_coefficients <- \(
 #' Retrieve Weekday Factors for Gas Standard Load Profiles
 #'
 #' Returns the weekday scaling factors (\eqn{F_{WT}}) for one or more gas standard
-#' load profiles as a data frame. These are the values published in Anlage 6 of
-#' the BDEW/VKU/GEODE Leitfaden (as of 2025-10-28) and used internally by
+#' load profiles as a data frame. These are the values used internally by
 #' [slp_gas()].
 #'
 #' @param profile_id character vector of gas profile identifiers. Same values
@@ -134,8 +129,8 @@ slp_gas_coefficients <- \(
 #'
 #' @details
 #' For the residential profiles `HEF`, `HMF`, and `HKO` all weekday factors
-#' are 1: gas consumption in households is assumed not to vary significantly
-#' by day of the week. Commercial profiles show sector-specific patterns — for
+#' are 1: gas consumption in households is assumed not to vary by day of the
+#' week. Commercial profiles show sector-specific patterns — for
 #' example, `GWA` (laundries) has high Monday–Wednesday factors (busy wash
 #' days) and very low weekend factors.
 #'
@@ -144,8 +139,8 @@ slp_gas_coefficients <- \(
 #' for details.
 #'
 #' @source BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen
-#'   Gas*, Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28,
-#'   Anhang 6.
+#'   Gas*, Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28,
+#'   Appendix 6.
 #'   \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
 #'
 #' @seealso [slp_gas()], [slp_gas_coefficients()];

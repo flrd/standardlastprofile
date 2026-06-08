@@ -8,7 +8,7 @@ slp_gas_siglinde(theta, A, B, C, D, theta0, mH, bH, mW, bW)
 }
 \arguments{
 \item{theta}{Numeric vector of daily mean outdoor temperatures in °C
-(\emph{Allokationstemperatur}).}
+(the allocation temperature).}
 
 \item{A, B, C, D}{Numeric scalars — sigmoid coefficients.}
 
@@ -28,9 +28,7 @@ dimensionless profile value \eqn{h(\vartheta)} for each temperature.
 }
 \description{
 Computes the dimensionless daily heating demand \eqn{h(\vartheta)} for a
-given outdoor temperature using the SigLinDe
-(Sigmoid + Linear + Deutschland) method defined in the BDEW/VKU/GEODE
-Leitfaden.
+given outdoor temperature using the SigLinDe method.
 }
 \details{
 The function value is the sum of a sigmoid part and a linear part:
@@ -79,8 +77,9 @@ slp_gas_siglinde(
 }
 \references{
 BDEW/VKU/GEODE (2025). \emph{Abwicklung von Standardlastprofilen Gas},
-Kooperationsvereinbarung Gas, Anlage XIV.2, as of 2025-10-28, Anhang 6,
-pp. 145–166.
+Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28. The unified
+SigLinDe profile function is shown on p. 42 (Abbildung 12; PDF page 54); the
+per-profile coefficients are tabulated in Appendix 6, pp. 145–166.
 \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
 }
 \seealso{

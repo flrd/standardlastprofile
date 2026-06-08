@@ -41,16 +41,13 @@ install.packages("standardlastprofile")
 
 **Gas**
 
-- `slp_gas()` — daily gas consumption via the SigLinDe method (all 15
-  BDEW profile IDs)
-- \`slp_gas_coefficients()\`\` — retrieve SigLinDe coefficients for gas
-  SLPs
-- `slp_gas_kundenwert()` — derive the customer value (Kundenwert) from a
-  reference temperature series
+- `slp_gas()` — generate daily gas consumption via the SigLinDe method
+- `slp_gas_coefficients()` — retrieve SigLinDe coefficients for gas SLPs
+- `slp_gas_kundenwert()` — derive the customer value (German:
+  Kundenwert) from a reference temperature series
 - `slp_gas_siglinde()` — low-level SigLinDe function, can be useful for
   custom or region-specific SigLinDe coefficients
-- \`slp_gas_weekday_factors()\`\` — retrieve weekday factors for gas
-  SLPs
+- `slp_gas_weekday_factors()` — retrieve weekday factors for gas SLPs
 
 ## Electricity
 
@@ -203,8 +200,8 @@ Then pass `dates` and `temps` to `slp_gas()` together with the
 Kundenwert:
 
 ``` r
-gas <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
-head(gas)
+HEF <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
+head(HEF)
 #>   profile_id       date      kwh
 #> 1        HEF 2025-10-01 40.95047
 #> 2        HEF 2025-10-02 32.50304
@@ -214,25 +211,33 @@ head(gas)
 #> 6        HEF 2025-10-06 30.17767
 
 # total gas consumption over the heating season (1 Oct 2025 – 30 Apr 2026)
-sum(gas$kwh)
+sum(HEF$kwh)
 #> [1] 12191.35
 ```
 
-The Kundenwert of 55.1 kWh/day is itself derived once, from the
-customer’s annual consumption and a reference temperature series. See
-the [gas
-article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
-for that step and the full method.
+> The Kundenwert of 55.1 kWh/day is itself derived once, from the
+> customer’s annual consumption and a reference temperature series. See
+> the [gas
+> article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
+> for that step and the full method.
 
-The same customer would consume differently in another climate. Keeping
-that Kundenwert fixed, the chart below uses **real DWD temperatures for
-the same 2025/26 heating season** to compare their daily gas consumption
-in Chemnitz, Freiburg, and Hamburg (columns) against Düsseldorf, one
-point per day, for each month (rows). Points above the 45° line mean
-more gas than in Düsseldorf. That winter all three cities ran colder
-than Düsseldorf, so every cloud sits above the line — most for Chemnitz
-(the coldest, ~35 % more gas over the season), least for Freiburg (~11
-%), with Hamburg in between (~25 %):
+<img src="man/figures/README-slp_gas_readme_plot-1.png" alt="Line chart of daily gas consumption in kilowatt-hours for a
+ single-family home in Düsseldorf across the 2025/26 heating season. Demand
+ peaks in the cold winter months and is lowest in the mild shoulder months of
+ October and April." width="95%" style="display: block; margin: auto;" />
+
+Let’s assume that same customer (i.e. fixed `kundenwert`) would live in
+another place with a different climate. The chart below uses temperature
+data for the same heating season (October ’25 to April ’26) to compare
+their daily gas consumption in: - Chemnitz - Freiburg im Breisgau -
+Hamburg against Düsseldorf.
+
+Points above the 45° line mean that customer would have consumed more
+gas than in Düsseldorf due to different climate and temperatures. We see
+that in that winter all three cities ran colder than Düsseldorf, so
+every cloud sits above the line — most for Chemnitz (~35% more gas over
+the season), least for Freiburg (~11% more), with Hamburg in between
+(~25% more):
 
 <img src="man/figures/README-slp_gas_cities-1.png" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
  rows are months October to April. Each point is a day; the x-axis is daily
@@ -245,7 +250,7 @@ climate zone comparison, see the [gas
 articles](https://flrd.github.io/standardlastprofile/articles/index.html)
 on the package website.
 
-## Source
+## Sources
 
 - Electricity SLPs:
   <https://www.bdew.de/energie/standardlastprofile-strom/>

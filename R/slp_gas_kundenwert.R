@@ -33,23 +33,31 @@
 #'
 #' \deqn{KW = \frac{E_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}}
 #'
-#' where \eqn{E_a} is `annual_consumption` and the sum runs over all days in
-#' the temperature series. For the result to be meaningful the denominator must
-#' reflect a full seasonal cycle; with fewer than 365 days a message is shown.
+#' where \eqn{E_a} is `annual_consumption` and the sum
+#' \eqn{\sum_D h(\vartheta_D) \cdot F_{WT,D}} runs over all days in the
+#' temperature series. For the result to be meaningful the denominator must
+#' reflect a full seasonal cycle.
 #'
 #' ## Reference temperature series
 #'
 #' For a robust Kundenwert the temperature series should represent a **full
 #' reference year**, ideally a multi-year climatological mean rather than a
-#' single year, so that no individual-year anomaly distorts the scaling factor.
+#' single year, so that no individual-year anomaly distorts the scaling factor;
+#' with fewer than 365 days a message is shown.
+#'
 #' Daily mean temperatures can be downloaded from the DWD (Deutscher
 #' Wetterdienst) open-data archive, e.g. via the
-#' \href{https://bookdown.org/brry/rdwd/}{rdwd} package. The
+#' \href{https://brry.github.io/rdwd/}{rdwd} package. The
 #' \href{https://flrd.github.io/standardlastprofile/articles/slp-gas.html}{gas SLP}
 #' article on the package website walks through fetching DWD data, deriving the
 #' Kundenwert, and generating profiles.
 #'
 #' ## Recommended workflow
+#'
+#' [slp_gas()] requires a `kundenwert`. If you do not already know it, compute
+#' it first with `slp_gas_kundenwert()` from a full reference year and the
+#' customer's annual consumption, then pass the result into [slp_gas()] to
+#' generate the profile for whatever period you need:
 #'
 #' ```r
 #' # Step 1 — derive KW from a full-year reference temperature series
@@ -65,6 +73,8 @@
 #' # Derive KW from a full-year reference temperature series
 #' dates_ref <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
 #' doy       <- as.integer(format(dates_ref, "%j"))
+#'
+#' # fake temperature data for demonstration here only
 #' temps_ref <- 10 - 11 * cos(2 * pi * (doy - 15) / 365)
 #' slp_gas_kundenwert("HEF", dates = dates_ref, temperatures = temps_ref,
 #'                    annual_consumption = 15000)
@@ -100,12 +110,15 @@ slp_gas_kundenwert <- \(
 
   # ---- validate dates -----------------------------------------------------
   if (is.character(dates)) {
-    if (!all(grepl("^\\d{4}-\\d{2}-\\d{2}$", dates))) {
+    parsed <- as.Date(dates, format = "%Y-%m-%d")
+    # catches both wrong format and calendar-invalid dates (e.g. 2026-02-30),
+    # which as.Date() returns as NA with an explicit format
+    if (!all(grepl("^\\d{4}-\\d{2}-\\d{2}$", dates)) || anyNA(parsed)) {
       stop(
         "'dates' must contain valid dates in ISO 8601 format (\"YYYY-MM-DD\")."
       )
     }
-    dates <- as.Date(dates)
+    dates <- parsed
   }
   if (!.is_date(dates)) {
     stop(

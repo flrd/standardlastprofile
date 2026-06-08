@@ -1,4 +1,4 @@
-H0_2024 <- slp_generate(
+H0_2024 <- slp_electricity(
   profile_id = "H0",
   start_date = "2024-01-01",
   end_date = "2024-12-31"
@@ -65,7 +65,7 @@ out <- vector("list", length(periods))
 names(out) <- periods
 
 for (i in periods) {
-  out[[i]] <- slp_generate("H0", lst[[i]][[1]], lst[[i]][[3]])
+  out[[i]] <- slp_electricity("H0", lst[[i]][[1]], lst[[i]][[3]])
 }
 
 out <- lapply(out, \(x) {

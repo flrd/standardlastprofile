@@ -55,11 +55,11 @@ install.packages("standardlastprofile")
 
 **Gas**
 
-- `slp_gas()` — daily gas consumption via the SigLinDe method (all 15 BDEW profile IDs)
-- `slp_gas_coefficients()`` — retrieve SigLinDe coefficients for gas SLPs
-- `slp_gas_kundenwert()` — derive the customer value (Kundenwert) from a reference temperature series
+- `slp_gas()` — generate daily gas consumption via the SigLinDe method
+- `slp_gas_coefficients()` — retrieve SigLinDe coefficients for gas SLPs
+- `slp_gas_kundenwert()` — derive the customer value (German: Kundenwert) from a reference temperature series
 - `slp_gas_siglinde()` — low-level SigLinDe function, can be useful for custom or region-specific SigLinDe coefficients
-- `slp_gas_weekday_factors()`` — retrieve weekday factors for gas SLPs
+- `slp_gas_weekday_factors()` — retrieve weekday factors for gas SLPs
 
 ## Electricity
 
@@ -170,7 +170,7 @@ head(G5)
 #| fig.alt = "Line plot of the electricity standard load profile 'G5' (bakery
 #|  with a bakehouse) from December 22nd to 27th 2023, normalised to 1,000 kWh/a."
 ggplot(G5, aes(start_time, watts)) +
-  geom_line(color = "#0CC792") +
+  geom_line(colour = "#0CC792") +
   scale_x_datetime(date_breaks = "1 day", date_labels = "%b %d") +
   scale_y_continuous(NULL, labels = \(x) paste(x, "W")) +
   labs(
@@ -277,26 +277,53 @@ temps <- c(
 Then pass `dates` and `temps` to `slp_gas()` together with the Kundenwert:
 
 ```{r slp_gas_readme, message=FALSE}
-gas <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
-head(gas)
+HEF <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
+head(HEF)
 
 # total gas consumption over the heating season (1 Oct 2025 – 30 Apr 2026)
-sum(gas$kwh)
+sum(HEF$kwh)
 ```
 
-The Kundenwert of 55.1 kWh/day is itself derived once, from the customer's
-annual consumption and a reference temperature series. See the
-[gas article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
-for that step and the full method.
+> The Kundenwert of 55.1 kWh/day is itself derived once, from the customer's
+> annual consumption and a reference temperature series. See the
+> [gas article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
+> for that step and the full method.
 
-The same customer would consume differently in another climate. Keeping that
-Kundenwert fixed, the chart below uses **real DWD temperatures for the same
-2025/26 heating season** to compare their daily gas consumption in Chemnitz,
-Freiburg, and Hamburg (columns) against Düsseldorf, one point per day, for each
-month (rows). Points above the 45° line mean more gas than in Düsseldorf. That
+```{r slp_gas_readme_plot, message=FALSE, echo=FALSE, fig.retina=2, fig.asp=0.5}
+#| fig.alt = "Line chart of daily gas consumption in kilowatt-hours for a
+#|  single-family home in Düsseldorf across the 2025/26 heating season. Demand
+#|  peaks in the cold winter months and is lowest in the mild shoulder months of
+#|  October and April."
+ggplot(HEF, aes(date, kwh)) +
+  geom_line(colour = "#0CC792") +
+  labs(
+    title = "Single family home in Düsseldorf",
+    subtitle = "Heating period from October '25 to April '26",
+    caption  = "data: www.bdew.de",
+    x        = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_line(linetype = "12", lineend = "round", colour = "#FAF6F4")
+  )
+```
+
+
+Let's assume that same customer (i.e. fixed `kundenwert`) would live in another
+place with a different climate. The chart below uses temperature data for the same
+heating season (October '25 to April '26) to compare their daily gas consumption in:
+- Chemnitz
+- Freiburg im Breisgau
+- Hamburg
+against Düsseldorf. 
+
+Points above the 45° line mean that customer would have consumed more gas than
+in Düsseldorf due to different climate and temperatures. We see that in that
 winter all three cities ran colder than Düsseldorf, so every cloud sits above
-the line — most for Chemnitz (the coldest, ~35 % more gas over the season),
-least for Freiburg (~11 %), with Hamburg in between (~25 %):
+the line — most for Chemnitz (~35% more gas over the season), least for 
+Freiburg (~11% more), with Hamburg in between (~25% more):
 
 ```{r slp_gas_cities, echo=FALSE, fig.asp=2.4, fig.retina=2, message=FALSE}
 #| fig.alt = "Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
@@ -309,7 +336,7 @@ standardlastprofile:::.slp_plot_gas_cities()
 
 For a detailed walkthrough of the SigLinDe parameters and the full climate zone comparison, see the [gas articles](https://flrd.github.io/standardlastprofile/articles/index.html) on the package website.
 
-## Source
+## Sources
 
 - Electricity SLPs: <https://www.bdew.de/energie/standardlastprofile-strom/>
 - Gas SLPs: <https://www.bdew.de/energie/standardlastprofile-gas/>

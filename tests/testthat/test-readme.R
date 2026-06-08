@@ -68,7 +68,7 @@ test_that("readme example #1 works", {
 
 
 # example #2 --------------------------------------------------------------
-G5 <- slp_generate(
+G5 <- slp_electricity(
   profile_id = "G5",
   start_date = "2023-12-22",
   end_date = "2023-12-27"

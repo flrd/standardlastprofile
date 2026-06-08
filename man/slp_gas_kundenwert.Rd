@@ -54,23 +54,31 @@ The Kundenwert is defined as:
 
 \deqn{KW = \frac{E_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}}
 
-where \eqn{E_a} is \code{annual_consumption} and the sum runs over all days in
-the temperature series. For the result to be meaningful the denominator must
-reflect a full seasonal cycle; with fewer than 365 days a message is shown.
+where \eqn{E_a} is \code{annual_consumption} and the sum
+\eqn{\sum_D h(\vartheta_D) \cdot F_{WT,D}} runs over all days in the
+temperature series. For the result to be meaningful the denominator must
+reflect a full seasonal cycle.
 \subsection{Reference temperature series}{
 
 For a robust Kundenwert the temperature series should represent a \strong{full
 reference year}, ideally a multi-year climatological mean rather than a
-single year, so that no individual-year anomaly distorts the scaling factor.
+single year, so that no individual-year anomaly distorts the scaling factor;
+with fewer than 365 days a message is shown.
+
 Daily mean temperatures can be downloaded from the DWD (Deutscher
 Wetterdienst) open-data archive, e.g. via the
-\href{https://bookdown.org/brry/rdwd/}{rdwd} package. The
+\href{https://brry.github.io/rdwd/}{rdwd} package. The
 \href{https://flrd.github.io/standardlastprofile/articles/slp-gas.html}{gas SLP}
 article on the package website walks through fetching DWD data, deriving the
 Kundenwert, and generating profiles.
 }
 
 \subsection{Recommended workflow}{
+
+\code{\link[=slp_gas]{slp_gas()}} requires a \code{kundenwert}. If you do not already know it, compute
+it first with \code{slp_gas_kundenwert()} from a full reference year and the
+customer's annual consumption, then pass the result into \code{\link[=slp_gas]{slp_gas()}} to
+generate the profile for whatever period you need:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# Step 1 — derive KW from a full-year reference temperature series
 kw <- slp_gas_kundenwert("HEF", dates_year, temps_year, annual_consumption = 15000)
@@ -84,6 +92,8 @@ slp_gas("HEF", dates_jan_mar, temps_jan_mar, kundenwert = kw)
 # Derive KW from a full-year reference temperature series
 dates_ref <- seq.Date(as.Date("2024-01-01"), as.Date("2024-12-31"), by = "day")
 doy       <- as.integer(format(dates_ref, "\%j"))
+
+# fake temperature data for demonstration here only
 temps_ref <- 10 - 11 * cos(2 * pi * (doy - 15) / 365)
 slp_gas_kundenwert("HEF", dates = dates_ref, temperatures = temps_ref,
                    annual_consumption = 15000)

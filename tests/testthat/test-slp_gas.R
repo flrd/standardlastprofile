@@ -120,6 +120,24 @@ test_that("dates: invalid ISO 8601 string raises an error", {
   )
 })
 
+test_that("dates: calendar-invalid date raises the clean ISO error", {
+  # right format but impossible calendar date — must not surface the raw
+  # as.Date() error ("character string is not in a standard unambiguous format")
+  expect_error(
+    slp_gas("HEF", "2026-02-30", 2.0, kundenwert = 1),
+    "ISO 8601"
+  )
+  expect_error(
+    slp_gas("HEF", "2026-13-01", 2.0, kundenwert = 1),
+    "ISO 8601"
+  )
+  # a single bad entry in an otherwise valid vector is caught too
+  expect_error(
+    slp_gas("HEF", c("2026-01-01", "2026-02-30"), c(2, 3), kundenwert = 1),
+    "ISO 8601"
+  )
+})
+
 test_that("dates: character vector in ISO 8601 is accepted", {
   expect_equal(
     slp_gas("HEF", as.character(dates_week), temps_week, kundenwert = 1)$kwh,

@@ -13,6 +13,9 @@ utils::globalVariables(c(
 ))
 
 .slp_plot_1999 <- \() {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required to draw this plot.", call. = FALSE)
+  }
   label_names <- c(
     "saturday" = "Saturday",
     "sunday" = "Sunday",
@@ -945,6 +948,9 @@ utils::globalVariables(c(
   profile_id = "HEF",
   kundenwert = 55.1
 ) {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required to draw this plot.", call. = FALSE)
+  }
   # Same customer (fixed Kundenwert) under four real climates: each comparison
   # city's daily consumption (y) plotted against Duesseldorf (x); points above
   # the 45-degree line mean more gas than in Duesseldorf. The Kundenwert
@@ -993,7 +999,7 @@ utils::globalVariables(c(
       linewidth = 0.3,
       colour = "grey60"
     ) +
-    ggplot2::geom_point(colour = "#0CC792", size = 0.7, alpha = 0.7) +
+    ggplot2::geom_point(colour = "#0CC792", size = 0.7) +
     ggplot2::facet_grid(month ~ city, switch = "y") +
     ggplot2::coord_fixed(ratio = 1, xlim = lim, ylim = lim) +
     ggplot2::scale_x_continuous(
@@ -1005,18 +1011,11 @@ utils::globalVariables(c(
       minor_breaks = NULL
     ) +
     ggplot2::labs(
-      title = paste0(
-        "SLP Gas \u2014 daily consumption vs. D\u00fcsseldorf (",
-        profile_id,
-        ", KW ",
-        kw_label,
-        " kWh/day)"
-      ),
+      title = "SLP Gas \u2014 single-family home",
       subtitle = paste0(
-        "Each point is one day, October\u2013April \u00b7 ",
+        "Each point is one day ",
         "above the 45\u00b0 line = more gas than in D\u00fcsseldorf"
-      ),
-      caption = "Profile parameters: BDEW Leitfaden, as of 2025-10-28"
+      )
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
@@ -1033,6 +1032,9 @@ utils::globalVariables(c(
 }
 
 .slp_plot_2025 <- \(months = c("december", "march", "june")) {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required to draw this plot.", call. = FALSE)
+  }
   label_names <- c(
     "saturday" = "Saturday",
     "sunday" = "Sunday",

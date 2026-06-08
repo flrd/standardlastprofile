@@ -104,6 +104,17 @@ test_that("dates: non-Date/character type raises an error", {
   )
 })
 
+test_that("dates: calendar-invalid date raises the clean ISO error", {
+  expect_error(
+    slp_gas_kundenwert("HEF", "2026-02-30", 2.0),
+    "ISO 8601"
+  )
+  expect_error(
+    slp_gas_kundenwert("HEF", "2026-13-01", 2.0),
+    "ISO 8601"
+  )
+})
+
 test_that("dates and temperatures: mismatched lengths raise an error", {
   expect_error(
     slp_gas_kundenwert("HEF", dates_ref, c(1, 2)),

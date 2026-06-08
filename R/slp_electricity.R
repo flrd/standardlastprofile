@@ -251,52 +251,49 @@ slp_electricity <- \(
   # returns vector of class 'Date'
   daily_seq <- .get_daily_sequence(start_date, end_date)
 
-  # subset of load_profiles_lst
-  tmp <- load_profiles_lst[profile_id]
-
-  vals <- vector("list", length = profiles_n)
-  names(vals) <- profile_id
-
-  # 1999 profiles use period-based matrix columns (e.g. "saturday_winter")
-  profiles_1999 <- intersect(
-    profile_id,
-    c("H0", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "L0", "L1", "L2")
+  profiles_1999_set <- c(
+    "H0",
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "L0",
+    "L1",
+    "L2"
   )
-  if (length(profiles_1999) > 0L) {
-    wkday_period <- .get_wkday_period(
-      daily_seq,
-      holidays = holidays
-    )
-    for (profile in profiles_1999) {
-      vals[[profile]] <- tmp[[profile]][, wkday_period]
-    }
+  dynamic_set <- c("H0", "H25", "P25", "S25")
+
+  # column keys per day, computed once (only what is needed):
+  # 1999 profiles use period-based columns (e.g. "saturday_winter"),
+  # 2025 profiles use month-based columns (e.g. "saturday_january").
+  any_1999 <- any(profile_id %in% profiles_1999_set)
+  any_2025 <- !all(profile_id %in% profiles_1999_set)
+  wkday_period <- if (any_1999) {
+    .get_wkday_period(daily_seq, holidays = holidays)
+  }
+  wkday_month <- if (any_2025) {
+    .get_wkday_month(daily_seq, holidays = holidays)
   }
 
-  # 2025 profiles use month-based matrix columns (e.g. "saturday_january")
-  profiles_2025 <- intersect(profile_id, c("H25", "G25", "L25", "P25", "S25"))
-  if (length(profiles_2025) > 0L) {
-    wkday_month <- .get_wkday_month(
-      daily_seq,
-      holidays = holidays
-    )
-    for (profile in profiles_2025) {
-      vals[[profile]] <- tmp[[profile]][, wkday_month]
-    }
-  }
-
-  # apply dynamization to profiles where electricity consumption varies
-  # by day of year, see: page 18f.
+  # dynamization factor per day (H0 and the dynamic 2025 profiles), see p. 18f.
   # https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
-  dynamic_profiles <- intersect(profile_id, c("H0", "H25", "P25", "S25"))
-  if (length(dynamic_profiles) > 0L) {
-    days_decimal <- as.integer(.format_j(daily_seq))
-    dyn_factors <- .dynamization_fun(days_decimal)
-    for (profile in dynamic_profiles) {
-      mat <- vals[[profile]]
-      vals[[profile]] <- suppressWarnings(
-        mat * rep(dyn_factors, each = dim(mat)[[1L]])
-      )
+  dyn_factors <- .dynamization_fun(as.integer(.format_j(daily_seq)))
+
+  # build per profile by position, so duplicate profile_id values are kept
+  # and returned faithfully (rather than collapsed by a named list).
+  vals <- vector("list", length = profiles_n)
+  for (i in seq_along(profile_id)) {
+    pid <- profile_id[[i]]
+    key <- if (pid %in% profiles_1999_set) wkday_period else wkday_month
+    # drop = FALSE keeps a 96 x n_days matrix even for a single day
+    mat <- load_profiles_lst[[pid]][, key, drop = FALSE]
+    if (pid %in% dynamic_set) {
+      mat <- mat * rep(dyn_factors, each = nrow(mat))
     }
+    vals[[i]] <- as.vector(mat)
   }
 
   # timestamp for output
