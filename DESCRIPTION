@@ -20,7 +20,7 @@ Description: Provides representative standard load profiles (SLPs) for
   Strom", <https://www.bdew.de/energie/standardlastprofile-strom/>. The gas
   procedure is described in BDEW (2025), "Standardlastprofile Gas",
   <https://www.bdew.de/energie/standardlastprofile-gas/>.
-Version: 2.0.0
+Version: 2.0.0.9000
 Authors@R: 
     person(
     given = "Markus",

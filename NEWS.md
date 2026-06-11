@@ -1,3 +1,5 @@
+# standardlastprofile (development version)
+
 # standardlastprofile 2.0.0
 
 This release (finally) adds **gas** standard load profiles (SLPs) alongside the
