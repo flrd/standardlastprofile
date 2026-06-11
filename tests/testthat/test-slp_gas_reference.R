@@ -150,6 +150,18 @@ test_that("single profile returns 7 rows", {
   expect_true(all(out$profile_id == "GKO"))
 })
 
+test_that("duplicate profile_id values are kept and order is preserved", {
+  out <- slp_gas_weekday_factors(c("HEF", "GKO", "HEF"))
+  expect_equal(nrow(out), 3L * 7L)
+  expect_equal(rle(out$profile_id)$values, c("HEF", "GKO", "HEF"))
+  # the two HEF blocks are identical and differ from the GKO block between them
+  expect_identical(out$f_wt[1:7], out$f_wt[15:21])
+  expect_false(identical(out$f_wt[1:7], out$f_wt[8:14]))
+  # a duplicated block matches the single-profile result for that id
+  single <- slp_gas_weekday_factors("GKO")
+  expect_identical(out$f_wt[8:14], single$f_wt)
+})
+
 test_that("residential profiles have all f_wt equal to 1", {
   out <- slp_gas_weekday_factors(c("HEF", "HMF", "HKO"))
   expect_true(all(out$f_wt == 1))

@@ -57,3 +57,96 @@ test_that("a numeric matrix theta is accepted and computed element-wise", {
   expect_equal(dim(out), c(2L, 2L))
   expect_equal(as.vector(out), h(as.vector(m)))
 })
+
+# ---- oracle: BDEW/VKU/GEODE Leitfaden Anlage 1 ------------------------------
+# External oracle from the source of truth: "Abwicklung von Standardlastprofilen
+# Gas", Stand 28.10.2025, Anlage 1 "Ermittlung des Kundenwertes", Seite 121-125
+# (Tabelle 18-21). These are pure-sigmoid profiles (linear part zero), so the
+# call sets mH = bH = mW = bW = 0. The published temperatures are rounded to
+# 2 dp and the h-values to ~5 dp, which sets the achievable tolerance (the raw
+# deviation against our function is < 1e-5).
+
+# Temperatures (geometric-series allocation temperature) shared by both tables.
+leitfaden_theta <- c(
+  12.16,
+  11.67,
+  12.00,
+  14.44,
+  15.43,
+  15.63,
+  10.99,
+  13.11,
+  13.23,
+  13.78,
+  12.74
+)
+
+test_that("siglinde reproduces the Leitfaden Heizgas h-values (Tabelle 19)", {
+  # legacy pre-SigLinDe EFHo Klasse-3 profile from the worked Heizgas example
+  published <- c(
+    0.57689,
+    0.61938,
+    0.59054,
+    0.40687,
+    0.34727,
+    0.33624,
+    0.68167,
+    0.50046,
+    0.49138,
+    0.45136,
+    0.52929
+  )
+  ours <- slp_gas_siglinde(
+    leitfaden_theta,
+    A = 3.0553842,
+    B = -37.1836374,
+    C = 5.6810825,
+    D = 0.0821966,
+    theta0 = 40,
+    mH = 0,
+    bH = 0,
+    mW = 0,
+    bW = 0
+  )
+  expect_equal(ours, published, tolerance = 1e-4)
+})
+
+test_that("siglinde reproduces the Leitfaden Kochgas (HKO) h-values (Tabelle 21)", {
+  # "DE HKO" — the same profile shipped in this package (see next test)
+  published <- c(
+    0.99438,
+    1.00385,
+    0.99755,
+    0.94237,
+    0.91636,
+    0.91093,
+    1.01596,
+    0.974256,
+    0.971549,
+    0.958696,
+    0.982373534
+  )
+  ours <- slp_gas_siglinde(
+    leitfaden_theta,
+    A = 0.4040932,
+    B = -24.4392968,
+    C = 6.5718175,
+    D = 0.71077105,
+    theta0 = 40,
+    mH = 0,
+    bH = 0,
+    mW = 0,
+    bW = 0
+  )
+  expect_equal(ours, published, tolerance = 1e-4)
+})
+
+test_that("shipped HKO coefficients match the Leitfaden 'DE HKO' parameters", {
+  # ties the Tabelle 21 oracle above to the coefficients we actually ship
+  hko <- slp_gas_coefficients("HKO", variant = "34")
+  expect_equal(hko$A, 0.4040932, tolerance = 1e-7)
+  expect_equal(hko$B, -24.4392968, tolerance = 1e-7)
+  expect_equal(hko$C, 6.5718175, tolerance = 1e-7)
+  expect_equal(hko$D, 0.71077105, tolerance = 1e-7)
+  expect_equal(hko$theta0, 40)
+})

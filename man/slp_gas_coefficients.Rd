@@ -57,9 +57,6 @@ slp_gas_siglinde(0, p$A, p$B, p$C, p$D, p$theta0, p$mH, p$bH, p$mW, p$bW)
 [ ]: R:\%20
 }
 \examples{
-# All 15 profiles, both variants (30 rows)
-slp_gas_coefficients()
-
 # Single profile, both variants
 slp_gas_coefficients("HEF")
 

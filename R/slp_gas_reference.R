@@ -50,9 +50,6 @@
 #'   article.
 #' @export
 #' @examples
-#' # All 15 profiles, both variants (30 rows)
-#' slp_gas_coefficients()
-#'
 #' # Single profile, both variants
 #' slp_gas_coefficients("HEF")
 #'

@@ -36,21 +36,21 @@ The renamed dataset and superseded function continue to work:
 * local: Ubuntu 24.04, R 4.6.0 — 0 errors | 0 warnings | 0 notes
 * macOS builder (macOS 26.2, R 4.6.0 Patched, Apple M1) — 0 errors |
   0 warnings | 0 notes
-* win-builder (R-devel) — 1 NOTE (CRAN incoming feasibility); see below
+* win-builder, R-release (4.6.0) — 1 NOTE (see below)
+* win-builder, R-devel (2026-06-06 r90114) — 1 NOTE (see below)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note (incoming feasibility only).
+0 errors | 0 warnings | 1 note.
 
-The win-builder R-devel NOTE had the following parts, all addressed for this
-submission:
+The only NOTE comes from the CRAN incoming feasibility check on win-builder:
 
 * "Possibly misspelled words in DESCRIPTION: VKU" — VKU is the acronym of an
   industry association (Verband kommunaler Unternehmen) and a co-author of the
-  cited source; it has been added to `inst/WORDLIST`.
+  cited source. It is spelled correctly, and is also listed in `inst/WORDLIST`.
 
-(The "version contains large components" note was due to the development
-version string and no longer applies to this release version.)
+As a new major version (2.0.0), the incoming-feasibility check also notes the
+maintainer address, which is expected.
 
 ## Reverse dependencies
 

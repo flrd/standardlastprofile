@@ -944,18 +944,15 @@ utils::globalVariables(c(
   )
 )
 
-.slp_plot_gas_cities <- \(
-  profile_id = "HEF",
-  kundenwert = 55.1
-) {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required to draw this plot.", call. = FALSE)
-  }
-  # Same customer (fixed Kundenwert) under four real climates: each comparison
-  # city's daily consumption (y) plotted against Duesseldorf (x); points above
-  # the 45-degree line mean more gas than in Duesseldorf. The Kundenwert
-  # (55.1 kWh/day for a 15,000 kWh/a HEF customer in Duesseldorf) is derived in
-  # the gas article from the 2004-2024 Duesseldorf long-term daily mean.
+# Per-day data behind the cities comparison: each comparison city's daily gas
+# consumption (`other`) against Duesseldorf (`duesseldorf`) for the same fixed-
+# Kundenwert customer, plus the heating-season `month` and `city` factors used
+# for faceting. Shared by the static ggplot2 chart (.slp_plot_gas_cities) and
+# the interactive Observable Plot version in the gas article, so the two cannot
+# drift. The Kundenwert (55.1 kWh/day for a 15,000 kWh/a HEF customer in
+# Duesseldorf) is derived in the gas article from the 2004-2024 Duesseldorf
+# long-term daily mean.
+.gas_cities_data <- \(profile_id = "HEF", kundenwert = 55.1) {
   temps <- .gas_demo_temps
   dates <- temps$date
 
@@ -988,8 +985,19 @@ utils::globalVariables(c(
   mn <- as.integer(format(dat$date, "%m"))
   dat$month <- factor(month.abb[mn], levels = month.abb[heating])
   dat$city <- factor(dat$city, levels = c("Chemnitz", "Freiburg", "Hamburg"))
+  dat
+}
 
-  kw_label <- format(round(kundenwert, 1), nsmall = 1)
+.slp_plot_gas_cities <- \(
+  profile_id = "HEF",
+  kundenwert = 55.1
+) {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package 'ggplot2' is required to draw this plot.", call. = FALSE)
+  }
+  # Each comparison city's daily consumption (y) plotted against Duesseldorf
+  # (x); points above the 45-degree line mean more gas than in Duesseldorf.
+  dat <- .gas_cities_data(profile_id, kundenwert)
   lim <- c(0, max(dat$duesseldorf, dat$other))
 
   ggplot2::ggplot(dat, ggplot2::aes(duesseldorf, other)) +
