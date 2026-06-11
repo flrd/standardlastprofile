@@ -57,7 +57,7 @@ install.packages("standardlastprofile")
 
 - `slp_gas()` — generate daily gas consumption via the SigLinDe method
 - `slp_gas_coefficients()` — retrieve SigLinDe coefficients for gas SLPs
-- `slp_gas_kundenwert()` — derive the customer value (German: Kundenwert) from a reference temperature series
+- `slp_gas_kundenwert()` — derive the customer value (German: "Kundenwert") from a reference temperature series
 - `slp_gas_siglinde()` — low-level SigLinDe function, can be useful for custom or region-specific SigLinDe coefficients
 - `slp_gas_weekday_factors()` — retrieve weekday factors for gas SLPs
 
@@ -228,7 +228,7 @@ slp_gas("HEF", dates_2027, temps_2027, kundenwert = kw,
 for daily gas consumption. It takes daily mean temperatures and a customer
 value (`kundenwert`, kWh/day), and supports all 15 gas profile IDs.
 
-Take a single-family home (profile `HEF`) in Düsseldorf with a Kundenwert of
+Take a single-family home (profile `HEF`) in Düsseldorf with a `kundenwert` of
 55.1 kWh/day. First grab the daily mean temperatures for the period of
 interest — here the 2025/26 heating season — from the DWD open-data archive
 via [`rdwd`](https://cran.r-project.org/package=rdwd) (no API key required;
@@ -274,7 +274,7 @@ temps <- c(
 )
 ```
 
-Then pass `dates` and `temps` to `slp_gas()` together with the Kundenwert:
+Then pass `dates` and `temps` to `slp_gas()` together with the `kundenwert`:
 
 ```{r slp_gas_readme, message=FALSE}
 HEF <- slp_gas("HEF", dates, temps, kundenwert = 55.1)

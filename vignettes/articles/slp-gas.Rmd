@@ -451,9 +451,9 @@ allocation_temp <- \(temps) {
 # temps_weighted <- allocation_temp(temps)
 ```
 
-### Customer value (Kundenwert)
+### Kundenwert
 
-The customer value accounts for a customer’s individual consumption behaviour. It is a scaling factor in kWh/day — specifically, the daily gas consumption at the reference temperature of 8°C, the point at which $h(\vartheta) = 1$ for every profile. We can rearrange the gas consumption equation above and write $KW$ as:
+The customer value (`kundenwert`) accounts for a customer’s individual consumption behaviour. It is a scaling factor in kWh/day — specifically, the daily gas consumption at the reference temperature of 8°C, the point at which $h(\vartheta) = 1$ for every profile. We can rearrange the gas consumption equation above and write $KW$ as:
 
 $$
 KW = \frac{E_a}{\displaystyle\sum_{D} h(\vartheta_D) \times F_{WT,D}}
