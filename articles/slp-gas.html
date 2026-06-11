@@ -509,13 +509,13 @@ geometrically-weighted variant, apply it before calling
 <span><span class="co"># temps_weighted &lt;- allocation_temp(temps)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="customer-value-kundenwert">Customer value (Kundenwert)<a class="anchor" aria-label="anchor" href="#customer-value-kundenwert"></a>
+<h3 id="kundenwert">Kundenwert<a class="anchor" aria-label="anchor" href="#kundenwert"></a>
 </h3>
-<p>The customer value accounts for a customer’s individual consumption
-behaviour. It is a scaling factor in kWh/day — specifically, the daily
-gas consumption at the reference temperature of 8°C, the point at which
-<span class="math inline">\(h(\vartheta) = 1\)</span> for every profile.
-We can rearrange the gas consumption equation above and write <span class="math inline">\(KW\)</span> as:</p>
+<p>The customer value (<code>kundenwert</code>) accounts for a
+customer’s individual consumption behaviour. It is a scaling factor in
+kWh/day — specifically, the daily gas consumption at the reference
+temperature of 8°C, the point at which <span class="math inline">\(h(\vartheta) = 1\)</span> for every profile. We
+can rearrange the gas consumption equation above and write <span class="math inline">\(KW\)</span> as:</p>
 <p><span class="math display">\[
 KW = \frac{E_a}{\displaystyle\sum_{D} h(\vartheta_D) \times F_{WT,D}}
 \]</span></p>

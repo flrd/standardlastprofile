@@ -97,7 +97,7 @@
 <li>
 <code><a href="reference/slp_gas_coefficients.html">slp_gas_coefficients()</a></code> — retrieve SigLinDe coefficients for gas SLPs</li>
 <li>
-<code><a href="reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code> — derive the customer value (German: Kundenwert) from a reference temperature series</li>
+<code><a href="reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code> — derive the customer value (German: “Kundenwert”) from a reference temperature series</li>
 <li>
 <code><a href="reference/slp_gas_siglinde.html">slp_gas_siglinde()</a></code> — low-level SigLinDe function, can be useful for custom or region-specific SigLinDe coefficients</li>
 <li>
@@ -218,7 +218,7 @@
 <h2 id="gas">Gas<a class="anchor" aria-label="anchor" href="#gas"></a>
 </h2>
 <p><code><a href="reference/slp_gas.html">slp_gas()</a></code> implements the <a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link">BDEW/VKU/GEODE synthetic procedure (SigLinDe method)</a> for daily gas consumption. It takes daily mean temperatures and a customer value (<code>kundenwert</code>, kWh/day), and supports all 15 gas profile IDs.</p>
-<p>Take a single-family home (profile <code>HEF</code>) in Düsseldorf with a Kundenwert of 55.1 kWh/day. First grab the daily mean temperatures for the period of interest — here the 2025/26 heating season — from the DWD open-data archive via <a href="https://cran.r-project.org/package=rdwd" class="external-link"><code>rdwd</code></a> (no API key required; <code>TMK</code> is the daily mean temperature in °C):</p>
+<p>Take a single-family home (profile <code>HEF</code>) in Düsseldorf with a <code>kundenwert</code> of 55.1 kWh/day. First grab the daily mean temperatures for the period of interest — here the 2025/26 heating season — from the DWD open-data archive via <a href="https://cran.r-project.org/package=rdwd" class="external-link"><code>rdwd</code></a> (no API key required; <code>TMK</code> is the daily mean temperature in °C):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://brry.github.io/rdwd/" class="external-link">rdwd</a></span><span class="op">)</span></span>
 <span></span>
@@ -233,7 +233,7 @@
 <span>                                varnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">temps</span> <span class="op">&lt;-</span> <span class="va">raw</span><span class="op">$</span><span class="va">TMK</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">dates</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">raw</span><span class="op">$</span><span class="va">MESS_DATUM</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="va">temps</span><span class="op">)</span><span class="op">)</span>   <span class="co"># fail loudly if the period isn't fully covered</span></span></code></pre></div>
-<p>Then pass <code>dates</code> and <code>temps</code> to <code><a href="reference/slp_gas.html">slp_gas()</a></code> together with the Kundenwert:</p>
+<p>Then pass <code>dates</code> and <code>temps</code> to <code><a href="reference/slp_gas.html">slp_gas()</a></code> together with the <code>kundenwert</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">HEF</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_gas.html">slp_gas</a></span><span class="op">(</span><span class="st">"HEF"</span>, <span class="va">dates</span>, <span class="va">temps</span>, kundenwert <span class="op">=</span> <span class="fl">55.1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">HEF</span><span class="op">)</span></span>

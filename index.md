@@ -37,7 +37,7 @@ install.packages("standardlastprofile")
 - [`slp_gas_coefficients()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_coefficients.md)
   — retrieve SigLinDe coefficients for gas SLPs
 - [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_kundenwert.md)
-  — derive the customer value (German: Kundenwert) from a reference
+  — derive the customer value (German: “Kundenwert”) from a reference
   temperature series
 - [`slp_gas_siglinde()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_siglinde.md)
   — low-level SigLinDe function, can be useful for custom or
@@ -181,7 +181,7 @@ customer value (`kundenwert`, kWh/day), and supports all 15 gas profile
 IDs.
 
 Take a single-family home (profile `HEF`) in Düsseldorf with a
-Kundenwert of 55.1 kWh/day. First grab the daily mean temperatures for
+`kundenwert` of 55.1 kWh/day. First grab the daily mean temperatures for
 the period of interest — here the 2025/26 heating season — from the DWD
 open-data archive via [`rdwd`](https://cran.r-project.org/package=rdwd)
 (no API key required; `TMK` is the daily mean temperature in °C):
@@ -205,7 +205,7 @@ stopifnot(!anyNA(temps))   # fail loudly if the period isn't fully covered
 
 Then pass `dates` and `temps` to
 [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
-together with the Kundenwert:
+together with the `kundenwert`:
 
 ``` r
 

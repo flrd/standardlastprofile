@@ -2,32 +2,30 @@
 
 ## standardlastprofile 2.0.0
 
-This release (finally) adds **gas** SLPs alongside the existing
-electricity profiles. We introduce an updated interface for electricity
-SLPs too. All renames and deprecations below are backward compatible.
+This release (finally) adds **gas** standard load profiles (SLPs)
+alongside the existing electricity profiles. We introduce an updated
+interface for electricity SLPs too. All renames and deprecations below
+are backward compatible.
 
 ### New functions
 
 - [`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
-  is the new primary function for generating electricity standard load
-  profiles. It replaces
+  is the new primary function for generating electricity SLPs. It
+  replaces
   [`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
   with a cleaner interface: no `state_code` argument and no restriction
   on the date range (previously limited to 1990–2073 by the built-in
   holiday data).
 
 - [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
-  implements the BDEW/VKU/GEODE synthetic procedure for gas standard
-  load profiles (SigLinDe method). It supports all 15 gas profile IDs
-  defined in the BDEW Leitfaden, as of 2025-10-28 (`HEF`, `HMF`, `HKO`,
-  `GKO`, `GHA`, `GMK`, `GBD`, `GBH`, `GWA`, `GGA`, `GBA`, `GGB`, `GPD`,
-  `GMF`, `GHD`). The function takes daily temperatures and a
-  `kundenwert` (kWh/day), and returns daily gas consumption in kWh. The
-  `kundenwert` is a required input, derived once from a full reference
-  year with
-  [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_kundenwert.md).
-  A `variant` argument selects between SigLinDe Ausprägung `"34"`
-  (default, 57 % linear component) and `"33"` (45 % linear component).
+  implements the BDEW/VKU/GEODE synthetic procedure for gas SLPs
+  (SigLinDe method). It supports all 15 gas profile IDs defined in the
+  BDEW Leitfaden, as of 2025-10-28 (`HEF`, `HMF`, `HKO`, `GKO`, `GHA`,
+  `GMK`, `GBD`, `GBH`, `GWA`, `GGA`, `GBA`, `GGB`, `GPD`, `GMF`, `GHD`).
+  The function takes daily temperatures and a `kundenwert` (kWh/day),
+  and returns daily gas consumption in kWh. A `variant` argument selects
+  between SigLinDe variant (German: “Ausprägung”) `"34"` (57 % linear
+  component) and `"33"` (45 % linear component).
 
 - [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_kundenwert.md)
   derives the `kundenwert` from a full reference year of daily
@@ -35,10 +33,11 @@ SLPs too. All renames and deprecations below are backward compatible.
   two-step workflow: compute KW once from a representative year, then
   pass the result as `kundenwert` to
   [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
-  for any shorter period. Daily mean temperatures can be obtained from
-  the DWD open-data archive, e.g. via the `rdwd` package; see the
-  gas-slp article on the package website for a complete fetch-to-profile
-  walkthrough.
+  for any shorter period. Daily mean temperatures can be obtained
+  e.g. from the DWD open-data archive, e.g. via the `rdwd` package; see
+  the [gas SLP article on the package
+  website](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
+  for a complete fetch-to-profile walkthrough.
 
 - [`slp_gas_siglinde()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_siglinde.md)
   exposes the low-level dimensionless daily heating demand function h(θ)
