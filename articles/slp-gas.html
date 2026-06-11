@@ -174,7 +174,7 @@ h(\vartheta) =
 \underbrace{\max\!\left(m_H \vartheta + b_H,\; m_W \vartheta +
 b_W\right)}_{\text{linear part}}
 \]</span></p>
-<div id="siglinde-widget" style="max-width: 600px; margin: 1.5em auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<div id="siglinde-widget" style="width: 100%; margin: 1.5em 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 <div style="margin-bottom: 12px;">
 <div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">
 Higher h(ϑ) means more gas consumption on that day
@@ -196,36 +196,111 @@ Higher h(ϑ) means more gas consumption on that day
   overflow: hidden;
   pointer-events: none;
 }
+.sig-active {
+  font-weight: 700;
+  color: #000;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.sig-select-box {
+  display: inline-block;
+  position: relative;       /* the box -- not the native select -- owns the height */
+  top: -2px;                /* nudge up to centre in the text line */
+  width: 4em;
+  height: 1.2em;            /* same as the toggle */
+  box-sizing: border-box;
+  overflow: hidden;
+  vertical-align: middle;
+  margin: 0 0 0 2px;
+  background-color: #fff;
+  outline: 2px solid #333;   /* outline (outside the box) to match the toggle */
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #333 50%),
+    linear-gradient(135deg, #333 50%, transparent 50%);
+  background-position: calc(100% - 9px) center, calc(100% - 6px) center;
+  background-size: 3px 3px, 3px 3px;
+  background-repeat: no-repeat;
+}
+#siglinde-profile {
+  position: absolute;       /* taller native select, vertically centred + clipped */
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0 16px 0 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1a1a1a;
+  cursor: pointer;
+}
 </style>
 <p style="font-size: 13px; color: #555; margin: 4px 0 0; line-height: 1.4;">
-Toggle between <span id="siglinde-label-sig" class="sig-toggle-label" data-text="Sigmoid"><span id="siglinde-label-sig-inner" style="font-weight: 700; color: #0CC792;">Sigmoid</span></span> <span style="display: inline-block; vertical-align: middle; width: 2.2em; height: 1.2em; margin: 0 2px;">
+Toggle between <span id="siglinde-label-sig" class="sig-toggle-label" data-text="Sigmoid"><span id="siglinde-label-sig-inner" class="sig-active">Sigmoid</span></span> <span style="display: inline-block; vertical-align: middle; position: relative; top: -2px; width: 2.2em; height: 1.2em; margin: 0 2px;">
 <button id="siglinde-toggle" role="switch" aria-checked="false" aria-label="Toggle between a pure Sigmoid and SigLinDe" style="position: relative; width: 100%; height: 100%; background: #fff; outline: 2px solid #333; border: none; border-radius: 0; cursor: pointer; padding: 0;">
 <span id="siglinde-thumb" style="position: absolute; top: 50%; left: 0.15em; width: 0.75em; height: 0.75em; background: #333; border-radius: 0; display: block; transition: transform 0.2s ease; transform: translateY(-50%);"></span>
-</button> </span> and <span id="siglinde-label-sld" class="sig-toggle-label" data-text="SigLinDe"><span id="siglinde-label-sld-inner" style="font-weight: 400;">SigLinDe</span></span> functions
+</button> </span> and <span id="siglinde-label-sld" class="sig-toggle-label" data-text="SigLinDe"><span id="siglinde-label-sld-inner">SigLinDe</span></span> functions for
+profile <span class="sig-select-box"><select id="siglinde-profile"><option value="HEF" data-name="Single-family home" selected>HEF</option>
+<option value="HMF" data-name="Multi-family home">HMF</option>
+<option value="HKO" data-name="Cooking and hot water only">HKO</option>
+<option value="GKO" data-name="Small commercial">GKO</option>
+<option value="GHA" data-name="Trade and commerce">GHA</option>
+<option value="GMK" data-name="Metal and automotive">GMK</option>
+<option value="GBD" data-name="Services">GBD</option>
+<option value="GBH" data-name="Accommodation">GBH</option>
+<option value="GWA" data-name="Laundries">GWA</option>
+<option value="GGA" data-name="Gastronomy">GGA</option>
+<option value="GBA" data-name="Bakeries">GBA</option>
+<option value="GGB" data-name="Mixed commercial">GGB</option>
+<option value="GPD" data-name="Paper and printing">GPD</option>
+<option value="GMF" data-name="Large multi-family / mixed use">GMF</option>
+<option value="GHD" data-name="Trade, commerce and services aggregate">GHD</option></select></span>
+</p>
+<p style="font-size: 13px; color: #555; margin: 6px 0 0; line-height: 1.4;">
+<span id="siglinde-profile-name" style="font-weight: 600; color: #1a1a1a;">Single-family home</span>
 </p>
 </div>
-<div id="siglinde-chart">
+<div id="siglinde-chart" style="width: 80%; margin-top: 8px;">
 
 </div>
 </div>
 <script type="module">
 import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
 
-const A = 1.0443538, B = -35.0333754, C = 6.2240634, D = 0.0502917, theta0 = 40;
-const mH = -0.053583, bH = 0.9995901, mW = -0.0021758, bW = 0.1633299;
+const coefs = {"HEF":{"33":{"A":1.6209544,"B":-37.1833141,"C":5.6727847,"D":0.0716431,"theta0":40,"mH":-0.04957,"bH":0.8401015,"mW":-0.002209,"bW":0.1074468},"34":{"A":1.3819663,"B":-37.4124155,"C":6.1723179,"D":0.0396284,"theta0":40,"mH":-0.0672159,"bH":1.1167138,"mW":-0.0019982,"bW":0.135507}},"HMF":{"33":{"A":1.2328655,"B":-34.7213605,"C":5.8164304,"D":0.0873352,"theta0":40,"mH":-0.0409284,"bH":0.767292,"mW":-0.002232,"bW":0.1199207},"34":{"A":1.0443538,"B":-35.0333754,"C":6.2240634,"D":0.0502917,"theta0":40,"mH":-0.053583,"bH":0.9995901,"mW":-0.0021758,"bW":0.1633299}},"HKO":{"33":{"A":0.4040932,"B":-24.4392968,"C":6.5718175,"D":0.710771,"theta0":40,"mH":0,"bH":0,"mW":0,"bW":0},"34":{"A":0.4040932,"B":-24.4392968,"C":6.5718175,"D":0.710771,"theta0":40,"mH":0,"bH":0,"mW":0,"bW":0}},"GKO":{"33":{"A":1.3554515,"B":-35.1412563,"C":7.1303395,"D":0.0990619,"theta0":40,"mH":-0.0526487,"bH":0.8626086,"mW":-0.0008808,"bW":0.0964014},"34":{"A":1.4256684,"B":-36.6590504,"C":7.6083226,"D":0.0371116,"theta0":40,"mH":-0.0809359,"bH":1.2364527,"mW":-0.0007628,"bW":0.1002979}},"GHA":{"33":{"A":1.9724775,"B":-36.9650065,"C":7.2256947,"D":0.0345782,"theta0":40,"mH":-0.0742174,"bH":1.0448869,"mW":-0.0008295,"bW":0.0461795},"34":{"A":1.8398455,"B":-37.8282037,"C":8.1593369,"D":0.025971,"theta0":40,"mH":-0.1069262,"bH":1.455224,"mW":-0.000492,"bW":0.0691851}},"GMK":{"33":{"A":1.4202419,"B":-34.880613,"C":6.5951899,"D":0.0385317,"theta0":40,"mH":-0.0521084,"bH":0.8647919,"mW":-0.0014369,"bW":0.0637602},"34":{"A":1.3284913,"B":-35.8715062,"C":7.5186829,"D":0.017554,"theta0":40,"mH":-0.0758983,"bH":1.1942555,"mW":-0.000898,"bW":0.0603337}},"GBD":{"33":{"A":1.4633682,"B":-36.1794117,"C":5.9265162,"D":0.0808835,"theta0":40,"mH":-0.04758,"bH":0.8230754,"mW":-0.0019273,"bW":0.1077046},"34":{"A":1.5175792,"B":-37.5,"C":6.8,"D":0.0295801,"theta0":40,"mH":-0.0788559,"bH":1.216125,"mW":-0.0013134,"bW":0.0968721}},"GBH":{"33":{"A":0.9874283,"B":-35.2532124,"C":6.1544406,"D":0.2265716,"theta0":40,"mH":-0.033902,"bH":0.6938234,"mW":-0.0012849,"bW":0.2029732},"34":{"A":0.9872585,"B":-35.2532124,"C":6.0587001,"D":0.0793512,"theta0":40,"mH":-0.0495013,"bH":0.9637999,"mW":-0.0022304,"bW":0.2288398}},"GWA":{"33":{"A":0.3337838,"B":-36.0237912,"C":4.8662747,"D":0.491228,"theta0":40,"mH":-0.0092263,"bH":0.4595757,"mW":-0.0009676,"bW":0.3964291},"34":{"A":0.3925339,"B":-35.3,"C":4.8662747,"D":0.3045099,"theta0":40,"mH":-0.0167993,"bH":0.6710889,"mW":-0.0020301,"bW":0.5614623}},"GGA":{"33":{"A":1.1582082,"B":-36.2878584,"C":6.5885126,"D":0.223568,"theta0":40,"mH":-0.0410335,"bH":0.7526451,"mW":-0.0009088,"bW":0.1916641},"34":{"A":1.184832,"B":-36,"C":7.7368518,"D":0.0793107,"theta0":40,"mH":-0.0687383,"bH":1.130857,"mW":-0.0006587,"bW":0.1910301}},"GBA":{"33":{"A":0.2770087,"B":-33,"C":5.7212303,"D":0.4865118,"theta0":40,"mH":-0.0094849,"bH":0.4630237,"mW":-0.0007134,"bW":0.3867447},"34":{"A":0.353764,"B":-33.35,"C":5.7212303,"D":0.3033305,"theta0":40,"mH":-0.0177463,"bH":0.6825699,"mW":-0.0013912,"bW":0.5434624}},"GGB":{"33":{"A":1.8213778,"B":-37.5,"C":6.3462148,"D":0.0678118,"theta0":40,"mH":-0.0607666,"bH":0.9308159,"mW":-0.0013967,"bW":0.0850399},"34":{"A":1.6266812,"B":-37.8825368,"C":6.983607,"D":0.0297136,"theta0":40,"mH":-0.0854333,"bH":1.2709629,"mW":-0.0011319,"bW":0.0928124}},"GPD":{"33":{"A":1.7110739,"B":-35.8,"C":8.4,"D":0.0702546,"theta0":40,"mH":-0.0745381,"bH":1.0463005,"mW":-0.0003672,"bW":0.0621882},"34":{"A":1.8834609,"B":-37,"C":10.2405021,"D":0.027547,"theta0":40,"mH":-0.12531,"bH":1.6275999,"mW":-0.0001105,"bW":0.0635119}},"GMF":{"33":{"A":1.2328655,"B":-34.7213605,"C":5.8164304,"D":0.0873352,"theta0":40,"mH":-0.0409284,"bH":0.767292,"mW":-0.002232,"bW":0.1199207},"34":{"A":1.0443538,"B":-35.0333754,"C":6.2240634,"D":0.0502917,"theta0":40,"mH":-0.053583,"bH":0.9995901,"mW":-0.0021758,"bW":0.1633299}},"GHD":{"33":{"A":1.3010623,"B":-35.6816144,"C":6.6857976,"D":0.1409267,"theta0":40,"mH":-0.0473428,"bH":0.8141691,"mW":-0.0010601,"bW":0.1325092},"34":{"A":1.25696,"B":-36.6078453,"C":7.321187,"D":0.077696,"theta0":40,"mH":-0.0696826,"bH":1.1379702,"mW":-0.0008522,"bW":0.1921068}}};
+const variants = ["33", "34"];
+let p = coefs["HEF"];          // p["33"], p["34"]
 
-function sigmoid(t) {
-  return A / (1 + Math.pow(B / (t - theta0), C)) + D;
+function sigmoid(c, t) {
+  return c.A / (1 + Math.pow(c.B / (t - c.theta0), c.C)) + c.D;
 }
-function linear(t) {
-  return Math.max(mH * t + bH, mW * t + bW);
+function linear(c, t) {
+  return Math.max(c.mH * t + c.bH, c.mW * t + c.bW);
 }
 
 const temps = [];
 for (let t = -15; t <= 25; t += 0.25) temps.push(t);
+const i8 = temps.indexOf(8);   // index of the 8°C reference
 
-const sigOnly  = temps.map(t => sigmoid(t));
-const siglinde = temps.map(t => sigmoid(t) + linear(t));
+function curvesFor(c) {
+  return {
+    sig: temps.map(t => sigmoid(c, t)),
+    sld: temps.map(t => sigmoid(c, t) + linear(c, t))
+  };
+}
+// displayed (possibly mid-morph) curves, one per variant
+let curves = { "33": curvesFor(p["33"]), "34": curvesFor(p["34"]) };
 
 const chartEl  = document.getElementById("siglinde-chart");
 const toggle   = document.getElementById("siglinde-toggle");
@@ -238,43 +313,42 @@ let blend  = 0;
 let animId = null;
 
 function render(t) {
-  const data = temps.map((temp, i) => ({
-    temp,
-    h: sigOnly[i] + t * (siglinde[i] - sigOnly[i])
-  }));
-
-  const marks = [
-    Plot.lineY(data, {
-      x: "temp", y: "h",
-      stroke: "#0CC792", strokeWidth: 2.5
-    })
-  ];
-
+  const width = chartEl.clientWidth;
+  if (!width) return;
+  const data = [];
+  const refDots = [];
+  for (const v of variants) {
+    const c = curves[v];
+    const label = "Variant " + v;
+    temps.forEach((temp, i) => {
+      data.push({ variant: label, temp, h: c.sig[i] + t * (c.sld[i] - c.sig[i]) });
+    });
+    refDots.push({ variant: label, temp: 8, h: c.sig[i8] + t * (c.sld[i8] - c.sig[i8]) });
+  }
   const plot = Plot.plot({
-    width: 600,
-    height: 340,
-    marginLeft: 50,
-    marginBottom: 40,
-    x: {
-      label: "Temperature (°C)",
-      tickFormat: d => d + "°",
-      grid: true
+    width,
+    height: Math.round(width * 0.6),
+    marginLeft: 44,
+    marginBottom: 36,
+    color: {
+      domain: ["Variant 33", "Variant 34"],
+      range: ["#961BFA", "#0CC792"],
+      legend: true
     },
-    y: {
-      label: "h(ϑ)",
-      domain: [0, 3],
-      grid: true
-    },
-    marks,
+    x: { label: "Temperature (°C)", ticks: [-10, 0, 8, 20], tickFormat: d => d + "°", grid: true },
+    y: { label: "h(ϑ)", domain: [0, 6], ticks: [1, 2, 3, 4, 5], grid: true },
+    marks: [
+      Plot.ruleY([1], { stroke: "#999", strokeDasharray: "4,3" }),
+      Plot.lineY(data, { x: "temp", y: "h", stroke: "variant", strokeWidth: 2.5 }),
+      Plot.dot(refDots, { x: "temp", y: "h", fill: "variant", r: 3.5, stroke: "white", strokeWidth: 1 })
+    ],
     style: {
-      fontSize: "13px",
+      fontSize: "12px",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       background: "transparent"
     }
   });
-
-  chartEl.innerHTML = "";
-  chartEl.appendChild(plot);
+  chartEl.replaceChildren(plot);
 }
 
 function animate() {
@@ -296,13 +370,39 @@ toggle.addEventListener("click", () => {
   active = !active;
   toggle.setAttribute("aria-checked", active);
   thumb.style.transform = active ? "translateY(-50%) translateX(1.1em)" : "translateY(-50%)";
-  labelSig.style.fontWeight = active ? "400" : "700";
-  labelSig.style.color = active ? "" : "#0CC792";
-  labelSld.style.fontWeight = active ? "700" : "400";
-  labelSld.style.color = active ? "#0CC792" : "";
+  labelSig.classList.toggle("sig-active", !active);
+  labelSld.classList.toggle("sig-active", active);
   if (animId) cancelAnimationFrame(animId);
   animId = requestAnimationFrame(animate);
 });
+
+const profileSelect = document.getElementById("siglinde-profile");
+let morphId = null;
+profileSelect.addEventListener("change", () => {
+  const from = {};
+  for (const v of variants) {
+    from[v] = { sig: curves[v].sig.slice(), sld: curves[v].sld.slice() };
+  }
+  p = coefs[profileSelect.value];
+  document.getElementById("siglinde-profile-name").textContent =
+    profileSelect.selectedOptions[0].dataset.name;
+  const to = { "33": curvesFor(p["33"]), "34": curvesFor(p["34"]) };
+  let m = 0;
+  if (morphId) cancelAnimationFrame(morphId);
+  (function step() {
+    m = Math.min(1, m + 0.08);
+    for (const v of variants) {
+      curves[v] = {
+        sig: from[v].sig.map((x, i) => x + m * (to[v].sig[i] - x)),
+        sld: from[v].sld.map((x, i) => x + m * (to[v].sld[i] - x))
+      };
+    }
+    render(blend);
+    morphId = m < 1 ? requestAnimationFrame(step) : null;
+  })();
+});
+
+window.addEventListener("resize", () => render(blend));
 
 render(0);
 </script><p>The SigLinDe approach was adopted by BDEW and has since been the
@@ -348,18 +448,18 @@ number &gt; 0 without a dimension:</p>
 <span>  bW     <span class="op">=</span>   <span class="fl">0.1633299</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
-<p>The result above is <strong>exactly 1</strong> — and that is no
-coincidence. The SigLinDe coefficients of every profile are calibrated
-so that the profile function equals 1 at the reference temperature of
-<strong>8 °C</strong>. At 8 °C the profile term drops out of <span class="math inline">\(Q(D) = KW \times h(\vartheta_D) \times
-F_{WT,D}\)</span>, so the customer value <span class="math inline">\(KW\)</span> is simply the daily consumption on an
-8 °C day — which is exactly how it is defined.</p>
+<p>The result above is exactly 1 — which is no coincidence. The SigLinDe
+coefficients of every profile are calibrated so that the profile
+function equals 1 at the reference temperature of 8°C. At 8°C the
+profile term drops out of <span class="math inline">\(Q(D) = KW \times
+h(\vartheta_D) \times F_{WT,D}\)</span>, so the customer value <span class="math inline">\(KW\)</span> is simply the daily consumption on an
+8°C day — which is exactly how it is defined.</p>
 <p><code>HKO</code> is the one exception, and precisely because of its
-missing linear part. The SigLinDe profiles owe that exact-1 value at 8
-°C to the linear term, which is fitted (together with the sigmoid) to
-pin <span class="math inline">\(h(8\,\text{°C}) = 1\)</span>.
+missing linear part. The SigLinDe profiles owe that exact-1 value at 8°C
+to the linear term, which is fitted (together with the sigmoid) to pin
+<span class="math inline">\(h(8\,\text{°C}) = 1\)</span>.
 <code>HKO</code> has no linear part, so its bare sigmoid is not pinned
-to the reference and reaches about <strong>1.06</strong> at 8 °C instead
+to the reference and reaches about <strong>1.06</strong> at 8°C instead
 — visible in the BDEW profile sheet, where the <code>HKO</code> row
 lists <span class="math inline">\(h(8\,\text{°C}) =
 1.05612\)</span>.</p>
@@ -413,7 +513,7 @@ geometrically-weighted variant, apply it before calling
 </h3>
 <p>The customer value accounts for a customer’s individual consumption
 behaviour. It is a scaling factor in kWh/day — specifically, the daily
-gas consumption at the reference temperature of 8 °C, the point at which
+gas consumption at the reference temperature of 8°C, the point at which
 <span class="math inline">\(h(\vartheta) = 1\)</span> for every profile.
 We can rearrange the gas consumption equation above and write <span class="math inline">\(KW\)</span> as:</p>
 <p><span class="math display">\[
@@ -838,12 +938,137 @@ more</strong>;</li>
 <p>The gap is widest on the cold January and February days at the
 top-right of each panel, and narrows in the mild shoulder months of
 October and April where the clouds approach the line.</p>
-<p><img src="slp-gas_files/figure-html/gas_cities_chart-1.png" class="r-plt" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
- rows are months October to April. Each point is a day; the x-axis is daily
- gas consumption in Düsseldorf, the y-axis in the comparison city, with a
- 45-degree reference line. All three cities' point clouds sit above the line
- that winter, furthest for Chemnitz (about 35 percent more), then Hamburg
- (about 25 percent), with Freiburg closest to the line (about 11 percent)." width="90%" style="display: block; margin: auto;"></p>
+<div id="cities-widget" style="width: 100%; margin: 1.5em 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">
+SLP Gas – single family home, three climates vs Düsseldorf
+</div>
+<p style="font-size: 13px; color: #555; margin: 4px 0 12px; line-height: 1.4;">
+Each point is one heating-season day. Points above the 45° line used
+more gas than in Düsseldorf.
+</p>
+<style>
+#cities-chart { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; align-items: start; }
+#cities-chart .city-h { text-align: center; font-weight: 700; font-size: 13px; color: #1a1a1a; }
+</style>
+<div id="cities-chart" role="group" aria-label="Daily gas consumption in Chemnitz, Freiburg and Hamburg plotted against Düsseldorf for each month of the heating season, with a 45-degree reference line. All three cities sit above the line that winter, furthest for Chemnitz, then Hamburg, with Freiburg closest.">
+<div>
+<div class="city-h">
+Chemnitz
+</div>
+<div class="city-plot" data-city="Chemnitz">
+
+</div>
+</div>
+<div>
+<div class="city-h">
+Freiburg
+</div>
+<div class="city-plot" data-city="Freiburg">
+
+</div>
+</div>
+<div>
+<div class="city-h">
+Hamburg
+</div>
+<div class="city-plot" data-city="Hamburg">
+
+</div>
+</div>
+</div>
+</div>
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const data = [{"city":"Chemnitz","month":"Oct","label":"1 Oct","duesseldorf":41,"other":68.6},{"city":"Chemnitz","month":"Oct","label":"2 Oct","duesseldorf":32.5,"other":63.2},{"city":"Chemnitz","month":"Oct","label":"3 Oct","duesseldorf":31.9,"other":56.4},{"city":"Chemnitz","month":"Oct","label":"4 Oct","duesseldorf":27.3,"other":44.1},{"city":"Chemnitz","month":"Oct","label":"5 Oct","duesseldorf":32.5,"other":49.8},{"city":"Chemnitz","month":"Oct","label":"6 Oct","duesseldorf":30.2,"other":48.5},{"city":"Chemnitz","month":"Oct","label":"7 Oct","duesseldorf":18.1,"other":36.1},{"city":"Chemnitz","month":"Oct","label":"8 Oct","duesseldorf":17.1,"other":29},{"city":"Chemnitz","month":"Oct","label":"9 Oct","duesseldorf":21.3,"other":35.5},{"city":"Chemnitz","month":"Oct","label":"10 Oct","duesseldorf":15,"other":39.1},{"city":"Chemnitz","month":"Oct","label":"11 Oct","duesseldorf":18.6,"other":36.1},{"city":"Chemnitz","month":"Oct","label":"12 Oct","duesseldorf":19.1,"other":39.1},{"city":"Chemnitz","month":"Oct","label":"13 Oct","duesseldorf":20.2,"other":40.3},{"city":"Chemnitz","month":"Oct","label":"14 Oct","duesseldorf":29.6,"other":55.1},{"city":"Chemnitz","month":"Oct","label":"15 Oct","duesseldorf":27.9,"other":46.6},{"city":"Chemnitz","month":"Oct","label":"16 Oct","duesseldorf":31.3,"other":46.6},{"city":"Chemnitz","month":"Oct","label":"17 Oct","duesseldorf":29.6,"other":48.5},{"city":"Chemnitz","month":"Oct","label":"18 Oct","duesseldorf":43.4,"other":73.5},{"city":"Chemnitz","month":"Oct","label":"19 Oct","duesseldorf":38.5,"other":70},{"city":"Chemnitz","month":"Oct","label":"20 Oct","duesseldorf":16,"other":47.9},{"city":"Chemnitz","month":"Oct","label":"21 Oct","duesseldorf":22.4,"other":31.9},{"city":"Chemnitz","month":"Oct","label":"22 Oct","duesseldorf":25.6,"other":30.2},{"city":"Chemnitz","month":"Oct","label":"23 Oct","duesseldorf":26.8,"other":30.2},{"city":"Chemnitz","month":"Oct","label":"24 Oct","duesseldorf":46.6,"other":60.5},{"city":"Chemnitz","month":"Oct","label":"25 Oct","duesseldorf":46.6,"other":57.1},{"city":"Chemnitz","month":"Oct","label":"26 Oct","duesseldorf":57.1,"other":72.1},{"city":"Chemnitz","month":"Oct","label":"27 Oct","duesseldorf":48.5,"other":71.4},{"city":"Chemnitz","month":"Oct","label":"28 Oct","duesseldorf":39.7,"other":57.8},{"city":"Chemnitz","month":"Oct","label":"29 Oct","duesseldorf":29,"other":44.7},{"city":"Chemnitz","month":"Oct","label":"30 Oct","duesseldorf":40.3,"other":46},{"city":"Chemnitz","month":"Oct","label":"31 Oct","duesseldorf":38.5,"other":53.8},{"city":"Chemnitz","month":"Nov","label":"1 Nov","duesseldorf":29,"other":24},{"city":"Chemnitz","month":"Nov","label":"2 Nov","duesseldorf":37.3,"other":39.7},{"city":"Chemnitz","month":"Nov","label":"3 Nov","duesseldorf":42.8,"other":57.8},{"city":"Chemnitz","month":"Nov","label":"4 Nov","duesseldorf":20.7,"other":46.6},{"city":"Chemnitz","month":"Nov","label":"5 Nov","duesseldorf":26.8,"other":37.3},{"city":"Chemnitz","month":"Nov","label":"6 Nov","duesseldorf":32.5,"other":57.1},{"city":"Chemnitz","month":"Nov","label":"7 Nov","duesseldorf":40.3,"other":67.3},{"city":"Chemnitz","month":"Nov","label":"8 Nov","duesseldorf":53.1,"other":79},{"city":"Chemnitz","month":"Nov","label":"9 Nov","duesseldorf":40.3,"other":70.7},{"city":"Chemnitz","month":"Nov","label":"10 Nov","duesseldorf":58.4,"other":59.8},{"city":"Chemnitz","month":"Nov","label":"11 Nov","duesseldorf":39.7,"other":63.2},{"city":"Chemnitz","month":"Nov","label":"12 Nov","duesseldorf":30.8,"other":46},{"city":"Chemnitz","month":"Nov","label":"13 Nov","duesseldorf":17.6,"other":19.7},{"city":"Chemnitz","month":"Nov","label":"14 Nov","duesseldorf":13.7,"other":15.5},{"city":"Chemnitz","month":"Nov","label":"15 Nov","duesseldorf":27.9,"other":48.5},{"city":"Chemnitz","month":"Nov","label":"16 Nov","duesseldorf":54.4,"other":48.5},{"city":"Chemnitz","month":"Nov","label":"17 Nov","duesseldorf":85.9,"other":96.2},{"city":"Chemnitz","month":"Nov","label":"18 Nov","duesseldorf":85.2,"other":106.3},{"city":"Chemnitz","month":"Nov","label":"19 Nov","duesseldorf":78.3,"other":100.9},{"city":"Chemnitz","month":"Nov","label":"20 Nov","duesseldorf":94.2,"other":106.9},{"city":"Chemnitz","month":"Nov","label":"21 Nov","duesseldorf":103.6,"other":130.1},{"city":"Chemnitz","month":"Nov","label":"22 Nov","duesseldorf":105.6,"other":132.5},{"city":"Chemnitz","month":"Nov","label":"23 Nov","duesseldorf":101.6,"other":130.7},{"city":"Chemnitz","month":"Nov","label":"24 Nov","duesseldorf":73.5,"other":98.9},{"city":"Chemnitz","month":"Nov","label":"25 Nov","duesseldorf":72.1,"other":98.9},{"city":"Chemnitz","month":"Nov","label":"26 Nov","duesseldorf":84.5,"other":112.8},{"city":"Chemnitz","month":"Nov","label":"27 Nov","duesseldorf":86.6,"other":110.8},{"city":"Chemnitz","month":"Nov","label":"28 Nov","duesseldorf":60.5,"other":85.2},{"city":"Chemnitz","month":"Nov","label":"29 Nov","duesseldorf":49.2,"other":74.2},{"city":"Chemnitz","month":"Nov","label":"30 Nov","duesseldorf":61.1,"other":66.6},{"city":"Chemnitz","month":"Dec","label":"1 Dec","duesseldorf":74.9,"other":92.1},{"city":"Chemnitz","month":"Dec","label":"2 Dec","duesseldorf":70,"other":92.8},{"city":"Chemnitz","month":"Dec","label":"3 Dec","duesseldorf":59.8,"other":95.5},{"city":"Chemnitz","month":"Dec","label":"4 Dec","duesseldorf":73.5,"other":108.9},{"city":"Chemnitz","month":"Dec","label":"5 Dec","duesseldorf":73.5,"other":102.9},{"city":"Chemnitz","month":"Dec","label":"6 Dec","duesseldorf":57.8,"other":88.7},{"city":"Chemnitz","month":"Dec","label":"7 Dec","duesseldorf":39.1,"other":62.5},{"city":"Chemnitz","month":"Dec","label":"8 Dec","duesseldorf":27.3,"other":37.3},{"city":"Chemnitz","month":"Dec","label":"9 Dec","duesseldorf":28.5,"other":33.7},{"city":"Chemnitz","month":"Dec","label":"10 Dec","duesseldorf":32.5,"other":46.6},{"city":"Chemnitz","month":"Dec","label":"11 Dec","duesseldorf":51.8,"other":60.5},{"city":"Chemnitz","month":"Dec","label":"12 Dec","duesseldorf":51.8,"other":90.1},{"city":"Chemnitz","month":"Dec","label":"13 Dec","duesseldorf":57.8,"other":98.9},{"city":"Chemnitz","month":"Dec","label":"14 Dec","duesseldorf":68,"other":93.5},{"city":"Chemnitz","month":"Dec","label":"15 Dec","duesseldorf":63.9,"other":83.2},{"city":"Chemnitz","month":"Dec","label":"16 Dec","duesseldorf":53.1,"other":86.6},{"city":"Chemnitz","month":"Dec","label":"17 Dec","duesseldorf":59.8,"other":93.5},{"city":"Chemnitz","month":"Dec","label":"18 Dec","duesseldorf":43.4,"other":57.8},{"city":"Chemnitz","month":"Dec","label":"19 Dec","duesseldorf":39.7,"other":48.5},{"city":"Chemnitz","month":"Dec","label":"20 Dec","duesseldorf":72.8,"other":61.1},{"city":"Chemnitz","month":"Dec","label":"21 Dec","duesseldorf":49.2,"other":62.5},{"city":"Chemnitz","month":"Dec","label":"22 Dec","duesseldorf":85.9,"other":93.5},{"city":"Chemnitz","month":"Dec","label":"23 Dec","duesseldorf":76.9,"other":102.9},{"city":"Chemnitz","month":"Dec","label":"24 Dec","duesseldorf":107.6,"other":128.3},{"city":"Chemnitz","month":"Dec","label":"25 Dec","duesseldorf":127.7,"other":141},{"city":"Chemnitz","month":"Dec","label":"26 Dec","duesseldorf":119.1,"other":138.8},{"city":"Chemnitz","month":"Dec","label":"27 Dec","duesseldorf":108.2,"other":128.3},{"city":"Chemnitz","month":"Dec","label":"28 Dec","duesseldorf":101.6,"other":122.9},{"city":"Chemnitz","month":"Dec","label":"29 Dec","duesseldorf":109.5,"other":119.1},{"city":"Chemnitz","month":"Dec","label":"30 Dec","duesseldorf":108.2,"other":127.1},{"city":"Chemnitz","month":"Dec","label":"31 Dec","duesseldorf":108.2,"other":127.1},{"city":"Chemnitz","month":"Jan","label":"1 Jan","duesseldorf":87.3,"other":112.1},{"city":"Chemnitz","month":"Jan","label":"2 Jan","duesseldorf":100.3,"other":112.1},{"city":"Chemnitz","month":"Jan","label":"3 Jan","duesseldorf":106.3,"other":123.5},{"city":"Chemnitz","month":"Jan","label":"4 Jan","duesseldorf":107.6,"other":124.1},{"city":"Chemnitz","month":"Jan","label":"5 Jan","duesseldorf":119.8,"other":136.5},{"city":"Chemnitz","month":"Jan","label":"6 Jan","duesseldorf":116.6,"other":145.5},{"city":"Chemnitz","month":"Jan","label":"7 Jan","duesseldorf":119.1,"other":151.3},{"city":"Chemnitz","month":"Jan","label":"8 Jan","duesseldorf":96.2,"other":141},{"city":"Chemnitz","month":"Jan","label":"9 Jan","duesseldorf":83.9,"other":113.4},{"city":"Chemnitz","month":"Jan","label":"10 Jan","duesseldorf":121,"other":150.3},{"city":"Chemnitz","month":"Jan","label":"11 Jan","duesseldorf":130.1,"other":155},{"city":"Chemnitz","month":"Jan","label":"12 Jan","duesseldorf":85.9,"other":122.9},{"city":"Chemnitz","month":"Jan","label":"13 Jan","duesseldorf":49.8,"other":79},{"city":"Chemnitz","month":"Jan","label":"14 Jan","duesseldorf":52.5,"other":72.8},{"city":"Chemnitz","month":"Jan","label":"15 Jan","duesseldorf":43.4,"other":67.3},{"city":"Chemnitz","month":"Jan","label":"16 Jan","duesseldorf":43.4,"other":67.3},{"city":"Chemnitz","month":"Jan","label":"17 Jan","duesseldorf":53.8,"other":97.6},{"city":"Chemnitz","month":"Jan","label":"18 Jan","duesseldorf":91.4,"other":99.6},{"city":"Chemnitz","month":"Jan","label":"19 Jan","duesseldorf":98.2,"other":111.5},{"city":"Chemnitz","month":"Jan","label":"20 Jan","duesseldorf":93.5,"other":126.5},{"city":"Chemnitz","month":"Jan","label":"21 Jan","duesseldorf":79,"other":125.3},{"city":"Chemnitz","month":"Jan","label":"22 Jan","duesseldorf":89.4,"other":143.8},{"city":"Chemnitz","month":"Jan","label":"23 Jan","duesseldorf":72.1,"other":148.7},{"city":"Chemnitz","month":"Jan","label":"24 Jan","duesseldorf":85.2,"other":139.9},{"city":"Chemnitz","month":"Jan","label":"25 Jan","duesseldorf":108.2,"other":115.3},{"city":"Chemnitz","month":"Jan","label":"26 Jan","duesseldorf":109.5,"other":124.7},{"city":"Chemnitz","month":"Jan","label":"27 Jan","duesseldorf":90.7,"other":115.3},{"city":"Chemnitz","month":"Jan","label":"28 Jan","duesseldorf":87.3,"other":112.1},{"city":"Chemnitz","month":"Jan","label":"29 Jan","duesseldorf":102.3,"other":122.2},{"city":"Chemnitz","month":"Jan","label":"30 Jan","duesseldorf":92.8,"other":111.5},{"city":"Chemnitz","month":"Jan","label":"31 Jan","duesseldorf":71.4,"other":112.8},{"city":"Chemnitz","month":"Feb","label":"1 Feb","duesseldorf":73.5,"other":113.4},{"city":"Chemnitz","month":"Feb","label":"2 Feb","duesseldorf":75.5,"other":119.8},{"city":"Chemnitz","month":"Feb","label":"3 Feb","duesseldorf":94.2,"other":116},{"city":"Chemnitz","month":"Feb","label":"4 Feb","duesseldorf":69.3,"other":96.2},{"city":"Chemnitz","month":"Feb","label":"5 Feb","duesseldorf":79,"other":112.1},{"city":"Chemnitz","month":"Feb","label":"6 Feb","duesseldorf":75.5,"other":95.5},{"city":"Chemnitz","month":"Feb","label":"7 Feb","duesseldorf":53.1,"other":89.4},{"city":"Chemnitz","month":"Feb","label":"8 Feb","duesseldorf":76.2,"other":102.3},{"city":"Chemnitz","month":"Feb","label":"9 Feb","duesseldorf":81.8,"other":98.9},{"city":"Chemnitz","month":"Feb","label":"10 Feb","duesseldorf":63.9,"other":83.2},{"city":"Chemnitz","month":"Feb","label":"11 Feb","duesseldorf":44.7,"other":66.6},{"city":"Chemnitz","month":"Feb","label":"12 Feb","duesseldorf":50.5,"other":62.5},{"city":"Chemnitz","month":"Feb","label":"13 Feb","duesseldorf":77.6,"other":77.6},{"city":"Chemnitz","month":"Feb","label":"14 Feb","duesseldorf":106.3,"other":117.2},{"city":"Chemnitz","month":"Feb","label":"15 Feb","duesseldorf":112.1,"other":130.7},{"city":"Chemnitz","month":"Feb","label":"16 Feb","duesseldorf":80.4,"other":116.6},{"city":"Chemnitz","month":"Feb","label":"17 Feb","duesseldorf":81.8,"other":102.9},{"city":"Chemnitz","month":"Feb","label":"18 Feb","duesseldorf":88.7,"other":116},{"city":"Chemnitz","month":"Feb","label":"19 Feb","duesseldorf":91.4,"other":127.1},{"city":"Chemnitz","month":"Feb","label":"20 Feb","duesseldorf":83.9,"other":122.9},{"city":"Chemnitz","month":"Feb","label":"21 Feb","duesseldorf":46,"other":79},{"city":"Chemnitz","month":"Feb","label":"22 Feb","duesseldorf":32.5,"other":52.5},{"city":"Chemnitz","month":"Feb","label":"23 Feb","duesseldorf":43.4,"other":59.8},{"city":"Chemnitz","month":"Feb","label":"24 Feb","duesseldorf":39.7,"other":73.5},{"city":"Chemnitz","month":"Feb","label":"25 Feb","duesseldorf":27.9,"other":60.5},{"city":"Chemnitz","month":"Feb","label":"26 Feb","duesseldorf":24.5,"other":48.5},{"city":"Chemnitz","month":"Feb","label":"27 Feb","duesseldorf":20.7,"other":26.2},{"city":"Chemnitz","month":"Feb","label":"28 Feb","duesseldorf":36.7,"other":28.5},{"city":"Chemnitz","month":"Mar","label":"1 Mar","duesseldorf":50.5,"other":63.2},{"city":"Chemnitz","month":"Mar","label":"2 Mar","duesseldorf":36.7,"other":59.8},{"city":"Chemnitz","month":"Mar","label":"3 Mar","duesseldorf":34.9,"other":51.8},{"city":"Chemnitz","month":"Mar","label":"4 Mar","duesseldorf":46,"other":61.1},{"city":"Chemnitz","month":"Mar","label":"5 Mar","duesseldorf":33.1,"other":53.8},{"city":"Chemnitz","month":"Mar","label":"6 Mar","duesseldorf":28.5,"other":41},{"city":"Chemnitz","month":"Mar","label":"7 Mar","duesseldorf":40.3,"other":40.3},{"city":"Chemnitz","month":"Mar","label":"8 Mar","duesseldorf":42.2,"other":46.6},{"city":"Chemnitz","month":"Mar","label":"9 Mar","duesseldorf":32.5,"other":40.3},{"city":"Chemnitz","month":"Mar","label":"10 Mar","duesseldorf":35.5,"other":37.9},{"city":"Chemnitz","month":"Mar","label":"11 Mar","duesseldorf":46,"other":40.3},{"city":"Chemnitz","month":"Mar","label":"12 Mar","duesseldorf":49.8,"other":58.4},{"city":"Chemnitz","month":"Mar","label":"13 Mar","duesseldorf":54.4,"other":43.4},{"city":"Chemnitz","month":"Mar","label":"14 Mar","duesseldorf":84.5,"other":48.5},{"city":"Chemnitz","month":"Mar","label":"15 Mar","duesseldorf":68.6,"other":83.2},{"city":"Chemnitz","month":"Mar","label":"16 Mar","duesseldorf":59.8,"other":89.4},{"city":"Chemnitz","month":"Mar","label":"17 Mar","duesseldorf":46,"other":79.7},{"city":"Chemnitz","month":"Mar","label":"18 Mar","duesseldorf":37.3,"other":66.6},{"city":"Chemnitz","month":"Mar","label":"19 Mar","duesseldorf":49.2,"other":60.5},{"city":"Chemnitz","month":"Mar","label":"20 Mar","duesseldorf":51.8,"other":71.4},{"city":"Chemnitz","month":"Mar","label":"21 Mar","duesseldorf":51.1,"other":81.8},{"city":"Chemnitz","month":"Mar","label":"22 Mar","duesseldorf":49.8,"other":61.8},{"city":"Chemnitz","month":"Mar","label":"23 Mar","duesseldorf":47.9,"other":54.4},{"city":"Chemnitz","month":"Mar","label":"24 Mar","duesseldorf":33.7,"other":49.2},{"city":"Chemnitz","month":"Mar","label":"25 Mar","duesseldorf":52.5,"other":61.8},{"city":"Chemnitz","month":"Mar","label":"26 Mar","duesseldorf":83.2,"other":94.9},{"city":"Chemnitz","month":"Mar","label":"27 Mar","duesseldorf":76.2,"other":104.3},{"city":"Chemnitz","month":"Mar","label":"28 Mar","duesseldorf":66.6,"other":89.4},{"city":"Chemnitz","month":"Mar","label":"29 Mar","duesseldorf":61.8,"other":90.1},{"city":"Chemnitz","month":"Mar","label":"30 Mar","duesseldorf":61.8,"other":92.1},{"city":"Chemnitz","month":"Mar","label":"31 Mar","duesseldorf":72.1,"other":87.3},{"city":"Chemnitz","month":"Apr","label":"1 Apr","duesseldorf":65.2,"other":82.5},{"city":"Chemnitz","month":"Apr","label":"2 Apr","duesseldorf":61.1,"other":74.9},{"city":"Chemnitz","month":"Apr","label":"3 Apr","duesseldorf":49.2,"other":68},{"city":"Chemnitz","month":"Apr","label":"4 Apr","duesseldorf":25.6,"other":45.3},{"city":"Chemnitz","month":"Apr","label":"5 Apr","duesseldorf":29.6,"other":26.2},{"city":"Chemnitz","month":"Apr","label":"6 Apr","duesseldorf":52.5,"other":58.4},{"city":"Chemnitz","month":"Apr","label":"7 Apr","duesseldorf":40.3,"other":65.9},{"city":"Chemnitz","month":"Apr","label":"8 Apr","duesseldorf":29.6,"other":63.2},{"city":"Chemnitz","month":"Apr","label":"9 Apr","duesseldorf":13.1,"other":71.4},{"city":"Chemnitz","month":"Apr","label":"10 Apr","duesseldorf":43.4,"other":85.9},{"city":"Chemnitz","month":"Apr","label":"11 Apr","duesseldorf":30.8,"other":61.8},{"city":"Chemnitz","month":"Apr","label":"12 Apr","duesseldorf":49.8,"other":61.8},{"city":"Chemnitz","month":"Apr","label":"13 Apr","duesseldorf":57.1,"other":47.3},{"city":"Chemnitz","month":"Apr","label":"14 Apr","duesseldorf":46.6,"other":56.4},{"city":"Chemnitz","month":"Apr","label":"15 Apr","duesseldorf":25.1,"other":41.6},{"city":"Chemnitz","month":"Apr","label":"16 Apr","duesseldorf":17.6,"other":23.4},{"city":"Chemnitz","month":"Apr","label":"17 Apr","duesseldorf":20.7,"other":24},{"city":"Chemnitz","month":"Apr","label":"18 Apr","duesseldorf":22.9,"other":15.5},{"city":"Chemnitz","month":"Apr","label":"19 Apr","duesseldorf":38.5,"other":53.1},{"city":"Chemnitz","month":"Apr","label":"20 Apr","duesseldorf":53.8,"other":79.7},{"city":"Chemnitz","month":"Apr","label":"21 Apr","duesseldorf":42.8,"other":65.9},{"city":"Chemnitz","month":"Apr","label":"22 Apr","duesseldorf":36.1,"other":62.5},{"city":"Chemnitz","month":"Apr","label":"23 Apr","duesseldorf":37.3,"other":49.2},{"city":"Chemnitz","month":"Apr","label":"24 Apr","duesseldorf":42.8,"other":59.8},{"city":"Chemnitz","month":"Apr","label":"25 Apr","duesseldorf":45.3,"other":34.3},{"city":"Chemnitz","month":"Apr","label":"26 Apr","duesseldorf":41.6,"other":58.4},{"city":"Chemnitz","month":"Apr","label":"27 Apr","duesseldorf":32.5,"other":53.1},{"city":"Chemnitz","month":"Apr","label":"28 Apr","duesseldorf":20.2,"other":47.3},{"city":"Chemnitz","month":"Apr","label":"29 Apr","duesseldorf":24,"other":61.8},{"city":"Chemnitz","month":"Apr","label":"30 Apr","duesseldorf":21.8,"other":50.5},{"city":"Freiburg","month":"Oct","label":"1 Oct","duesseldorf":41,"other":47.9},{"city":"Freiburg","month":"Oct","label":"2 Oct","duesseldorf":32.5,"other":54.4},{"city":"Freiburg","month":"Oct","label":"3 Oct","duesseldorf":31.9,"other":49.8},{"city":"Freiburg","month":"Oct","label":"4 Oct","duesseldorf":27.3,"other":17.6},{"city":"Freiburg","month":"Oct","label":"5 Oct","duesseldorf":32.5,"other":37.9},{"city":"Freiburg","month":"Oct","label":"6 Oct","duesseldorf":30.2,"other":32.5},{"city":"Freiburg","month":"Oct","label":"7 Oct","duesseldorf":18.1,"other":29.6},{"city":"Freiburg","month":"Oct","label":"8 Oct","duesseldorf":17.1,"other":40.3},{"city":"Freiburg","month":"Oct","label":"9 Oct","duesseldorf":21.3,"other":25.6},{"city":"Freiburg","month":"Oct","label":"10 Oct","duesseldorf":15,"other":41.6},{"city":"Freiburg","month":"Oct","label":"11 Oct","duesseldorf":18.6,"other":40.3},{"city":"Freiburg","month":"Oct","label":"12 Oct","duesseldorf":19.1,"other":44.1},{"city":"Freiburg","month":"Oct","label":"13 Oct","duesseldorf":20.2,"other":38.5},{"city":"Freiburg","month":"Oct","label":"14 Oct","duesseldorf":29.6,"other":27.3},{"city":"Freiburg","month":"Oct","label":"15 Oct","duesseldorf":27.9,"other":49.8},{"city":"Freiburg","month":"Oct","label":"16 Oct","duesseldorf":31.3,"other":53.8},{"city":"Freiburg","month":"Oct","label":"17 Oct","duesseldorf":29.6,"other":47.9},{"city":"Freiburg","month":"Oct","label":"18 Oct","duesseldorf":43.4,"other":49.8},{"city":"Freiburg","month":"Oct","label":"19 Oct","duesseldorf":38.5,"other":46},{"city":"Freiburg","month":"Oct","label":"20 Oct","duesseldorf":16,"other":19.1},{"city":"Freiburg","month":"Oct","label":"21 Oct","duesseldorf":22.4,"other":14},{"city":"Freiburg","month":"Oct","label":"22 Oct","duesseldorf":25.6,"other":13.1},{"city":"Freiburg","month":"Oct","label":"23 Oct","duesseldorf":26.8,"other":20.2},{"city":"Freiburg","month":"Oct","label":"24 Oct","duesseldorf":46.6,"other":46},{"city":"Freiburg","month":"Oct","label":"25 Oct","duesseldorf":46.6,"other":37.9},{"city":"Freiburg","month":"Oct","label":"26 Oct","duesseldorf":57.1,"other":49.8},{"city":"Freiburg","month":"Oct","label":"27 Oct","duesseldorf":48.5,"other":50.5},{"city":"Freiburg","month":"Oct","label":"28 Oct","duesseldorf":39.7,"other":30.2},{"city":"Freiburg","month":"Oct","label":"29 Oct","duesseldorf":29,"other":31.9},{"city":"Freiburg","month":"Oct","label":"30 Oct","duesseldorf":40.3,"other":31.9},{"city":"Freiburg","month":"Oct","label":"31 Oct","duesseldorf":38.5,"other":44.1},{"city":"Freiburg","month":"Nov","label":"1 Nov","duesseldorf":29,"other":21.3},{"city":"Freiburg","month":"Nov","label":"2 Nov","duesseldorf":37.3,"other":33.1},{"city":"Freiburg","month":"Nov","label":"3 Nov","duesseldorf":42.8,"other":44.1},{"city":"Freiburg","month":"Nov","label":"4 Nov","duesseldorf":20.7,"other":58.4},{"city":"Freiburg","month":"Nov","label":"5 Nov","duesseldorf":26.8,"other":63.9},{"city":"Freiburg","month":"Nov","label":"6 Nov","duesseldorf":32.5,"other":74.9},{"city":"Freiburg","month":"Nov","label":"7 Nov","duesseldorf":40.3,"other":90.7},{"city":"Freiburg","month":"Nov","label":"8 Nov","duesseldorf":53.1,"other":84.5},{"city":"Freiburg","month":"Nov","label":"9 Nov","duesseldorf":40.3,"other":61.1},{"city":"Freiburg","month":"Nov","label":"10 Nov","duesseldorf":58.4,"other":79},{"city":"Freiburg","month":"Nov","label":"11 Nov","duesseldorf":39.7,"other":36.7},{"city":"Freiburg","month":"Nov","label":"12 Nov","duesseldorf":30.8,"other":57.1},{"city":"Freiburg","month":"Nov","label":"13 Nov","duesseldorf":17.6,"other":40.3},{"city":"Freiburg","month":"Nov","label":"14 Nov","duesseldorf":13.7,"other":36.1},{"city":"Freiburg","month":"Nov","label":"15 Nov","duesseldorf":27.9,"other":25.6},{"city":"Freiburg","month":"Nov","label":"16 Nov","duesseldorf":54.4,"other":54.4},{"city":"Freiburg","month":"Nov","label":"17 Nov","duesseldorf":85.9,"other":71.4},{"city":"Freiburg","month":"Nov","label":"18 Nov","duesseldorf":85.2,"other":110.8},{"city":"Freiburg","month":"Nov","label":"19 Nov","duesseldorf":78.3,"other":88.7},{"city":"Freiburg","month":"Nov","label":"20 Nov","duesseldorf":94.2,"other":90.7},{"city":"Freiburg","month":"Nov","label":"21 Nov","duesseldorf":103.6,"other":107.6},{"city":"Freiburg","month":"Nov","label":"22 Nov","duesseldorf":105.6,"other":137.1},{"city":"Freiburg","month":"Nov","label":"23 Nov","duesseldorf":101.6,"other":122.2},{"city":"Freiburg","month":"Nov","label":"24 Nov","duesseldorf":73.5,"other":69.3},{"city":"Freiburg","month":"Nov","label":"25 Nov","duesseldorf":72.1,"other":74.9},{"city":"Freiburg","month":"Nov","label":"26 Nov","duesseldorf":84.5,"other":88.7},{"city":"Freiburg","month":"Nov","label":"27 Nov","duesseldorf":86.6,"other":110.8},{"city":"Freiburg","month":"Nov","label":"28 Nov","duesseldorf":60.5,"other":86.6},{"city":"Freiburg","month":"Nov","label":"29 Nov","duesseldorf":49.2,"other":59.1},{"city":"Freiburg","month":"Nov","label":"30 Nov","duesseldorf":61.1,"other":72.8},{"city":"Freiburg","month":"Dec","label":"1 Dec","duesseldorf":74.9,"other":102.3},{"city":"Freiburg","month":"Dec","label":"2 Dec","duesseldorf":70,"other":96.2},{"city":"Freiburg","month":"Dec","label":"3 Dec","duesseldorf":59.8,"other":90.7},{"city":"Freiburg","month":"Dec","label":"4 Dec","duesseldorf":73.5,"other":85.2},{"city":"Freiburg","month":"Dec","label":"5 Dec","duesseldorf":73.5,"other":83.2},{"city":"Freiburg","month":"Dec","label":"6 Dec","duesseldorf":57.8,"other":65.2},{"city":"Freiburg","month":"Dec","label":"7 Dec","duesseldorf":39.1,"other":33.1},{"city":"Freiburg","month":"Dec","label":"8 Dec","duesseldorf":27.3,"other":24.5},{"city":"Freiburg","month":"Dec","label":"9 Dec","duesseldorf":28.5,"other":54.4},{"city":"Freiburg","month":"Dec","label":"10 Dec","duesseldorf":32.5,"other":27.3},{"city":"Freiburg","month":"Dec","label":"11 Dec","duesseldorf":51.8,"other":55.1},{"city":"Freiburg","month":"Dec","label":"12 Dec","duesseldorf":51.8,"other":70},{"city":"Freiburg","month":"Dec","label":"13 Dec","duesseldorf":57.8,"other":74.2},{"city":"Freiburg","month":"Dec","label":"14 Dec","duesseldorf":68,"other":85.2},{"city":"Freiburg","month":"Dec","label":"15 Dec","duesseldorf":63.9,"other":92.1},{"city":"Freiburg","month":"Dec","label":"16 Dec","duesseldorf":53.1,"other":109.5},{"city":"Freiburg","month":"Dec","label":"17 Dec","duesseldorf":59.8,"other":83.2},{"city":"Freiburg","month":"Dec","label":"18 Dec","duesseldorf":43.4,"other":76.9},{"city":"Freiburg","month":"Dec","label":"19 Dec","duesseldorf":39.7,"other":57.8},{"city":"Freiburg","month":"Dec","label":"20 Dec","duesseldorf":72.8,"other":58.4},{"city":"Freiburg","month":"Dec","label":"21 Dec","duesseldorf":49.2,"other":86.6},{"city":"Freiburg","month":"Dec","label":"22 Dec","duesseldorf":85.9,"other":92.8},{"city":"Freiburg","month":"Dec","label":"23 Dec","duesseldorf":76.9,"other":99.6},{"city":"Freiburg","month":"Dec","label":"24 Dec","duesseldorf":107.6,"other":92.8},{"city":"Freiburg","month":"Dec","label":"25 Dec","duesseldorf":127.7,"other":107.6},{"city":"Freiburg","month":"Dec","label":"26 Dec","duesseldorf":119.1,"other":126.5},{"city":"Freiburg","month":"Dec","label":"27 Dec","duesseldorf":108.2,"other":122.2},{"city":"Freiburg","month":"Dec","label":"28 Dec","duesseldorf":101.6,"other":124.7},{"city":"Freiburg","month":"Dec","label":"29 Dec","duesseldorf":109.5,"other":126.5},{"city":"Freiburg","month":"Dec","label":"30 Dec","duesseldorf":108.2,"other":125.3},{"city":"Freiburg","month":"Dec","label":"31 Dec","duesseldorf":108.2,"other":141},{"city":"Freiburg","month":"Jan","label":"1 Jan","duesseldorf":87.3,"other":124.1},{"city":"Freiburg","month":"Jan","label":"2 Jan","duesseldorf":100.3,"other":100.3},{"city":"Freiburg","month":"Jan","label":"3 Jan","duesseldorf":106.3,"other":122.9},{"city":"Freiburg","month":"Jan","label":"4 Jan","duesseldorf":107.6,"other":117.9},{"city":"Freiburg","month":"Jan","label":"5 Jan","duesseldorf":119.8,"other":138.8},{"city":"Freiburg","month":"Jan","label":"6 Jan","duesseldorf":116.6,"other":138.8},{"city":"Freiburg","month":"Jan","label":"7 Jan","duesseldorf":119.1,"other":128.9},{"city":"Freiburg","month":"Jan","label":"8 Jan","duesseldorf":96.2,"other":85.2},{"city":"Freiburg","month":"Jan","label":"9 Jan","duesseldorf":83.9,"other":61.1},{"city":"Freiburg","month":"Jan","label":"10 Jan","duesseldorf":121,"other":96.9},{"city":"Freiburg","month":"Jan","label":"11 Jan","duesseldorf":130.1,"other":114.7},{"city":"Freiburg","month":"Jan","label":"12 Jan","duesseldorf":85.9,"other":86.6},{"city":"Freiburg","month":"Jan","label":"13 Jan","duesseldorf":49.8,"other":47.3},{"city":"Freiburg","month":"Jan","label":"14 Jan","duesseldorf":52.5,"other":42.8},{"city":"Freiburg","month":"Jan","label":"15 Jan","duesseldorf":43.4,"other":46.6},{"city":"Freiburg","month":"Jan","label":"16 Jan","duesseldorf":43.4,"other":62.5},{"city":"Freiburg","month":"Jan","label":"17 Jan","duesseldorf":53.8,"other":83.2},{"city":"Freiburg","month":"Jan","label":"18 Jan","duesseldorf":91.4,"other":108.9},{"city":"Freiburg","month":"Jan","label":"19 Jan","duesseldorf":98.2,"other":108.9},{"city":"Freiburg","month":"Jan","label":"20 Jan","duesseldorf":93.5,"other":112.1},{"city":"Freiburg","month":"Jan","label":"21 Jan","duesseldorf":79,"other":117.2},{"city":"Freiburg","month":"Jan","label":"22 Jan","duesseldorf":89.4,"other":116.6},{"city":"Freiburg","month":"Jan","label":"23 Jan","duesseldorf":72.1,"other":110.8},{"city":"Freiburg","month":"Jan","label":"24 Jan","duesseldorf":85.2,"other":102.3},{"city":"Freiburg","month":"Jan","label":"25 Jan","duesseldorf":108.2,"other":101.6},{"city":"Freiburg","month":"Jan","label":"26 Jan","duesseldorf":109.5,"other":79},{"city":"Freiburg","month":"Jan","label":"27 Jan","duesseldorf":90.7,"other":99.6},{"city":"Freiburg","month":"Jan","label":"28 Jan","duesseldorf":87.3,"other":85.2},{"city":"Freiburg","month":"Jan","label":"29 Jan","duesseldorf":102.3,"other":84.5},{"city":"Freiburg","month":"Jan","label":"30 Jan","duesseldorf":92.8,"other":96.2},{"city":"Freiburg","month":"Jan","label":"31 Jan","duesseldorf":71.4,"other":79},{"city":"Freiburg","month":"Feb","label":"1 Feb","duesseldorf":73.5,"other":83.2},{"city":"Freiburg","month":"Feb","label":"2 Feb","duesseldorf":75.5,"other":74.2},{"city":"Freiburg","month":"Feb","label":"3 Feb","duesseldorf":94.2,"other":77.6},{"city":"Freiburg","month":"Feb","label":"4 Feb","duesseldorf":69.3,"other":110.2},{"city":"Freiburg","month":"Feb","label":"5 Feb","duesseldorf":79,"other":94.2},{"city":"Freiburg","month":"Feb","label":"6 Feb","duesseldorf":75.5,"other":66.6},{"city":"Freiburg","month":"Feb","label":"7 Feb","duesseldorf":53.1,"other":55.8},{"city":"Freiburg","month":"Feb","label":"8 Feb","duesseldorf":76.2,"other":101.6},{"city":"Freiburg","month":"Feb","label":"9 Feb","duesseldorf":81.8,"other":82.5},{"city":"Freiburg","month":"Feb","label":"10 Feb","duesseldorf":63.9,"other":57.8},{"city":"Freiburg","month":"Feb","label":"11 Feb","duesseldorf":44.7,"other":37.3},{"city":"Freiburg","month":"Feb","label":"12 Feb","duesseldorf":50.5,"other":44.7},{"city":"Freiburg","month":"Feb","label":"13 Feb","duesseldorf":77.6,"other":56.4},{"city":"Freiburg","month":"Feb","label":"14 Feb","duesseldorf":106.3,"other":82.5},{"city":"Freiburg","month":"Feb","label":"15 Feb","duesseldorf":112.1,"other":88.7},{"city":"Freiburg","month":"Feb","label":"16 Feb","duesseldorf":80.4,"other":65.9},{"city":"Freiburg","month":"Feb","label":"17 Feb","duesseldorf":81.8,"other":78.3},{"city":"Freiburg","month":"Feb","label":"18 Feb","duesseldorf":88.7,"other":102.9},{"city":"Freiburg","month":"Feb","label":"19 Feb","duesseldorf":91.4,"other":73.5},{"city":"Freiburg","month":"Feb","label":"20 Feb","duesseldorf":83.9,"other":77.6},{"city":"Freiburg","month":"Feb","label":"21 Feb","duesseldorf":46,"other":49.2},{"city":"Freiburg","month":"Feb","label":"22 Feb","duesseldorf":32.5,"other":36.1},{"city":"Freiburg","month":"Feb","label":"23 Feb","duesseldorf":43.4,"other":39.1},{"city":"Freiburg","month":"Feb","label":"24 Feb","duesseldorf":39.7,"other":34.3},{"city":"Freiburg","month":"Feb","label":"25 Feb","duesseldorf":27.9,"other":60.5},{"city":"Freiburg","month":"Feb","label":"26 Feb","duesseldorf":24.5,"other":37.9},{"city":"Freiburg","month":"Feb","label":"27 Feb","duesseldorf":20.7,"other":28.5},{"city":"Freiburg","month":"Feb","label":"28 Feb","duesseldorf":36.7,"other":36.1},{"city":"Freiburg","month":"Mar","label":"1 Mar","duesseldorf":50.5,"other":45.3},{"city":"Freiburg","month":"Mar","label":"2 Mar","duesseldorf":36.7,"other":57.8},{"city":"Freiburg","month":"Mar","label":"3 Mar","duesseldorf":34.9,"other":53.8},{"city":"Freiburg","month":"Mar","label":"4 Mar","duesseldorf":46,"other":51.1},{"city":"Freiburg","month":"Mar","label":"5 Mar","duesseldorf":33.1,"other":55.1},{"city":"Freiburg","month":"Mar","label":"6 Mar","duesseldorf":28.5,"other":49.8},{"city":"Freiburg","month":"Mar","label":"7 Mar","duesseldorf":40.3,"other":51.1},{"city":"Freiburg","month":"Mar","label":"8 Mar","duesseldorf":42.2,"other":43.4},{"city":"Freiburg","month":"Mar","label":"9 Mar","duesseldorf":32.5,"other":37.3},{"city":"Freiburg","month":"Mar","label":"10 Mar","duesseldorf":35.5,"other":34.3},{"city":"Freiburg","month":"Mar","label":"11 Mar","duesseldorf":46,"other":31.9},{"city":"Freiburg","month":"Mar","label":"12 Mar","duesseldorf":49.8,"other":47.9},{"city":"Freiburg","month":"Mar","label":"13 Mar","duesseldorf":54.4,"other":34.3},{"city":"Freiburg","month":"Mar","label":"14 Mar","duesseldorf":84.5,"other":71.4},{"city":"Freiburg","month":"Mar","label":"15 Mar","duesseldorf":68.6,"other":74.9},{"city":"Freiburg","month":"Mar","label":"16 Mar","duesseldorf":59.8,"other":65.2},{"city":"Freiburg","month":"Mar","label":"17 Mar","duesseldorf":46,"other":46.6},{"city":"Freiburg","month":"Mar","label":"18 Mar","duesseldorf":37.3,"other":40.3},{"city":"Freiburg","month":"Mar","label":"19 Mar","duesseldorf":49.2,"other":40.3},{"city":"Freiburg","month":"Mar","label":"20 Mar","duesseldorf":51.8,"other":58.4},{"city":"Freiburg","month":"Mar","label":"21 Mar","duesseldorf":51.1,"other":54.4},{"city":"Freiburg","month":"Mar","label":"22 Mar","duesseldorf":49.8,"other":49.2},{"city":"Freiburg","month":"Mar","label":"23 Mar","duesseldorf":47.9,"other":60.5},{"city":"Freiburg","month":"Mar","label":"24 Mar","duesseldorf":33.7,"other":46.6},{"city":"Freiburg","month":"Mar","label":"25 Mar","duesseldorf":52.5,"other":50.5},{"city":"Freiburg","month":"Mar","label":"26 Mar","duesseldorf":83.2,"other":90.7},{"city":"Freiburg","month":"Mar","label":"27 Mar","duesseldorf":76.2,"other":96.2},{"city":"Freiburg","month":"Mar","label":"28 Mar","duesseldorf":66.6,"other":98.9},{"city":"Freiburg","month":"Mar","label":"29 Mar","duesseldorf":61.8,"other":76.2},{"city":"Freiburg","month":"Mar","label":"30 Mar","duesseldorf":61.8,"other":73.5},{"city":"Freiburg","month":"Mar","label":"31 Mar","duesseldorf":72.1,"other":79},{"city":"Freiburg","month":"Apr","label":"1 Apr","duesseldorf":65.2,"other":74.2},{"city":"Freiburg","month":"Apr","label":"2 Apr","duesseldorf":61.1,"other":69.3},{"city":"Freiburg","month":"Apr","label":"3 Apr","duesseldorf":49.2,"other":47.9},{"city":"Freiburg","month":"Apr","label":"4 Apr","duesseldorf":25.6,"other":26.2},{"city":"Freiburg","month":"Apr","label":"5 Apr","duesseldorf":29.6,"other":13},{"city":"Freiburg","month":"Apr","label":"6 Apr","duesseldorf":52.5,"other":29},{"city":"Freiburg","month":"Apr","label":"7 Apr","duesseldorf":40.3,"other":30.2},{"city":"Freiburg","month":"Apr","label":"8 Apr","duesseldorf":29.6,"other":24},{"city":"Freiburg","month":"Apr","label":"9 Apr","duesseldorf":13.1,"other":22.9},{"city":"Freiburg","month":"Apr","label":"10 Apr","duesseldorf":43.4,"other":35.5},{"city":"Freiburg","month":"Apr","label":"11 Apr","duesseldorf":30.8,"other":20.2},{"city":"Freiburg","month":"Apr","label":"12 Apr","duesseldorf":49.8,"other":56.4},{"city":"Freiburg","month":"Apr","label":"13 Apr","duesseldorf":57.1,"other":59.8},{"city":"Freiburg","month":"Apr","label":"14 Apr","duesseldorf":46.6,"other":46},{"city":"Freiburg","month":"Apr","label":"15 Apr","duesseldorf":25.1,"other":47.9},{"city":"Freiburg","month":"Apr","label":"16 Apr","duesseldorf":17.6,"other":27.3},{"city":"Freiburg","month":"Apr","label":"17 Apr","duesseldorf":20.7,"other":20.7},{"city":"Freiburg","month":"Apr","label":"18 Apr","duesseldorf":22.9,"other":14.5},{"city":"Freiburg","month":"Apr","label":"19 Apr","duesseldorf":38.5,"other":27.3},{"city":"Freiburg","month":"Apr","label":"20 Apr","duesseldorf":53.8,"other":42.2},{"city":"Freiburg","month":"Apr","label":"21 Apr","duesseldorf":42.8,"other":42.8},{"city":"Freiburg","month":"Apr","label":"22 Apr","duesseldorf":36.1,"other":29},{"city":"Freiburg","month":"Apr","label":"23 Apr","duesseldorf":37.3,"other":31.9},{"city":"Freiburg","month":"Apr","label":"24 Apr","duesseldorf":42.8,"other":30.8},{"city":"Freiburg","month":"Apr","label":"25 Apr","duesseldorf":45.3,"other":25.6},{"city":"Freiburg","month":"Apr","label":"26 Apr","duesseldorf":41.6,"other":26.2},{"city":"Freiburg","month":"Apr","label":"27 Apr","duesseldorf":32.5,"other":22.4},{"city":"Freiburg","month":"Apr","label":"28 Apr","duesseldorf":20.2,"other":17.1},{"city":"Freiburg","month":"Apr","label":"29 Apr","duesseldorf":24,"other":12.1},{"city":"Freiburg","month":"Apr","label":"30 Apr","duesseldorf":21.8,"other":12.9},{"city":"Hamburg","month":"Oct","label":"1 Oct","duesseldorf":41,"other":51.1},{"city":"Hamburg","month":"Oct","label":"2 Oct","duesseldorf":32.5,"other":49.8},{"city":"Hamburg","month":"Oct","label":"3 Oct","duesseldorf":31.9,"other":39.7},{"city":"Hamburg","month":"Oct","label":"4 Oct","duesseldorf":27.3,"other":41.6},{"city":"Hamburg","month":"Oct","label":"5 Oct","duesseldorf":32.5,"other":34.3},{"city":"Hamburg","month":"Oct","label":"6 Oct","duesseldorf":30.2,"other":24},{"city":"Hamburg","month":"Oct","label":"7 Oct","duesseldorf":18.1,"other":17.6},{"city":"Hamburg","month":"Oct","label":"8 Oct","duesseldorf":17.1,"other":20.7},{"city":"Hamburg","month":"Oct","label":"9 Oct","duesseldorf":21.3,"other":25.6},{"city":"Hamburg","month":"Oct","label":"10 Oct","duesseldorf":15,"other":20.7},{"city":"Hamburg","month":"Oct","label":"11 Oct","duesseldorf":18.6,"other":19.1},{"city":"Hamburg","month":"Oct","label":"12 Oct","duesseldorf":19.1,"other":22.4},{"city":"Hamburg","month":"Oct","label":"13 Oct","duesseldorf":20.2,"other":34.9},{"city":"Hamburg","month":"Oct","label":"14 Oct","duesseldorf":29.6,"other":29.6},{"city":"Hamburg","month":"Oct","label":"15 Oct","duesseldorf":27.9,"other":31.9},{"city":"Hamburg","month":"Oct","label":"16 Oct","duesseldorf":31.3,"other":29},{"city":"Hamburg","month":"Oct","label":"17 Oct","duesseldorf":29.6,"other":44.1},{"city":"Hamburg","month":"Oct","label":"18 Oct","duesseldorf":43.4,"other":75.5},{"city":"Hamburg","month":"Oct","label":"19 Oct","duesseldorf":38.5,"other":68.6},{"city":"Hamburg","month":"Oct","label":"20 Oct","duesseldorf":16,"other":56.4},{"city":"Hamburg","month":"Oct","label":"21 Oct","duesseldorf":22.4,"other":27.9},{"city":"Hamburg","month":"Oct","label":"22 Oct","duesseldorf":25.6,"other":33.7},{"city":"Hamburg","month":"Oct","label":"23 Oct","duesseldorf":26.8,"other":30.2},{"city":"Hamburg","month":"Oct","label":"24 Oct","duesseldorf":46.6,"other":41.6},{"city":"Hamburg","month":"Oct","label":"25 Oct","duesseldorf":46.6,"other":48.5},{"city":"Hamburg","month":"Oct","label":"26 Oct","duesseldorf":57.1,"other":58.4},{"city":"Hamburg","month":"Oct","label":"27 Oct","duesseldorf":48.5,"other":55.1},{"city":"Hamburg","month":"Oct","label":"28 Oct","duesseldorf":39.7,"other":51.1},{"city":"Hamburg","month":"Oct","label":"29 Oct","duesseldorf":29,"other":40.3},{"city":"Hamburg","month":"Oct","label":"30 Oct","duesseldorf":40.3,"other":41},{"city":"Hamburg","month":"Oct","label":"31 Oct","duesseldorf":38.5,"other":57.8},{"city":"Hamburg","month":"Nov","label":"1 Nov","duesseldorf":29,"other":42.2},{"city":"Hamburg","month":"Nov","label":"2 Nov","duesseldorf":37.3,"other":43.4},{"city":"Hamburg","month":"Nov","label":"3 Nov","duesseldorf":42.8,"other":43.4},{"city":"Hamburg","month":"Nov","label":"4 Nov","duesseldorf":20.7,"other":26.2},{"city":"Hamburg","month":"Nov","label":"5 Nov","duesseldorf":26.8,"other":27.3},{"city":"Hamburg","month":"Nov","label":"6 Nov","duesseldorf":32.5,"other":49.2},{"city":"Hamburg","month":"Nov","label":"7 Nov","duesseldorf":40.3,"other":71.4},{"city":"Hamburg","month":"Nov","label":"8 Nov","duesseldorf":53.1,"other":58.4},{"city":"Hamburg","month":"Nov","label":"9 Nov","duesseldorf":40.3,"other":57.8},{"city":"Hamburg","month":"Nov","label":"10 Nov","duesseldorf":58.4,"other":57.8},{"city":"Hamburg","month":"Nov","label":"11 Nov","duesseldorf":39.7,"other":53.1},{"city":"Hamburg","month":"Nov","label":"12 Nov","duesseldorf":30.8,"other":46.6},{"city":"Hamburg","month":"Nov","label":"13 Nov","duesseldorf":17.6,"other":27.3},{"city":"Hamburg","month":"Nov","label":"14 Nov","duesseldorf":13.7,"other":56.4},{"city":"Hamburg","month":"Nov","label":"15 Nov","duesseldorf":27.9,"other":70},{"city":"Hamburg","month":"Nov","label":"16 Nov","duesseldorf":54.4,"other":79},{"city":"Hamburg","month":"Nov","label":"17 Nov","duesseldorf":85.9,"other":81.8},{"city":"Hamburg","month":"Nov","label":"18 Nov","duesseldorf":85.2,"other":81.8},{"city":"Hamburg","month":"Nov","label":"19 Nov","duesseldorf":78.3,"other":86.6},{"city":"Hamburg","month":"Nov","label":"20 Nov","duesseldorf":94.2,"other":104.9},{"city":"Hamburg","month":"Nov","label":"21 Nov","duesseldorf":103.6,"other":120.4},{"city":"Hamburg","month":"Nov","label":"22 Nov","duesseldorf":105.6,"other":108.9},{"city":"Hamburg","month":"Nov","label":"23 Nov","duesseldorf":101.6,"other":115.3},{"city":"Hamburg","month":"Nov","label":"24 Nov","duesseldorf":73.5,"other":90.7},{"city":"Hamburg","month":"Nov","label":"25 Nov","duesseldorf":72.1,"other":88.7},{"city":"Hamburg","month":"Nov","label":"26 Nov","duesseldorf":84.5,"other":96.9},{"city":"Hamburg","month":"Nov","label":"27 Nov","duesseldorf":86.6,"other":89.4},{"city":"Hamburg","month":"Nov","label":"28 Nov","duesseldorf":60.5,"other":57.8},{"city":"Hamburg","month":"Nov","label":"29 Nov","duesseldorf":49.2,"other":54.4},{"city":"Hamburg","month":"Nov","label":"30 Nov","duesseldorf":61.1,"other":59.8},{"city":"Hamburg","month":"Dec","label":"1 Dec","duesseldorf":74.9,"other":77.6},{"city":"Hamburg","month":"Dec","label":"2 Dec","duesseldorf":70,"other":74.9},{"city":"Hamburg","month":"Dec","label":"3 Dec","duesseldorf":59.8,"other":68.6},{"city":"Hamburg","month":"Dec","label":"4 Dec","duesseldorf":73.5,"other":79.7},{"city":"Hamburg","month":"Dec","label":"5 Dec","duesseldorf":73.5,"other":91.4},{"city":"Hamburg","month":"Dec","label":"6 Dec","duesseldorf":57.8,"other":82.5},{"city":"Hamburg","month":"Dec","label":"7 Dec","duesseldorf":39.1,"other":51.8},{"city":"Hamburg","month":"Dec","label":"8 Dec","duesseldorf":27.3,"other":36.1},{"city":"Hamburg","month":"Dec","label":"9 Dec","duesseldorf":28.5,"other":31.3},{"city":"Hamburg","month":"Dec","label":"10 Dec","duesseldorf":32.5,"other":32.5},{"city":"Hamburg","month":"Dec","label":"11 Dec","duesseldorf":51.8,"other":50.5},{"city":"Hamburg","month":"Dec","label":"12 Dec","duesseldorf":51.8,"other":76.2},{"city":"Hamburg","month":"Dec","label":"13 Dec","duesseldorf":57.8,"other":59.8},{"city":"Hamburg","month":"Dec","label":"14 Dec","duesseldorf":68,"other":70},{"city":"Hamburg","month":"Dec","label":"15 Dec","duesseldorf":63.9,"other":69.3},{"city":"Hamburg","month":"Dec","label":"16 Dec","duesseldorf":53.1,"other":73.5},{"city":"Hamburg","month":"Dec","label":"17 Dec","duesseldorf":59.8,"other":65.2},{"city":"Hamburg","month":"Dec","label":"18 Dec","duesseldorf":43.4,"other":55.8},{"city":"Hamburg","month":"Dec","label":"19 Dec","duesseldorf":39.7,"other":44.1},{"city":"Hamburg","month":"Dec","label":"20 Dec","duesseldorf":72.8,"other":83.9},{"city":"Hamburg","month":"Dec","label":"21 Dec","duesseldorf":49.2,"other":72.8},{"city":"Hamburg","month":"Dec","label":"22 Dec","duesseldorf":85.9,"other":87.3},{"city":"Hamburg","month":"Dec","label":"23 Dec","duesseldorf":76.9,"other":99.6},{"city":"Hamburg","month":"Dec","label":"24 Dec","duesseldorf":107.6,"other":108.2},{"city":"Hamburg","month":"Dec","label":"25 Dec","duesseldorf":127.7,"other":134.2},{"city":"Hamburg","month":"Dec","label":"26 Dec","duesseldorf":119.1,"other":127.1},{"city":"Hamburg","month":"Dec","label":"27 Dec","duesseldorf":108.2,"other":92.1},{"city":"Hamburg","month":"Dec","label":"28 Dec","duesseldorf":101.6,"other":116.6},{"city":"Hamburg","month":"Dec","label":"29 Dec","duesseldorf":109.5,"other":81.1},{"city":"Hamburg","month":"Dec","label":"30 Dec","duesseldorf":108.2,"other":116},{"city":"Hamburg","month":"Dec","label":"31 Dec","duesseldorf":108.2,"other":84.5},{"city":"Hamburg","month":"Jan","label":"1 Jan","duesseldorf":87.3,"other":90.1},{"city":"Hamburg","month":"Jan","label":"2 Jan","duesseldorf":100.3,"other":106.9},{"city":"Hamburg","month":"Jan","label":"3 Jan","duesseldorf":106.3,"other":118.5},{"city":"Hamburg","month":"Jan","label":"4 Jan","duesseldorf":107.6,"other":122.9},{"city":"Hamburg","month":"Jan","label":"5 Jan","duesseldorf":119.8,"other":113.4},{"city":"Hamburg","month":"Jan","label":"6 Jan","duesseldorf":116.6,"other":116},{"city":"Hamburg","month":"Jan","label":"7 Jan","duesseldorf":119.1,"other":121},{"city":"Hamburg","month":"Jan","label":"8 Jan","duesseldorf":96.2,"other":119.1},{"city":"Hamburg","month":"Jan","label":"9 Jan","duesseldorf":83.9,"other":124.7},{"city":"Hamburg","month":"Jan","label":"10 Jan","duesseldorf":121,"other":130.1},{"city":"Hamburg","month":"Jan","label":"11 Jan","duesseldorf":130.1,"other":162.6},{"city":"Hamburg","month":"Jan","label":"12 Jan","duesseldorf":85.9,"other":124.7},{"city":"Hamburg","month":"Jan","label":"13 Jan","duesseldorf":49.8,"other":89.4},{"city":"Hamburg","month":"Jan","label":"14 Jan","duesseldorf":52.5,"other":83.2},{"city":"Hamburg","month":"Jan","label":"15 Jan","duesseldorf":43.4,"other":81.1},{"city":"Hamburg","month":"Jan","label":"16 Jan","duesseldorf":43.4,"other":59.1},{"city":"Hamburg","month":"Jan","label":"17 Jan","duesseldorf":53.8,"other":87.3},{"city":"Hamburg","month":"Jan","label":"18 Jan","duesseldorf":91.4,"other":88},{"city":"Hamburg","month":"Jan","label":"19 Jan","duesseldorf":98.2,"other":109.5},{"city":"Hamburg","month":"Jan","label":"20 Jan","duesseldorf":93.5,"other":114.7},{"city":"Hamburg","month":"Jan","label":"21 Jan","duesseldorf":79,"other":125.3},{"city":"Hamburg","month":"Jan","label":"22 Jan","duesseldorf":89.4,"other":125.9},{"city":"Hamburg","month":"Jan","label":"23 Jan","duesseldorf":72.1,"other":134.8},{"city":"Hamburg","month":"Jan","label":"24 Jan","duesseldorf":85.2,"other":127.7},{"city":"Hamburg","month":"Jan","label":"25 Jan","duesseldorf":108.2,"other":120.4},{"city":"Hamburg","month":"Jan","label":"26 Jan","duesseldorf":109.5,"other":106.3},{"city":"Hamburg","month":"Jan","label":"27 Jan","duesseldorf":90.7,"other":108.2},{"city":"Hamburg","month":"Jan","label":"28 Jan","duesseldorf":87.3,"other":106.9},{"city":"Hamburg","month":"Jan","label":"29 Jan","duesseldorf":102.3,"other":113.4},{"city":"Hamburg","month":"Jan","label":"30 Jan","duesseldorf":92.8,"other":121.6},{"city":"Hamburg","month":"Jan","label":"31 Jan","duesseldorf":71.4,"other":125.3},{"city":"Hamburg","month":"Feb","label":"1 Feb","duesseldorf":73.5,"other":144.4},{"city":"Hamburg","month":"Feb","label":"2 Feb","duesseldorf":75.5,"other":150.8},{"city":"Hamburg","month":"Feb","label":"3 Feb","duesseldorf":94.2,"other":142.7},{"city":"Hamburg","month":"Feb","label":"4 Feb","duesseldorf":69.3,"other":139.9},{"city":"Hamburg","month":"Feb","label":"5 Feb","duesseldorf":79,"other":128.9},{"city":"Hamburg","month":"Feb","label":"6 Feb","duesseldorf":75.5,"other":111.5},{"city":"Hamburg","month":"Feb","label":"7 Feb","duesseldorf":53.1,"other":102.3},{"city":"Hamburg","month":"Feb","label":"8 Feb","duesseldorf":76.2,"other":105.6},{"city":"Hamburg","month":"Feb","label":"9 Feb","duesseldorf":81.8,"other":106.9},{"city":"Hamburg","month":"Feb","label":"10 Feb","duesseldorf":63.9,"other":96.9},{"city":"Hamburg","month":"Feb","label":"11 Feb","duesseldorf":44.7,"other":98.2},{"city":"Hamburg","month":"Feb","label":"12 Feb","duesseldorf":50.5,"other":100.9},{"city":"Hamburg","month":"Feb","label":"13 Feb","duesseldorf":77.6,"other":114.1},{"city":"Hamburg","month":"Feb","label":"14 Feb","duesseldorf":106.3,"other":125.3},{"city":"Hamburg","month":"Feb","label":"15 Feb","duesseldorf":112.1,"other":138.8},{"city":"Hamburg","month":"Feb","label":"16 Feb","duesseldorf":80.4,"other":129.5},{"city":"Hamburg","month":"Feb","label":"17 Feb","duesseldorf":81.8,"other":121},{"city":"Hamburg","month":"Feb","label":"18 Feb","duesseldorf":88.7,"other":124.7},{"city":"Hamburg","month":"Feb","label":"19 Feb","duesseldorf":91.4,"other":134.2},{"city":"Hamburg","month":"Feb","label":"20 Feb","duesseldorf":83.9,"other":119.8},{"city":"Hamburg","month":"Feb","label":"21 Feb","duesseldorf":46,"other":69.3},{"city":"Hamburg","month":"Feb","label":"22 Feb","duesseldorf":32.5,"other":51.1},{"city":"Hamburg","month":"Feb","label":"23 Feb","duesseldorf":43.4,"other":58.4},{"city":"Hamburg","month":"Feb","label":"24 Feb","duesseldorf":39.7,"other":66.6},{"city":"Hamburg","month":"Feb","label":"25 Feb","duesseldorf":27.9,"other":46.6},{"city":"Hamburg","month":"Feb","label":"26 Feb","duesseldorf":24.5,"other":37.9},{"city":"Hamburg","month":"Feb","label":"27 Feb","duesseldorf":20.7,"other":27.3},{"city":"Hamburg","month":"Feb","label":"28 Feb","duesseldorf":36.7,"other":31.9},{"city":"Hamburg","month":"Mar","label":"1 Mar","duesseldorf":50.5,"other":57.8},{"city":"Hamburg","month":"Mar","label":"2 Mar","duesseldorf":36.7,"other":39.7},{"city":"Hamburg","month":"Mar","label":"3 Mar","duesseldorf":34.9,"other":52.5},{"city":"Hamburg","month":"Mar","label":"4 Mar","duesseldorf":46,"other":77.6},{"city":"Hamburg","month":"Mar","label":"5 Mar","duesseldorf":33.1,"other":57.1},{"city":"Hamburg","month":"Mar","label":"6 Mar","duesseldorf":28.5,"other":47.9},{"city":"Hamburg","month":"Mar","label":"7 Mar","duesseldorf":40.3,"other":44.7},{"city":"Hamburg","month":"Mar","label":"8 Mar","duesseldorf":42.2,"other":37.9},{"city":"Hamburg","month":"Mar","label":"9 Mar","duesseldorf":32.5,"other":47.3},{"city":"Hamburg","month":"Mar","label":"10 Mar","duesseldorf":35.5,"other":44.7},{"city":"Hamburg","month":"Mar","label":"11 Mar","duesseldorf":46,"other":42.8},{"city":"Hamburg","month":"Mar","label":"12 Mar","duesseldorf":49.8,"other":53.8},{"city":"Hamburg","month":"Mar","label":"13 Mar","duesseldorf":54.4,"other":55.1},{"city":"Hamburg","month":"Mar","label":"14 Mar","duesseldorf":84.5,"other":79},{"city":"Hamburg","month":"Mar","label":"15 Mar","duesseldorf":68.6,"other":73.5},{"city":"Hamburg","month":"Mar","label":"16 Mar","duesseldorf":59.8,"other":74.9},{"city":"Hamburg","month":"Mar","label":"17 Mar","duesseldorf":46,"other":70.7},{"city":"Hamburg","month":"Mar","label":"18 Mar","duesseldorf":37.3,"other":55.1},{"city":"Hamburg","month":"Mar","label":"19 Mar","duesseldorf":49.2,"other":48.5},{"city":"Hamburg","month":"Mar","label":"20 Mar","duesseldorf":51.8,"other":63.2},{"city":"Hamburg","month":"Mar","label":"21 Mar","duesseldorf":51.1,"other":74.2},{"city":"Hamburg","month":"Mar","label":"22 Mar","duesseldorf":49.8,"other":62.5},{"city":"Hamburg","month":"Mar","label":"23 Mar","duesseldorf":47.9,"other":57.8},{"city":"Hamburg","month":"Mar","label":"24 Mar","duesseldorf":33.7,"other":42.2},{"city":"Hamburg","month":"Mar","label":"25 Mar","duesseldorf":52.5,"other":54.4},{"city":"Hamburg","month":"Mar","label":"26 Mar","duesseldorf":83.2,"other":83.9},{"city":"Hamburg","month":"Mar","label":"27 Mar","duesseldorf":76.2,"other":74.9},{"city":"Hamburg","month":"Mar","label":"28 Mar","duesseldorf":66.6,"other":71.4},{"city":"Hamburg","month":"Mar","label":"29 Mar","duesseldorf":61.8,"other":66.6},{"city":"Hamburg","month":"Mar","label":"30 Mar","duesseldorf":61.8,"other":69.3},{"city":"Hamburg","month":"Mar","label":"31 Mar","duesseldorf":72.1,"other":63.9},{"city":"Hamburg","month":"Apr","label":"1 Apr","duesseldorf":65.2,"other":63.2},{"city":"Hamburg","month":"Apr","label":"2 Apr","duesseldorf":61.1,"other":61.8},{"city":"Hamburg","month":"Apr","label":"3 Apr","duesseldorf":49.2,"other":64.5},{"city":"Hamburg","month":"Apr","label":"4 Apr","duesseldorf":25.6,"other":41.6},{"city":"Hamburg","month":"Apr","label":"5 Apr","duesseldorf":29.6,"other":36.1},{"city":"Hamburg","month":"Apr","label":"6 Apr","duesseldorf":52.5,"other":59.8},{"city":"Hamburg","month":"Apr","label":"7 Apr","duesseldorf":40.3,"other":58.4},{"city":"Hamburg","month":"Apr","label":"8 Apr","duesseldorf":29.6,"other":59.8},{"city":"Hamburg","month":"Apr","label":"9 Apr","duesseldorf":13.1,"other":49.2},{"city":"Hamburg","month":"Apr","label":"10 Apr","duesseldorf":43.4,"other":61.8},{"city":"Hamburg","month":"Apr","label":"11 Apr","duesseldorf":30.8,"other":46.6},{"city":"Hamburg","month":"Apr","label":"12 Apr","duesseldorf":49.8,"other":41},{"city":"Hamburg","month":"Apr","label":"13 Apr","duesseldorf":57.1,"other":56.4},{"city":"Hamburg","month":"Apr","label":"14 Apr","duesseldorf":46.6,"other":47.3},{"city":"Hamburg","month":"Apr","label":"15 Apr","duesseldorf":25.1,"other":35.5},{"city":"Hamburg","month":"Apr","label":"16 Apr","duesseldorf":17.6,"other":23.4},{"city":"Hamburg","month":"Apr","label":"17 Apr","duesseldorf":20.7,"other":26.8},{"city":"Hamburg","month":"Apr","label":"18 Apr","duesseldorf":22.9,"other":21.8},{"city":"Hamburg","month":"Apr","label":"19 Apr","duesseldorf":38.5,"other":47.9},{"city":"Hamburg","month":"Apr","label":"20 Apr","duesseldorf":53.8,"other":63.2},{"city":"Hamburg","month":"Apr","label":"21 Apr","duesseldorf":42.8,"other":61.1},{"city":"Hamburg","month":"Apr","label":"22 Apr","duesseldorf":36.1,"other":51.1},{"city":"Hamburg","month":"Apr","label":"23 Apr","duesseldorf":37.3,"other":51.1},{"city":"Hamburg","month":"Apr","label":"24 Apr","duesseldorf":42.8,"other":52.5},{"city":"Hamburg","month":"Apr","label":"25 Apr","duesseldorf":45.3,"other":55.1},{"city":"Hamburg","month":"Apr","label":"26 Apr","duesseldorf":41.6,"other":54.4},{"city":"Hamburg","month":"Apr","label":"27 Apr","duesseldorf":32.5,"other":59.1},{"city":"Hamburg","month":"Apr","label":"28 Apr","duesseldorf":20.2,"other":44.1},{"city":"Hamburg","month":"Apr","label":"29 Apr","duesseldorf":24,"other":43.4},{"city":"Hamburg","month":"Apr","label":"30 Apr","duesseldorf":21.8,"other":29}];
+const cities = ["Chemnitz", "Freiburg", "Hamburg"];
+const months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
+const hi  = Math.max(...data.flatMap(d => [d.duesseldorf, d.other]));
+const lim = [0, Math.ceil(hi / 20) * 20];
+
+const panels = cities.map(city => ({
+  city,
+  el: document.querySelector(`#cities-chart .city-plot[data-city="${city}"]`),
+  rows: data.filter(d => d.city === city)
+}));
+
+// uniform margins on every plot (y-axis reserved left, month labels right) so
+// the cells stay identical squares whether or not a given plot draws them
+const mL = 44, mR = 34, mT = 8, mB = 34, fyPad = 0.06;
+
+function plotCity(panel, width, showY, showMonths) {
+  // x and y share the kWh scale, so each month cell must be exactly square (no
+  // stretch). The 7 facet rows each lose fyPad of their vertical step to
+  // padding, so divide it back out so the drawn cell height equals its width
+  // at any column count.
+  const cellW = width - mL - mR;
+  const height = Math.round((7 * cellW) / (1 - fyPad) + mT + mB);
+  const marks = [
+    Plot.line(panel.rows, {
+      fy: "month",
+      x: "duesseldorf", y: "duesseldorf",
+      stroke: "#333", strokeWidth: 0.6, sort: "duesseldorf"
+    }),
+    Plot.dot(panel.rows, {
+      fy: "month",
+      x: "duesseldorf", y: "other",
+      fill: "#0CC792", r: 1.8, fillOpacity: 0.85,
+      tip: true,
+      title: d => d.city + ": " + d.other.toFixed(1) + " kWh\n" +
+                  "Düsseldorf: " + d.duesseldorf.toFixed(1) + " kWh\n" + d.label
+    })
+  ];
+  // month labels on the right, drawn only on the rightmost plot of each row
+  if (showMonths) {
+    marks.push(Plot.axisFy({ anchor: "right", label: null, tickSize: 0 }));
+  }
+  return Plot.plot({
+    width,
+    height,
+    marginLeft: mL,
+    marginRight: mR,
+    marginTop: mT,
+    marginBottom: mB,
+    fy: { domain: months, axis: null, padding: fyPad },
+    // x-axis ticks on every plot, but the title only on the rightmost of each row
+    x: { domain: lim, label: showMonths ? "Düsseldorf (kWh/day)" : null, ticks: 3, grid: true },
+    // y-axis (ticks + title) drawn only on the leftmost plot of each row
+    y: showY
+      ? { domain: lim, label: "Comparison city (kWh/day)", ticks: 3, grid: true }
+      : { domain: lim, axis: null, grid: true },
+    style: {
+      fontSize: "11px",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      background: "transparent"
+    },
+    marks
+  });
+}
+
+function render() {
+  // label each visual row once: the leftmost plot gets the y-axis, the rightmost
+  // gets the month labels -- recomputed on every (re)render so it follows the
+  // 3- / 2- / 1-up reflow.
+  const rects = panels.map(p => p.el.getBoundingClientRect());
+  const minLeft = Math.min(...rects.map(r => r.left));
+  panels.forEach((panel, i) => {
+    const width = panel.el.clientWidth;
+    if (!width) return;
+    const r = rects[i];
+    const firstInRow = Math.abs(r.left - minLeft) < 1;
+    const lastInRow = !rects.some(
+      (o, j) => j !== i && Math.abs(o.top - r.top) < 1 && o.left > r.left + 1
+    );
+    const chart = plotCity(panel, width, firstInRow, lastInRow);
+    chart.querySelectorAll(`[aria-label="fy-axis tick label"] text`)
+      .forEach(t => { t.style.fontWeight = "700"; });
+    panel.el.replaceChildren(chart);
+  });
+}
+
+render();
+window.addEventListener("resize", render);
+</script>
 </div>
 </div>
 

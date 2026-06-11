@@ -66,7 +66,10 @@ b_W\right)}\_{\text{linear part}} \\
 
 Higher h(ϑ) means more gas consumption on that day
 
-Toggle between Sigmoid and SigLinDe functions
+Toggle between Sigmoid and SigLinDe functions for profile HEF HMF HKO
+GKO GHA GMK GBD GBH GWA GGA GBA GGB GPD GMF GHD
+
+Single-family home
 
 The SigLinDe approach was adopted by BDEW and has since been the binding
 standard.[^6]
@@ -121,19 +124,19 @@ slp_gas_siglinde(
 #> [1] 1
 ```
 
-The result above is **exactly 1** — and that is no coincidence. The
-SigLinDe coefficients of every profile are calibrated so that the
-profile function equals 1 at the reference temperature of **8 °C**. At 8
-°C the profile term drops out of \\Q(D) = KW \times h(\vartheta_D)
-\times F\_{WT,D}\\, so the customer value \\KW\\ is simply the daily
-consumption on an 8 °C day — which is exactly how it is defined.
+The result above is exactly 1 — which is no coincidence. The SigLinDe
+coefficients of every profile are calibrated so that the profile
+function equals 1 at the reference temperature of 8°C. At 8°C the
+profile term drops out of \\Q(D) = KW \times h(\vartheta_D) \times
+F\_{WT,D}\\, so the customer value \\KW\\ is simply the daily
+consumption on an 8°C day — which is exactly how it is defined.
 
 `HKO` is the one exception, and precisely because of its missing linear
-part. The SigLinDe profiles owe that exact-1 value at 8 °C to the linear
+part. The SigLinDe profiles owe that exact-1 value at 8°C to the linear
 term, which is fitted (together with the sigmoid) to pin
 \\h(8\\\text{°C}) = 1\\. `HKO` has no linear part, so its bare sigmoid
-is not pinned to the reference and reaches about **1.06** at 8 °C
-instead — visible in the BDEW profile sheet, where the `HKO` row lists
+is not pinned to the reference and reaches about **1.06** at 8°C instead
+— visible in the BDEW profile sheet, where the `HKO` row lists
 \\h(8\\\text{°C}) = 1.05612\\.
 
 The temperature \\\vartheta\\ fed to this function is the daily
@@ -188,7 +191,7 @@ allocation_temp <- \(temps) {
 
 The customer value accounts for a customer’s individual consumption
 behaviour. It is a scaling factor in kWh/day — specifically, the daily
-gas consumption at the reference temperature of 8 °C, the point at which
+gas consumption at the reference temperature of 8°C, the point at which
 \\h(\vartheta) = 1\\ for every profile. We can rearrange the gas
 consumption equation above and write \\KW\\ as:
 
@@ -428,14 +431,16 @@ The gap is widest on the cold January and February days at the top-right
 of each panel, and narrows in the mild shoulder months of October and
 April where the clouds approach the line.
 
-![Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
-rows are months October to April. Each point is a day; the x-axis is
-daily gas consumption in Düsseldorf, the y-axis in the comparison city,
-with a 45-degree reference line. All three cities' point clouds sit
-above the line that winter, furthest for Chemnitz (about 35 percent
-more), then Hamburg (about 25 percent), with Freiburg closest to the
-line (about 11
-percent).](slp-gas_files/figure-html/gas_cities_chart-1.png)
+SLP Gas – single family home, three climates vs Düsseldorf
+
+Each point is one heating-season day. Points above the 45° line used
+more gas than in Düsseldorf.
+
+Chemnitz
+
+Freiburg
+
+Hamburg
 
 [^1]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von
     Standardlastprofilen Gas*. Berlin. Available at
