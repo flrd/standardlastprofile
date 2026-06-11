@@ -1,9 +1,12 @@
-pandoc: 3.1.11
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  standardlastprofile: standardlastprofile.html
-last_built: 2026-03-16T08:33Z
+  articles/get-started: get-started.html
+  articles/slp-electricity: slp-electricity.html
+  articles/slp-gas-parameters: slp-gas-parameters.html
+  articles/slp-gas: slp-gas.html
+last_built: 2026-06-11T11:14Z
 urls:
   reference: https://flrd.github.io/standardlastprofile/reference
   article: https://flrd.github.io/standardlastprofile/articles

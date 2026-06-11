@@ -1,8 +1,10 @@
 # Retrieve information on standard load profiles
 
-Information and examples on standard load profiles from the German
-Association of Energy and Water Industries (BDEW Bundesverband der
-Energie- und Wasserwirtschaft e.V.)
+Returns descriptions for electricity and gas standard load profiles
+defined by BDEW. Accepts both electricity profile IDs (`H0`, `G0`–`G6`,
+`L0`–`L2`, `H25`, `G25`, `L25`, `P25`, `S25`) and gas profile IDs
+(`HEF`, `HMF`, `HKO`, `GKO`, `GHA`, `GMK`, `GBD`, `GBH`, `GWA`, `GGA`,
+`GBA`, `GGB`, `GPD`, `GMF`, `GHD`).
 
 ## Usage
 
@@ -14,64 +16,92 @@ slp_info(profile_id, language = c("EN", "DE"))
 
 <https://www.bdew.de/energie/standardlastprofile-strom/>
 
-<https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
-
-<https://www.bdew.de/media/documents/Zuordnung_der_VDEW-Lastprofile_zum_Kundengruppenschluessel.pdf>
+<https://www.bdew.de/energie/standardlastprofile-gas/>
 
 ## Arguments
 
 - profile_id:
 
-  load profile identifier, required
+  character vector of profile identifiers. Electricity and gas IDs can
+  be mixed freely.
 
 - language:
 
-  one of `"EN"` (default) or `"DE"`
+  one of `"EN"` (default) or `"DE"`.
 
 ## Value
 
-A named list with one element per `profile_id`. Each element is itself a
-list with three character components: `profile` (the identifier),
-`description` (a short label), and `details` (a longer explanation).
+A named list with one element per `profile_id`. Each element is a list
+with character components `profile` (the identifier), `description` (a
+short label), and — for electricity profiles only — `details` (a longer
+explanation).
 
 ## Examples
 
 ``` r
-slp_info("G5", language = "DE")
-#> $G5
-#> $G5$profile
-#> [1] "G5"
+# Electricity profile
+slp_info("H0")
+#> $H0
+#> $H0$profile
+#> [1] "H0"
 #> 
-#> $G5$description
-#> [1] "Bäckerei mit Backstube"
+#> $H0$description
+#> [1] "household"
 #> 
-#> $G5$details
-#> [1] "Bäckereien mit Backstube haben den Schwerpunkt ihres Verbrauchs an den Werktagen traditionell ab ca. 3 Uhr früh und in der Nacht zum Samstag ab etwa Mitternacht. Der Tagverbrauch ist zum Gesamtbedarf relativ gering und wird hauptsächlich von der Verkaufstätigkeit bestimmt. Verkaufsorientierte Bäckereien, in denen zu Geschäftszeiten Backwaren zubereitet werden ('Backen im Laden'), verhalten sich wie andere Läden und sind im Profil G4 einzuordnen."
+#> $H0$details
+#> [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps."
 #> 
 #> 
 
-# multiple profile IDs are supported
-slp_info(c("G0", "G5"))
-#> $G0
-#> $G0$profile
-#> [1] "G0"
+# Gas profile
+slp_info("HEF")
+#> $HEF
+#> $HEF$profile
+#> [1] "HEF"
 #> 
-#> $G0$description
-#> [1] "commerce in general"
-#> 
-#> $G0$details
-#> [1] "If an assignment to one of the profiles G1 to G6 is not possible or desired, this profile represents the weighted average of the overall group."
+#> $HEF$description
+#> [1] "Single-family home"
 #> 
 #> 
-#> $G5
-#> $G5$profile
-#> [1] "G5"
+
+# Mixed
+slp_info(c("H0", "HEF", "GKO"))
+#> $H0
+#> $H0$profile
+#> [1] "H0"
 #> 
-#> $G5$description
-#> [1] "bakery with bakehouse"
+#> $H0$description
+#> [1] "household"
 #> 
-#> $G5$details
-#> [1] "Bakeries with a bakehouse traditionally have their main consumption on weekdays from around 3 a.m. and on Saturday nights from around midnight. Daytime consumption is relatively low compared to overall demand and is mainly determined by sales activities. Sales-oriented bakeries in which bakery products are prepared during business hours ('in-store baking') behave like other stores and are classified in profile G4."
+#> $H0$details
+#> [1] "This profile includes all households with exclusively and predominantly private consumption. Households with predominantly private electrical consumption, i.e. also with minor commercial consumption are e.g. sales representatives, home workers, etc. with an office in the household. The Household profile is not applicable for special applications such as storage heaters or heat pumps."
+#> 
+#> 
+#> $HEF
+#> $HEF$profile
+#> [1] "HEF"
+#> 
+#> $HEF$description
+#> [1] "Single-family home"
+#> 
+#> 
+#> $GKO
+#> $GKO$profile
+#> [1] "GKO"
+#> 
+#> $GKO$description
+#> [1] "Small commercial"
+#> 
+#> 
+
+# German descriptions
+slp_info("HEF", language = "DE")
+#> $HEF
+#> $HEF$profile
+#> [1] "HEF"
+#> 
+#> $HEF$description
+#> [1] "Einfamilienhaus"
 #> 
 #> 
 ```

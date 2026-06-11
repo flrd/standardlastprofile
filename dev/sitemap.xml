@@ -1,13 +1,23 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/CODE_OF_CONDUCT.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/LICENSE.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/articles/get-started.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/articles/index.html</loc></url>
-<url><loc>https://flrd.github.io/standardlastprofile/dev/articles/standardlastprofile.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/articles/slp-electricity.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/articles/slp-gas-parameters.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/articles/slp-gas.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/authors.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/index.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/news/index.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/reference/index.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_electricity.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_electricity_profiles.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_gas.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_coefficients.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_kundenwert.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_siglinde.html</loc></url>
+<url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_weekday_factors.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/reference/slp_info.html</loc></url>
 <url><loc>https://flrd.github.io/standardlastprofile/dev/reference/standardlastprofile-package.html</loc></url>
