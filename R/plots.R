@@ -984,10 +984,10 @@ utils::globalVariables(c(
   heating <- c(10L, 11L, 12L, 1L, 2L, 3L, 4L)
   mn <- as.integer(format(dat$date, "%m"))
   dat$month <- factor(month.abb[mn], levels = month.abb[heating])
-  dat$city <- factor(
-    ifelse(dat$city == "Freiburg", "Freiburg im Breisgau", dat$city),
-    levels = c("Chemnitz", "Freiburg im Breisgau", "Hamburg")
-  )
+  # Keep the short key "Freiburg" here: this data is shared with the article's
+  # HTML widget, whose JS joins on the literal city name. The ggplot relabels to
+  # "Freiburg im Breisgau" for its facet strips (see .slp_plot_gas_cities).
+  dat$city <- factor(dat$city, levels = c("Chemnitz", "Freiburg", "Hamburg"))
   dat
 }
 
@@ -1001,6 +1001,8 @@ utils::globalVariables(c(
   # Each comparison city's daily consumption (y) plotted against Duesseldorf
   # (x); points above the 45-degree line mean more gas than in Duesseldorf.
   dat <- .gas_cities_data(profile_id, kundenwert)
+  # full city name for the facet strips (data key stays "Freiburg")
+  levels(dat$city)[levels(dat$city) == "Freiburg"] <- "Freiburg im Breisgau"
   lim <- c(0, max(dat$duesseldorf, dat$other))
 
   ggplot2::ggplot(dat, ggplot2::aes(duesseldorf, other)) +

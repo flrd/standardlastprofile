@@ -1,17 +1,17 @@
 #' Compute the Kundenwert for a Gas Standard Load Profile
 #'
-#' Compute the customer value (Kundenwert, KW) that scales a gas standard load
+#' Compute the `kundenwert` (customer value) that scales a gas standard load
 #' profile to a specific annual consumption. The result can be passed directly
 #' to [slp_gas()] via its `kundenwert` argument, enabling a two-step
-#' workflow: derive KW from a representative full-year reference temperature
-#' series, then generate profiles for any shorter period using that fixed KW.
+#' workflow: derive `kundenwert` from a representative full-year reference temperature
+#' series, then generate profiles for any shorter period using that fixed value.
 #'
 #' @param profile_id gas load profile identifier, required. Same values as
 #'   [slp_gas()]. Multiple values are supported; the result is a
 #'   named numeric vector with one element per profile.
 #' @param dates a Date vector or character vector in ISO 8601 format
-#'   (`"YYYY-MM-DD"`), representing a **full reference year** of daily dates.
-#'   For a meaningful Kundenwert the series should ideally cover 365 (or 366)
+#'   (`"YYYY-MM-DD"`).
+#'   For a meaningful `kundenwert` the series should ideally cover 365 (or 366)
 #'   days. Must have the same length as `temperatures`.
 #' @param temperatures a numeric vector of daily temperatures in degrees
 #'   Celsius. Must have the same length as `dates`.

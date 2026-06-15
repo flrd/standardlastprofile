@@ -592,8 +592,8 @@ to the `kundenwert`.
 
 ### Kundenwert $KW$
 
-`kundenwert` (customer value) accounts for a customer’s individual consumption
-behaviour. It answers the question: how much gas is consumed on a day
+`kundenwert` accounts for a customer’s individual consumption behaviour. This
+value answers the question: how much gas is consumed by a customer on a day
 where the outside temperature is 8°C? It is a scaling factor in kWh/day — at
 8°C, the point at which $h(\vartheta) = 1$ for every profile.
 
@@ -802,7 +802,7 @@ That value is what the README example passes to `slp_gas()` to generate the
 2025/26 heating season — and it is what we use below to ask how the same
 customer would fare in a different climate. 
 
-### Same customer preferences, different city
+### Same customer preferences, different climate
 
 We keep that `kundenwert` of 55.1 kWh/day fixed and ask how the gas consumption
 changes in another place — same customer, same KW, different
