@@ -14,7 +14,6 @@ day types.](reference/figures/README-bdew-1999-small_multiples-1.png)
 ## Installation
 
 ``` r
-
 install.packages("standardlastprofile")
 ```
 
@@ -58,7 +57,6 @@ across 5 variables:
 - `watts`: average electric power, normalised to 1,000 kWh/a
 
 ``` r
-
 str(slp_electricity_profiles)
 #> 'data.frame':    26784 obs. of  5 variables:
 #>  $ profile_id: chr  "H0" "H0" "H0" "H0" ...
@@ -111,7 +109,6 @@ storage.](reference/figures/README-H0_vs_2025-1.png)
 returns a data frame with one row per 15-minute interval:
 
 ``` r
-
 G5 <- slp_electricity(
   profile_id = "G5",
   start_date = "2023-12-22",
@@ -192,7 +189,6 @@ is a data frame with three columns: `profile_id`, `date`, and `kwh`
 which is the daily gas consumption:
 
 ``` r
-
 HEF <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
 head(HEF)
 #>   profile_id       date      kwh

@@ -18,7 +18,6 @@ produces a 15-minute resolution load profile in watts, normalised to an
 annual consumption of 1,000 kWh.
 
 ``` r
-
 library(standardlastprofile)
 
 G5 <- slp_electricity(
@@ -53,7 +52,6 @@ Kundenwert is derived once from a full reference year with
 here we pass a known value:
 
 ``` r
-
 dates <- seq.Date(as.Date("2026-01-12"), as.Date("2026-01-18"), by = "day")
 temps <- c(-3.2, -1.8, 0.4, 2.1, 4.5, 3.8, 1.2)
 
