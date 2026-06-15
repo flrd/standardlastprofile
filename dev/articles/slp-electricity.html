@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Generate a standard load profile for electricity • standardlastprofile</title>
+<title>Electricity Standard Load Profiles (Standardlastprofile Strom) • standardlastprofile</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -16,7 +16,14 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate a standard load profile for electricity">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Electricity Standard Load Profiles (Standardlastprofile Strom)">
+<meta name="description" content="BDEW Standardlastprofile Strom algorithm in R: period mapping, dynamization function, and public holiday handling for profiles H0, G0-G6, L0-L2, H25, G25, L25, P25, S25.">
+<meta property="og:description" content="BDEW Standardlastprofile Strom algorithm in R: period mapping, dynamization function, and public holiday handling for profiles H0, G0-G6, L0-L2, H25, G25, L25, P25, S25.">
+<meta property="og:image" content="https://flrd.github.io/standardlastprofile/reference/figures/README-slp_gas_cities-1.png">
+<meta property="og:image:alt" content="Gas standard load profiles for three German cities computed with the standardlastprofile R package.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@flrd">
+<meta name="twitter:site" content="@flrd">
 <meta name="robots" content="noindex">
 </head>
 <body>
@@ -66,7 +73,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Generate a standard load profile for electricity</h1>
+      <h1>Electricity Standard Load Profiles (Standardlastprofile Strom)</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/main/vignettes/articles/slp-electricity.Rmd" class="external-link"><code>vignettes/articles/slp-electricity.Rmd</code></a></small>
@@ -93,7 +100,7 @@ financial expense of continuous consumption measurement is often
 unreasonable. Energy supply companies can therefore use a standard load
 profile (SLP) as the basis for creating a consumption forecast.</p>
 <p>The aim of this vignette is to show how the algorithm of the
-<code><a href="../reference/slp_generate.html">slp_generate()</a></code> function works.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the algorithm can be found &lt;a href="https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf" class="external-link"&gt;here&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a> The data in the
+<code><a href="../reference/slp_electricity.html">slp_electricity()</a></code> function works.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;More information on the algorithm can be found &lt;a href="https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf" class="external-link"&gt;here&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a> The data in the
 <code>slp_electricity_profiles</code> dataset forms the basis for all
 subsequent steps.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -140,16 +147,11 @@ energy and sum them for a year, the result is (approximately) 1,000
 kWh/year.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flrd/standardlastprofile" class="external-link">standardlastprofile</a></span><span class="op">)</span></span>
-<span><span class="va">H0_2026</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_generate.html">slp_generate</a></span><span class="op">(</span></span>
+<span><span class="va">H0_2026</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span></span>
 <span>  profile_id <span class="op">=</span> <span class="st">"H0"</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="st">"2026-01-01"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2026-12-31"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: `slp_generate()` was deprecated in standardlastprofile 2.0.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `slp_electricity()` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<span>  <span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">H0_2026</span><span class="op">$</span><span class="va">watts</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 3992465</span></span></code></pre></div>
@@ -185,29 +187,29 @@ of <strong>1,000,000 kWh</strong>.<a class="footnote-ref" tabindex="0" data-bs-t
 <p>To give users a single, consistent interface we convert all values to
 watts normalised to 1,000 kWh/a. This conversion is applied once, at
 data-build time, in <code>data-raw/DATASET.R</code>. As a result,
-<code><a href="../reference/slp_generate.html">slp_generate()</a></code> always returns watts regardless of which
+<code><a href="../reference/slp_electricity.html">slp_electricity()</a></code> always returns watts regardless of which
 profile is requested. We can verify that the normalisation holds for a
 2025 profile just as it does for a 1999 profile:</p>
 </blockquote>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">P25_2026</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_generate.html">slp_generate</a></span><span class="op">(</span><span class="st">"P25"</span>, <span class="st">"2026-01-01"</span>, <span class="st">"2026-12-31"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">P25_2026</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span><span class="st">"P25"</span>, <span class="st">"2026-01-01"</span>, <span class="st">"2026-12-31"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">P25_2026</span><span class="op">$</span><span class="va">watts</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1000.08</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="converting-the-output-to-kwh">Converting the output to kWh<a class="anchor" aria-label="anchor" href="#converting-the-output-to-kwh"></a>
 </h3>
-<p>The values returned by <code><a href="../reference/slp_generate.html">slp_generate()</a></code> represent
+<p>The values returned by <code><a href="../reference/slp_electricity.html">slp_electricity()</a></code> represent
 <strong>average electric power</strong> during each 15-minute interval.
 To obtain the <strong>energy consumed</strong> during that interval in
-kWh you can wrap <code><a href="../reference/slp_generate.html">slp_generate()</a></code> once:</p>
+kWh you can wrap <code><a href="../reference/slp_electricity.html">slp_electricity()</a></code> once:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">slp_generate_kwh</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_generate.html">slp_generate</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">slp_electricity_kwh</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span>  <span class="va">out</span><span class="op">$</span><span class="va">kwh</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">watts</span> <span class="op">/</span> <span class="fl">4</span> <span class="op">/</span> <span class="fl">1000</span></span>
 <span>  <span class="va">out</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">H0_kwh</span> <span class="op">&lt;-</span> <span class="fu">slp_generate_kwh</span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"2026-01-01"</span>, <span class="st">"2026-12-31"</span><span class="op">)</span></span>
+<span><span class="va">H0_kwh</span> <span class="op">&lt;-</span> <span class="fu">slp_electricity_kwh</span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"2026-01-01"</span>, <span class="st">"2026-12-31"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">H0_kwh</span><span class="op">$</span><span class="va">kwh</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 998.1163</span></span></code></pre></div>
 </div>
@@ -215,8 +217,9 @@ kWh you can wrap <code><a href="../reference/slp_generate.html">slp_generate()</
 <div class="section level2">
 <h2 id="algorithm-step-by-step">Algorithm step by step<a class="anchor" aria-label="anchor" href="#algorithm-step-by-step"></a>
 </h2>
-<p>When you call <code><a href="../reference/slp_generate.html">slp_generate()</a></code>, you generate (surprise!) a
-standard load profile. These are the steps that are then performed:</p>
+<p>When you call <code><a href="../reference/slp_electricity.html">slp_electricity()</a></code>, you generate
+(surprise!) a standard load profile. These are the steps that are then
+performed:</p>
 <ol style="list-style-type: decimal">
 <li>Generate a date sequence from <code>start_date</code> to
 <code>end_date</code>.</li>
@@ -274,9 +277,11 @@ weekdays from Monday to Friday for any group. For this reason, the days
 Monday to Friday are grouped together as <code>workday</code>. December
 24th and 31st are considered Saturdays too if they are not Sundays.
 Public holidays are regarded as Sundays.</p>
-<p><strong>Note</strong>: The function <code><a href="../reference/slp_generate.html">slp_generate()</a></code>
-supports by default nationwide public holidays for Germany. Those were
-retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>:</p>
+<div class="section level4">
+<h4 id="public-holidays">Public holidays<a class="anchor" aria-label="anchor" href="#public-holidays"></a>
+</h4>
+<p><code><a href="../reference/slp_electricity.html">slp_electricity()</a></code> supports nationwide public holidays
+for Germany by default. Those were retrieved from the <a href="https://github.com/nager/Nager.Date" class="external-link">nager.Date API</a>:</p>
 <ul>
 <li>New Year’s (Jan 1)</li>
 <li>Good Friday</li>
@@ -288,19 +293,41 @@ retrieved from the <a href="https://github.com/nager/Nager.Date" class="external
 <li>Christmas Day (Dec 25)</li>
 <li>Boxing Day (Dec 26)</li>
 </ul>
-<blockquote>
 <p>State-level holidays are <strong>not</strong> included by default, as
 these vary by state and can change over time. Use the optional
 <code>holidays</code> argument to pass your own vector of dates and take
 full control over which dates are treated as public holidays; the
-built-in data are then ignored entirely. See the <a href="https://flrd.github.io/standardlastprofile/index.html#public-holidays">README</a>
-for an example of how to fetch state-level holidays from the <a href="https://date.nager.at" class="external-link">nager.Date API</a> and pass them to
-<code><a href="../reference/slp_generate.html">slp_generate()</a></code>.</p>
-</blockquote>
+built-in data are then ignored entirely.</p>
+<p>The example below fetches public holidays for 2027 specific to the
+state of Berlin from the <a href="https://date.nager.at" class="external-link">nager.Date
+API</a>. Berlin observes International Women’s Day (8 March) in addition
+to all nationwide holidays. The API returns one entry per holiday;
+entries where <code>global</code> is <code>TRUE</code> are observed in
+all states, while state-specific ones carry a <code>counties</code>
+field containing the relevant ISO 3166-2 code (e.g. <code>"DE-BE"</code>
+for Berlin).</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr2.r-lib.org" class="external-link">httr2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://httr2.r-lib.org/reference/request.html" class="external-link">request</a></span><span class="op">(</span><span class="st">"https://date.nager.at"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/req_url.html" class="external-link">req_url_path_append</a></span><span class="op">(</span><span class="st">"api"</span>, <span class="st">"v3"</span>, <span class="st">"PublicHolidays"</span>, <span class="st">"2027"</span>, <span class="st">"DE"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/req_perform.html" class="external-link">req_perform</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/resp_body_raw.html" class="external-link">resp_body_json</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Berlin observes International Women's Day (8 March) in addition to all</span></span>
+<span><span class="co"># nationwide holidays; global == TRUE means observed in all states</span></span>
+<span><span class="va">is_berlin</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">global</span><span class="op">)</span> <span class="op">||</span> <span class="st">"DE-BE"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">counties</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">holidays_berlin_2027</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="va">is_berlin</span>, <span class="va">resp</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">date</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"2027-01-01"</span>, <span class="st">"2027-12-31"</span>,</span>
+<span>                holidays <span class="op">=</span> <span class="va">holidays_berlin_2027</span><span class="op">)</span></span></code></pre></div>
 <p>The result of this second step is a mapping from each date to a
 so-called characteristic profile day, i.e. a combination of weekday and
 period:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wkday_period</span> <span class="op">&lt;-</span> <span class="fu">standardlastprofile</span><span class="fu">:::</span><span class="fu">.get_wkday_period</span><span class="op">(</span><span class="va">date_seq</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>input <span class="op">=</span> <span class="va">date_seq</span>, output <span class="op">=</span> <span class="va">wkday_period</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        input          output</span></span>
@@ -311,21 +338,22 @@ period:</p>
 <span><span class="co">#&gt; 5 2023-12-26   sunday_winter</span></span>
 <span><span class="co">#&gt; 6 2023-12-27  workday_winter</span></span></code></pre></div>
 </div>
+</div>
 <div class="section level3">
 <h3 id="assign-consumption-values-to-each-day">Assign consumption values to each day<a class="anchor" aria-label="anchor" href="#assign-consumption-values-to-each-day"></a>
 </h3>
 <p>The third step is to assign the measurements we know from the
 <code>slp_electricity_profiles</code> dataset to each characteristic
-profile day. This is the job of the <code><a href="../reference/slp_generate.html">slp_generate()</a></code>
+profile day. This is the job of the <code><a href="../reference/slp_electricity.html">slp_electricity()</a></code>
 function:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">G5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_generate.html">slp_generate</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">G5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span></span>
 <span>  profile_id <span class="op">=</span> <span class="st">"G5"</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="st">"2023-12-22"</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="st">"2023-12-27"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>This function returns a data frame with 4 columns:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">G5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   profile_id          start_time            end_time watts</span></span>
 <span><span class="co">#&gt; 1         G5 2023-12-22 00:00:00 2023-12-22 00:15:00  50.1</span></span>
@@ -345,7 +373,7 @@ seasonal periods) available in the dataset
 <p>Below is the code snippet from the <a href="https://github.com/flrd/standardlastprofile#generate-a-load-profile" class="external-link">README</a>,
 which can be used to reproduce the plot for the G5 profile, showcasing
 the algorithm’s outcome:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">G5</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">start_time</span>, <span class="va">watts</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#0CC792"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -389,9 +417,9 @@ in the <code>slp_electricity_profiles</code> dataset for
 <code>H0</code>, <code>H25</code>, <code>P25</code>, and
 <code>S25</code> serve as base values to be scaled by a dynamization
 factor.</p>
-<p>This is taken into account when you call <code><a href="../reference/slp_generate.html">slp_generate()</a></code>.
-The study suggested the application of a 4th order polynomial function
-to the values of these profiles.</p>
+<p>This is taken into account when you call
+<code><a href="../reference/slp_electricity.html">slp_electricity()</a></code>. The study suggested the application of a
+4th order polynomial function to the values of these profiles.</p>
 <p><span class="math display">\[
 w_d = w_s \times(-3.92\mathrm{e}{-10} \times d^4 + 3.20\mathrm{e}{-7}
 \times  d^3 - 7.02\mathrm{e}{-5} \times d^2 + 2.10\mathrm{e}{-3} \times

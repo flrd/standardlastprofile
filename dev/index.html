@@ -19,6 +19,11 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="BDEW Standard Load Profiles for Electricity and Gas">
 <meta name="description" content='Provides representative standard load profiles (SLPs) for electricity and gas published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The electricity profiles cover the 1999 profiles — households (H0), commercial (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25, G25, L25, P25, S25), which additionally represent households with photovoltaic systems and battery storage. An interface generates an electricity load profile over a user-defined date range. A second interface generates daily gas load profiles using the BDEW/VKU/GEODE synthetic SigLinDe procedure from daily temperatures and a customer value (Kundenwert). The 1999 data and methodology are described in VDEW (1999), "Repräsentative VDEW-Lastprofile", &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;. The electricity generation algorithm is described in VDEW (2000), "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step", &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;. The 2025 profiles are described in BDEW (2025), "Standardlastprofile Strom", &lt;https://www.bdew.de/energie/standardlastprofile-strom/&gt;. The gas procedure is described in BDEW (2025), "Standardlastprofile Gas", &lt;https://www.bdew.de/energie/standardlastprofile-gas/&gt;.'>
 <meta property="og:description" content='Provides representative standard load profiles (SLPs) for electricity and gas published by the German Association of Energy and Water Industries (BDEW Bundesverband der Energie- und Wasserwirtschaft e.V.) in a tidy format. The electricity profiles cover the 1999 profiles — households (H0), commercial (G0–G6), and agriculture (L0–L2) — and the updated 2025 profiles (H25, G25, L25, P25, S25), which additionally represent households with photovoltaic systems and battery storage. An interface generates an electricity load profile over a user-defined date range. A second interface generates daily gas load profiles using the BDEW/VKU/GEODE synthetic SigLinDe procedure from daily temperatures and a customer value (Kundenwert). The 1999 data and methodology are described in VDEW (1999), "Repräsentative VDEW-Lastprofile", &lt;https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf&gt;. The electricity generation algorithm is described in VDEW (2000), "Anwendung der Repräsentativen VDEW-Lastprofile step-by-step", &lt;https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf&gt;. The 2025 profiles are described in BDEW (2025), "Standardlastprofile Strom", &lt;https://www.bdew.de/energie/standardlastprofile-strom/&gt;. The gas procedure is described in BDEW (2025), "Standardlastprofile Gas", &lt;https://www.bdew.de/energie/standardlastprofile-gas/&gt;.'>
+<meta property="og:image" content="https://flrd.github.io/standardlastprofile/reference/figures/README-slp_gas_cities-1.png">
+<meta property="og:image:alt" content="Gas standard load profiles for three German cities computed with the standardlastprofile R package.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@flrd">
+<meta name="twitter:site" content="@flrd">
 <meta name="robots" content="noindex">
 </head>
 <body>
@@ -189,53 +194,37 @@
 <div class="section level3">
 <h3 id="public-holidays">Public holidays<a class="anchor" aria-label="anchor" href="#public-holidays"></a>
 </h3>
-<p>Both <code><a href="reference/slp_electricity.html">slp_electricity()</a></code> and <code><a href="reference/slp_gas.html">slp_gas()</a></code> use the same holiday logic: nine nationwide German public holidays are treated as Sundays by default (New Year’s, Good Friday, Easter Monday, Labour Day, Ascension Day, Whit Monday, German Unity Day, Christmas Day, Boxing Day). State-level holidays are not included because they vary by state and can change. Use the <code>holidays</code> argument in either function to supply your own dates — the built-in data are then ignored entirely:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr2.r-lib.org" class="external-link">httr2</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://httr2.r-lib.org/reference/request.html" class="external-link">request</a></span><span class="op">(</span><span class="st">"https://date.nager.at"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/req_url.html" class="external-link">req_url_path_append</a></span><span class="op">(</span><span class="st">"api"</span>, <span class="st">"v3"</span>, <span class="st">"PublicHolidays"</span>, <span class="st">"2027"</span>, <span class="st">"DE"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/req_perform.html" class="external-link">req_perform</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://httr2.r-lib.org/reference/resp_body_raw.html" class="external-link">resp_body_json</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Berlin observes International Women's Day (8 March) in addition to all</span></span>
-<span><span class="co"># nationwide holidays; global == TRUE means observed in all states</span></span>
-<span><span class="va">is_berlin</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">global</span><span class="op">)</span> <span class="op">||</span> <span class="st">"DE-BE"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">counties</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">holidays_berlin_2027</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="va">is_berlin</span>, <span class="va">resp</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">date</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># electricity</span></span>
-<span><span class="fu"><a href="reference/slp_electricity.html">slp_electricity</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"2027-01-01"</span>, <span class="st">"2027-12-31"</span>,</span>
-<span>                holidays <span class="op">=</span> <span class="va">holidays_berlin_2027</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># gas — same holidays argument, same semantics</span></span>
-<span><span class="fu"><a href="reference/slp_gas.html">slp_gas</a></span><span class="op">(</span><span class="st">"HEF"</span>, <span class="va">dates_2027</span>, <span class="va">temps_2027</span>, kundenwert <span class="op">=</span> <span class="va">kw</span>,</span>
-<span>        holidays <span class="op">=</span> <span class="va">holidays_berlin_2027</span><span class="op">)</span></span></code></pre></div>
+<p>Both <code><a href="reference/slp_electricity.html">slp_electricity()</a></code> and <code><a href="reference/slp_gas.html">slp_gas()</a></code> use the same holiday logic: nine nationwide German public holidays are treated as Sundays by default:</p>
+<ul>
+<li>New Year’s</li>
+<li>Good Friday</li>
+<li>Easter Monday</li>
+<li>Labour Day</li>
+<li>Ascension Day</li>
+<li>Whit Monday</li>
+<li>German Unity Day</li>
+<li>Christmas Day</li>
+<li>Boxing Day</li>
+</ul>
+<p>State-level holidays are not included because they vary by state and year. Use the <code>holidays</code> argument in either function to supply your own dates — the built-in data are then ignored entirely. See the <a href="https://flrd.github.io/standardlastprofile/articles/slp-electricity.html#public-holidays">electricity article</a> for an example of how to fetch state-level holidays from the <a href="https://date.nager.at" class="external-link">nager.Date API</a>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="gas">Gas<a class="anchor" aria-label="anchor" href="#gas"></a>
 </h2>
-<p><code><a href="reference/slp_gas.html">slp_gas()</a></code> implements the <a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link">BDEW/VKU/GEODE synthetic procedure (SigLinDe method)</a> for daily gas consumption. It takes daily mean temperatures and a customer value (<code>kundenwert</code>, kWh/day), and supports all 15 gas profile IDs.</p>
-<p>Take a single-family home (profile <code>HEF</code>) in Düsseldorf with a <code>kundenwert</code> of 55.1 kWh/day. First grab the daily mean temperatures for the period of interest — here the 2025/26 heating season — from the DWD open-data archive via <a href="https://cran.r-project.org/package=rdwd" class="external-link"><code>rdwd</code></a> (no API key required; <code>TMK</code> is the daily mean temperature in °C):</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://brry.github.io/rdwd/" class="external-link">rdwd</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html" class="external-link">seq.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2025-10-01"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2026-04-30"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Düsseldorf = DWD station 1078. The "recent" file is a rolling ~550-day</span></span>
-<span><span class="co"># window, so combine it with "historical" to cover any period; force = TRUE</span></span>
-<span><span class="co"># avoids reusing a stale cached download.</span></span>
-<span><span class="va">link</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD</a></span><span class="op">(</span><span class="st">"Duesseldorf"</span>, res <span class="op">=</span> <span class="st">"daily"</span>, var <span class="op">=</span> <span class="st">"kl"</span>,</span>
-<span>                   per <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"historical"</span>, <span class="st">"recent"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">raw</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/readDWD.html" class="external-link">readDWD</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/dataDWD.html" class="external-link">dataDWD</a></span><span class="op">(</span><span class="va">link</span>, read <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>                                varnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">temps</span> <span class="op">&lt;-</span> <span class="va">raw</span><span class="op">$</span><span class="va">TMK</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">dates</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">raw</span><span class="op">$</span><span class="va">MESS_DATUM</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="va">temps</span><span class="op">)</span><span class="op">)</span>   <span class="co"># fail loudly if the period isn't fully covered</span></span></code></pre></div>
-<p>Then pass <code>dates</code> and <code>temps</code> to <code><a href="reference/slp_gas.html">slp_gas()</a></code> together with the <code>kundenwert</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p><code><a href="reference/slp_gas.html">slp_gas()</a></code> implements the <a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link">BDEW/VKU/GEODE synthetic procedure (SigLinDe method)</a> for daily gas consumption. The gas consumption on any particular day is influenced by three factors:</p>
+<ol style="list-style-type: decimal">
+<li>outside temperature</li>
+<li>personal preferences (<code>kundenwert</code>)</li>
+<li>the day of the week</li>
+</ol>
+<p><code><a href="reference/slp_gas.html">slp_gas()</a></code> hence takes a date vector for which the gas consumption should be calculated, a vector of daily mean temperatures and a <code>kundenwert</code> (customer value in kWh/day), together with one of 15 gas profile IDs.</p>
+<p>Pass <code>dates</code> and <code>temps</code> to <code><a href="reference/slp_gas.html">slp_gas()</a></code> together with the <code>kundenwert</code>.</p>
+<blockquote>
+<p>The <code>kundenwert</code> of 55.1 kWh/day is itself derived once, from the customer’s annual consumption and a reference temperature series. See the <a href="https://flrd.github.io/standardlastprofile/articles/slp-gas.html">gas article</a> for that step and the full method.</p>
+</blockquote>
+<p>The result of <code><a href="reference/slp_gas.html">slp_gas()</a></code> is a data frame with three columns: <code>profile_id</code>, <code>date</code>, and <code>kwh</code> which is the daily gas consumption:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">HEF</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/slp_gas.html">slp_gas</a></span><span class="op">(</span><span class="st">"HEF"</span>, <span class="va">dates</span>, <span class="va">temps</span>, kundenwert <span class="op">=</span> <span class="fl">55.1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">HEF</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   profile_id       date      kwh</span></span>
@@ -244,26 +233,25 @@
 <span><span class="co">#&gt; 3        HEF 2025-10-03 31.91795</span></span>
 <span><span class="co">#&gt; 4        HEF 2025-10-04 27.32729</span></span>
 <span><span class="co">#&gt; 5        HEF 2025-10-05 32.50304</span></span>
-<span><span class="co">#&gt; 6        HEF 2025-10-06 30.17767</span></span>
-<span></span>
-<span><span class="co"># total gas consumption over the heating season (1 Oct 2025 – 30 Apr 2026)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">HEF</span><span class="op">$</span><span class="va">kwh</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 12191.35</span></span></code></pre></div>
-<blockquote>
-<p>The Kundenwert of 55.1 kWh/day is itself derived once, from the customer’s annual consumption and a reference temperature series. See the <a href="https://flrd.github.io/standardlastprofile/articles/slp-gas.html">gas article</a> for that step and the full method.</p>
-</blockquote>
+<span><span class="co">#&gt; 6        HEF 2025-10-06 30.17767</span></span></code></pre></div>
 <p><img src="reference/figures/README-slp_gas_readme_plot-1.png" alt="Line chart of daily gas consumption in kilowatt-hours for a
  single-family home in Düsseldorf across the 2025/26 heating season. Demand
  peaks in the cold winter months and is lowest in the mild shoulder months of
  October and April." width="95%" style="display: block; margin: auto;"></p>
-<p>Let’s assume that same customer (i.e. fixed <code>kundenwert</code>) would live in another place with a different climate. The chart below uses temperature data for the same heating season (October ’25 to April ’26) to compare their daily gas consumption in: - Chemnitz - Freiburg im Breisgau - Hamburg against Düsseldorf.</p>
-<p>Points above the 45° line mean that customer would have consumed more gas than in Düsseldorf due to different climate and temperatures. We see that in that winter all three cities ran colder than Düsseldorf, so every cloud sits above the line — most for Chemnitz (~35% more gas over the season), least for Freiburg (~11% more), with Hamburg in between (~25% more):</p>
-<p><img src="reference/figures/README-slp_gas_cities-1.png" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
+<p>In the example above we assumed a single-family home (profile <code>HEF</code>) in Düsseldorf.</p>
+<p>In the following graph, we compare the same customer (i.e. we set the <code>kundenwert</code>) for the same period – October 2025 to April 2026 – with three other locations. This allows us to isolate the influence of the outside temperature on gas consumption in these cities:</p>
+<ul>
+<li>Chemnitz,</li>
+<li>Freiburg im Breisgau, and</li>
+<li>Hamburg.</li>
+</ul>
+<p>Each point represents a single day in the period from 1 October 2025 to 30 April 2026. Points above the 45° line indicate that the customer would have consumed more gas than in Düsseldorf. We can see that this winter was colder in all three cities than in Düsseldorf, so all the points lie above the line – most notably in Chemnitz, least so in Freiburg im Breisgau, with Hamburg in between:</p>
+<p><img src="reference/figures/README-slp_gas_cities-1.png" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg im Breisgau, Hamburg;
  rows are months October to April. Each point is a day; the x-axis is daily
  gas consumption in Düsseldorf, the y-axis in the comparison city, with a
  45-degree reference line. All three cities' point clouds sit above the line
  in winter, most clearly for Chemnitz." width="95%" style="display: block; margin: auto;"></p>
-<p>For a detailed walkthrough of the SigLinDe parameters and the full climate zone comparison, see the <a href="https://flrd.github.io/standardlastprofile/articles/index.html">gas articles</a> on the package website.</p>
+<p>For a detailed explanation of the SigLinDe parameters and the full climate zone comparison, see the <a href="https://flrd.github.io/standardlastprofile/articles/index.html">gas articles</a> on the package website.</p>
 </div>
 <div class="section level2">
 <h2 id="sources">Sources<a class="anchor" aria-label="anchor" href="#sources"></a>

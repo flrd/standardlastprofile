@@ -1,6 +1,8 @@
 # Generate a Standard Load Profile for Electricity
 
-**\[superseded\]**
+**Defunct.** Please use
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_electricity.md)
+instead.
 
 ## Usage
 
@@ -10,7 +12,7 @@ slp_generate(
   start_date,
   end_date,
   holidays = NULL,
-  state_code = deprecated()
+  state_code = NULL
 )
 ```
 
@@ -42,23 +44,17 @@ slp_generate(
 
 - state_code:
 
-  **\[defunct\]** Removed in version 2.0.0. Use `holidays` instead.
+  Removed in version 2.0.0. Use `holidays` instead.
 
 ## Value
 
 See
 [`slp_electricity()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_electricity.md).
 
-## Details
-
-Please use
-[`slp_electricity()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_electricity.md)
-instead.
-
 ## Examples
 
 ``` r
-# Superseded — use slp_electricity() instead:
+# Defunct — use slp_electricity() instead:
 if (FALSE) { # \dontrun{
 slp_generate("H0", "2026-01-01", "2026-12-31")
 } # }

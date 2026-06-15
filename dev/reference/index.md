@@ -21,8 +21,3 @@
   : Retrieve Weekday Factors for Gas Standard Load Profiles
 - [`slp_info()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_info.md)
   : Retrieve information on standard load profiles
-
-## Superseded
-
-- [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
-  **\[superseded\]** : Generate a Standard Load Profile for Electricity

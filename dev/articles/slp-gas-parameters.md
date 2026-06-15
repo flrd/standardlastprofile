@@ -45,7 +45,7 @@ Table 1: BDEW gas standard load profile identifiers and descriptions.
 
 Daily gas consumption is computed using the **SigLinDe** method
 (Sigmoid + Linear + Deutschland). The dimensionless daily heating demand
-\\h(\vartheta)\\ for an allocation temperature \\\vartheta\\ (in °C) is:
+\\h(\vartheta)\\ for a daily temperature \\\vartheta\\ (in °C) is:
 
 \\h(\vartheta) = \frac{A}{1 + \left(\frac{B}{\vartheta -
 \vartheta_0}\right)^C} + D + \max\left(m_H \cdot \vartheta + b_H,\\ m_W

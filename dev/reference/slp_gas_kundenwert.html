@@ -13,7 +13,7 @@ series, then generate profiles for any shorter period using that fixed KW."><met
 profile to a specific annual consumption. The result can be passed directly
 to slp_gas() via its kundenwert argument, enabling a two-step
 workflow: derive KW from a representative full-year reference temperature
-series, then generate profiles for any shorter period using that fixed KW."><meta name="robots" content="noindex"></head><body>
+series, then generate profiles for any shorter period using that fixed KW."><meta property="og:image" content="https://flrd.github.io/standardlastprofile/reference/figures/README-slp_gas_cities-1.png"><meta property="og:image:alt" content="Gas standard load profiles for three German cities computed with the standardlastprofile R package."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:creator" content="@flrd"><meta name="twitter:site" content="@flrd"><meta name="robots" content="noindex"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -121,12 +121,14 @@ the input <code>profile_id</code> values.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The Kundenwert is defined as:</p>
-<p>$$KW = \frac{E_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}$$</p>
-<p>where \(E_a\) is <code>annual_consumption</code> and the sum
-\(\sum_D h(\vartheta_D) \cdot F_{WT,D}\) runs over all days in the
-temperature series. For the result to be meaningful the denominator must
-reflect a full seasonal cycle.</p><div class="section">
+    <p>The Kundenwert is derived from the annual consumption and the year's
+temperature profile:</p>
+<p>$$KW = \frac{Q_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}$$</p>
+<p>where \(Q_a\) is <code>annual_consumption</code> (the annual consumption total; German:
+<em>Jahresverbrauchsprognose</em>, JVP) and the sum \(\sum_D h(\vartheta_D) \cdot
+F_{WT,D}\) runs over all days in the temperature and weekday factor series.
+For the result to be meaningful the denominator must reflect a full seasonal
+cycle (ideally a calendar year).</p><div class="section">
 <h3 id="reference-temperature-series">Reference temperature series<a class="anchor" aria-label="anchor" href="#reference-temperature-series"></a></h3>
 
 

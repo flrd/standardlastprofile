@@ -42,9 +42,8 @@ Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28, Appendix 6.
 - temperatures:
 
   a numeric vector of daily temperatures in degrees Celsius, one value
-  per gas day. Must have the same length as `dates`. The temperature
-  should be the allocation temperature (German: *Allokationstemperatur*)
-  for that gas day. Two options are supported by the Leitfaden (see
+  per gas day. Must have the same length as `dates`. Two options for
+  computing the daily temperature are supported by the Leitfaden (see
   Details):
 
   - **Simple daily mean** (*Tagesmitteltemperatur*): arithmetic average
@@ -57,10 +56,10 @@ Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28, Appendix 6.
   use the **gas forecast temperature** (German: *Gasprognosetemperatur*,
   GPT) published by DWD or DTN instead of a raw daily mean. The GPT
   incorporates a multi-day weighted average and seasonal adjustment that
-  reduces the systematic seasonal allocation bias of pure
-  temperature-based profiles (VKU SLP evaluation reports 2023, 2025).
-  This function accepts whichever temperature values are passed; the
-  choice of method is the caller's responsibility.
+  reduces the systematic seasonal bias of pure temperature-based
+  profiles (VKU SLP evaluation reports 2023, 2025). This function
+  accepts whichever temperature values are passed; the choice of method
+  is the caller's responsibility.
 
 - kundenwert:
 
@@ -150,9 +149,9 @@ The `HKO` profile (Kochgasprofil) is a pure sigmoid retained from the
 pre-SigLinDe era; it has no 33/34 variant and its linear part is always
 zero.
 
-### Allocation temperature
+### Daily temperature
 
-The allocation temperature can be computed in two ways:
+The daily temperature can be computed in two ways:
 
 **Simple daily mean** — arithmetic mean of hourly temperatures:
 \$\$\vartheta_D = \frac{1}{24} \sum\_{h=1}^{24} T_h\$\$
@@ -172,8 +171,8 @@ is two steps:
 
 1.  Derive \\KW\\ once from a full reference year of temperatures with
     [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_kundenwert.md):
-    \$\$KW = \frac{E_a}{\sum_D h(\vartheta_D) \times F\_{WT,D}}\$\$
-    where \\E_a\\ is the annual consumption.
+    \$\$KW = \frac{Q_a}{\sum_D h(\vartheta_D) \times F\_{WT,D}}\$\$
+    where \\Q_a\\ is the annual consumption.
 
 2.  Pass that \\KW\\ to `slp_gas()` for any period you want to generate.
 

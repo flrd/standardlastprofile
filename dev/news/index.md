@@ -2,7 +2,22 @@
 
 ## standardlastprofile (development version)
 
+## standardlastprofile 2.1.0
+
+### Defunct
+
+- [`slp_generate()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_generate.md)
+  is now defunct. Calling it raises an error. Use
+  [`slp_electricity()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_electricity.md)
+  instead (superseded since 2.0.0).
+
+- The `slp` dataset alias is now defunct. Accessing `slp` raises an
+  error. Use `slp_electricity_profiles` instead (deprecated since
+  2.0.0).
+
 ## standardlastprofile 2.0.0
+
+CRAN release: 2026-06-11
 
 This release (finally) adds **gas** standard load profiles (SLPs)
 alongside the existing electricity profiles. We introduce an updated

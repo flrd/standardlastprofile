@@ -68,14 +68,17 @@ input `profile_id` values.
 
 ## Details
 
-The Kundenwert is defined as:
+The Kundenwert is derived from the annual consumption and the year's
+temperature profile:
 
-\$\$KW = \frac{E_a}{\sum_D h(\vartheta_D) \cdot F\_{WT,D}}\$\$
+\$\$KW = \frac{Q_a}{\sum_D h(\vartheta_D) \cdot F\_{WT,D}}\$\$
 
-where \\E_a\\ is `annual_consumption` and the sum \\\sum_D
+where \\Q_a\\ is `annual_consumption` (the annual consumption total;
+German: *Jahresverbrauchsprognose*, JVP) and the sum \\\sum_D
 h(\vartheta_D) \cdot F\_{WT,D}\\ runs over all days in the temperature
-series. For the result to be meaningful the denominator must reflect a
-full seasonal cycle.
+and weekday factor series. For the result to be meaningful the
+denominator must reflect a full seasonal cycle (ideally a calendar
+year).
 
 ### Reference temperature series
 

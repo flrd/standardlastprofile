@@ -13,8 +13,8 @@ slp_gas_siglinde(theta, A, B, C, D, theta0, mH, bH, mW, bW)
 
 - theta:
 
-  Numeric vector of daily mean outdoor temperatures in °C (the
-  allocation temperature).
+  Numeric vector of daily mean outdoor temperatures in °C (the daily
+  temperature).
 
 - A, B, C, D:
 
