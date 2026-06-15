@@ -13,8 +13,7 @@
 #'   `temperatures`.
 #' @param temperatures a numeric vector of daily temperatures in degrees
 #'   Celsius, one value per gas day. Must have the same length as `dates`.
-#'   The temperature should be the allocation temperature (German:
-#'   *Allokationstemperatur*) for that gas day. Two options are supported by
+#'   Two options for computing the daily temperature are supported by
 #'   the Leitfaden (see Details):
 #'   - **Simple daily mean** (*Tagesmitteltemperatur*): arithmetic average of
 #'     hourly values over the gas day.
@@ -25,7 +24,7 @@
 #'   **gas forecast temperature** (German: *Gasprognosetemperatur*, GPT)
 #'   published by DWD or DTN instead of a raw daily mean. The GPT incorporates
 #'   a multi-day weighted average and seasonal adjustment that reduces the
-#'   systematic seasonal allocation bias of pure temperature-based profiles
+#'   systematic seasonal bias of pure temperature-based profiles
 #'   (VKU SLP evaluation reports 2023, 2025). This function accepts whichever
 #'   temperature values are passed; the choice of method is the caller's
 #'   responsibility.
@@ -92,9 +91,9 @@
 #' pre-SigLinDe era; it has no 33/34 variant and its linear part is always
 #' zero.
 #'
-#' ## Allocation temperature
+#' ## Daily temperature
 #'
-#' The allocation temperature can be computed in two ways:
+#' The daily temperature can be computed in two ways:
 #'
 #' **Simple daily mean** — arithmetic mean of hourly temperatures:
 #' \deqn{\vartheta_D = \frac{1}{24} \sum_{h=1}^{24} T_h}
@@ -114,8 +113,8 @@
 #'
 #' 1. Derive \eqn{KW} once from a full reference year of temperatures with
 #'    [slp_gas_kundenwert()]:
-#'    \deqn{KW = \frac{E_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
-#'    where \eqn{E_a} is the annual consumption.
+#'    \deqn{KW = \frac{Q_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
+#'    where \eqn{Q_a} is the annual consumption.
 #' 2. Pass that \eqn{KW} to `slp_gas()` for any period you want to generate.
 #'
 #' Keeping the two steps separate is deliberate: `kundenwert` is a property
@@ -190,7 +189,7 @@ slp_gas <- \(
   holidays = NULL
 ) {
   # ---- validate variant ---------------------------------------------------
-  variant <- match.arg(variant)
+  variant <- match.arg(as.character(variant), c("34", "33"))
   # ---- validate profile_id ------------------------------------------------
   profile_id <- .match_profile_gas(profile_id)
   profiles_n <- length(profile_id)

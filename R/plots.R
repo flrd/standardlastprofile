@@ -984,7 +984,10 @@ utils::globalVariables(c(
   heating <- c(10L, 11L, 12L, 1L, 2L, 3L, 4L)
   mn <- as.integer(format(dat$date, "%m"))
   dat$month <- factor(month.abb[mn], levels = month.abb[heating])
-  dat$city <- factor(dat$city, levels = c("Chemnitz", "Freiburg", "Hamburg"))
+  dat$city <- factor(
+    ifelse(dat$city == "Freiburg", "Freiburg im Breisgau", dat$city),
+    levels = c("Chemnitz", "Freiburg im Breisgau", "Hamburg")
+  )
   dat
 }
 

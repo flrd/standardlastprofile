@@ -50,8 +50,6 @@ Config/Needs/website:
 URL: https://github.com/flrd/standardlastprofile,
     https://flrd.github.io/standardlastprofile/
 BugReports: https://github.com/flrd/standardlastprofile/issues
-Imports:
-    lifecycle
 Depends:
     R (>= 4.1)
 LazyData: true

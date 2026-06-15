@@ -81,11 +81,8 @@
 
 #' The `slp` dataset was renamed
 #'
-#' `r lifecycle::badge("deprecated")`
-#'
-#' The electricity dataset `slp` was renamed to [slp_electricity_profiles] in
-#' version 2.0.0 and is no longer exported under the old name. Accessing `slp`
-#' still returns the data for now, but emits a deprecation warning. Use
+#' **Defunct.** The electricity dataset `slp` was renamed to [slp_electricity_profiles] in
+#' version 2.0.0. Accessing `slp` now raises an error. Use
 #' `slp_electricity_profiles`, or `standardlastprofile::slp_electricity_profiles`,
 #' instead.
 #'

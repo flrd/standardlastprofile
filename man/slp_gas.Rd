@@ -34,8 +34,7 @@ Multiple values are supported.}
 
 \item{temperatures}{a numeric vector of daily temperatures in degrees
 Celsius, one value per gas day. Must have the same length as \code{dates}.
-The temperature should be the allocation temperature (German:
-\emph{Allokationstemperatur}) for that gas day. Two options are supported by
+Two options for computing the daily temperature are supported by
 the Leitfaden (see Details):
 \itemize{
 \item \strong{Simple daily mean} (\emph{Tagesmitteltemperatur}): arithmetic average of
@@ -48,7 +47,7 @@ In production contexts, distribution network operators increasingly use the
 \strong{gas forecast temperature} (German: \emph{Gasprognosetemperatur}, GPT)
 published by DWD or DTN instead of a raw daily mean. The GPT incorporates
 a multi-day weighted average and seasonal adjustment that reduces the
-systematic seasonal allocation bias of pure temperature-based profiles
+systematic seasonal bias of pure temperature-based profiles
 (VKU SLP evaluation reports 2023, 2025). This function accepts whichever
 temperature values are passed; the choice of method is the caller's
 responsibility.}
@@ -131,9 +130,9 @@ pre-SigLinDe era; it has no 33/34 variant and its linear part is always
 zero.
 }
 
-\subsection{Allocation temperature}{
+\subsection{Daily temperature}{
 
-The allocation temperature can be computed in two ways:
+The daily temperature can be computed in two ways:
 
 \strong{Simple daily mean} — arithmetic mean of hourly temperatures:
 \deqn{\vartheta_D = \frac{1}{24} \sum_{h=1}^{24} T_h}
@@ -154,8 +153,8 @@ two steps:
 \enumerate{
 \item Derive \eqn{KW} once from a full reference year of temperatures with
 \code{\link[=slp_gas_kundenwert]{slp_gas_kundenwert()}}:
-\deqn{KW = \frac{E_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
-where \eqn{E_a} is the annual consumption.
+\deqn{KW = \frac{Q_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}}
+where \eqn{Q_a} is the annual consumption.
 \item Pass that \eqn{KW} to \code{slp_gas()} for any period you want to generate.
 }
 

@@ -66,7 +66,7 @@ test_that("a numeric matrix theta is accepted and computed element-wise", {
 # 2 dp and the h-values to ~5 dp, which sets the achievable tolerance (the raw
 # deviation against our function is < 1e-5).
 
-# Temperatures (geometric-series allocation temperature) shared by both tables.
+# Temperatures (geometrically-weighted daily temperature) shared by both tables.
 leitfaden_theta <- c(
   12.16,
   11.67,

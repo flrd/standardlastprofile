@@ -19,7 +19,7 @@
 #' the sigmoid part remains.
 #'
 #' @param theta Numeric vector of daily mean outdoor temperatures in °C
-#'   (the allocation temperature).
+#'   (the daily temperature).
 #' @param A,B,C,D Numeric scalars — sigmoid coefficients.
 #' @param theta0 Numeric scalar — pole temperature (40 °C for all published
 #'   profiles). The function is undefined at \eqn{\vartheta = \vartheta_0} and

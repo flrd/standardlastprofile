@@ -134,70 +134,53 @@ head(G5)
 ### Public holidays
 
 Both `slp_electricity()` and `slp_gas()` use the same holiday logic:
-nine nationwide German public holidays are treated as Sundays by default
-(New Year’s, Good Friday, Easter Monday, Labour Day, Ascension Day, Whit
-Monday, German Unity Day, Christmas Day, Boxing Day). State-level
-holidays are not included because they vary by state and can change. Use
-the `holidays` argument in either function to supply your own dates —
-the built-in data are then ignored entirely:
+nine nationwide German public holidays are treated as Sundays by
+default:
 
-``` r
-library(httr2)
+- New Year’s
+- Good Friday
+- Easter Monday
+- Labour Day
+- Ascension Day
+- Whit Monday
+- German Unity Day
+- Christmas Day
+- Boxing Day
 
-resp <- request("https://date.nager.at") |>
-  req_url_path_append("api", "v3", "PublicHolidays", "2027", "DE") |>
-  req_perform() |>
-  resp_body_json()
-
-# Berlin observes International Women's Day (8 March) in addition to all
-# nationwide holidays; global == TRUE means observed in all states
-is_berlin <- \(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
-
-holidays_berlin_2027 <- as.Date(
-  vapply(Filter(is_berlin, resp), \(x) x$date, character(1))
-)
-
-# electricity
-slp_electricity("H0", "2027-01-01", "2027-12-31",
-                holidays = holidays_berlin_2027)
-
-# gas — same holidays argument, same semantics
-slp_gas("HEF", dates_2027, temps_2027, kundenwert = kw,
-        holidays = holidays_berlin_2027)
-```
+State-level holidays are not included because they vary by state and
+year. Use the `holidays` argument in either function to supply your own
+dates — the built-in data are then ignored entirely. See the
+[electricity
+article](https://flrd.github.io/standardlastprofile/articles/slp-electricity.html#public-holidays)
+for an example of how to fetch state-level holidays from the [nager.Date
+API](https://date.nager.at).
 
 ## Gas
 
 `slp_gas()` implements the [BDEW/VKU/GEODE synthetic procedure (SigLinDe
 method)](https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf)
-for daily gas consumption. It takes daily mean temperatures and a
-customer value (`kundenwert`, kWh/day), and supports all 15 gas profile
-IDs.
+for daily gas consumption. The gas consumption on any particular day is
+influenced by three factors:
 
-Take a single-family home (profile `HEF`) in Düsseldorf with a
-`kundenwert` of 55.1 kWh/day. First grab the daily mean temperatures for
-the period of interest — here the 2025/26 heating season — from the DWD
-open-data archive via [`rdwd`](https://cran.r-project.org/package=rdwd)
-(no API key required; `TMK` is the daily mean temperature in °C):
+1.  outside temperature
+2.  personal preferences (`kundenwert`)
+3.  the day of the week
 
-``` r
-library(rdwd)
+`slp_gas()` hence takes a date vector for which the gas consumption
+should be calculated, a vector of daily mean temperatures and a
+`kundenwert` (customer value in kWh/day), together with one of 15 gas
+profile IDs.
 
-dates <- seq.Date(as.Date("2025-10-01"), as.Date("2026-04-30"), by = "day")
+Pass `dates` and `temps` to `slp_gas()` together with the `kundenwert`.
 
-# Düsseldorf = DWD station 1078. The "recent" file is a rolling ~550-day
-# window, so combine it with "historical" to cover any period; force = TRUE
-# avoids reusing a stale cached download.
-link  <- selectDWD("Duesseldorf", res = "daily", var = "kl",
-                   per = c("historical", "recent"))
-raw   <- do.call(rbind, readDWD(dataDWD(link, read = FALSE, force = TRUE),
-                                varnames = FALSE))
-temps <- raw$TMK[match(dates, as.Date(raw$MESS_DATUM))]
-stopifnot(!anyNA(temps))   # fail loudly if the period isn't fully covered
-```
+> The `kundenwert` of 55.1 kWh/day is itself derived once, from the
+> customer’s annual consumption and a reference temperature series. See
+> the [gas
+> article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
+> for that step and the full method.
 
-Then pass `dates` and `temps` to `slp_gas()` together with the
-`kundenwert`:
+The result of `slp_gas()` is a data frame with three columns:
+`profile_id`, `date`, and `kwh` which is the daily gas consumption:
 
 ``` r
 HEF <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
@@ -209,43 +192,39 @@ head(HEF)
 #> 4        HEF 2025-10-04 27.32729
 #> 5        HEF 2025-10-05 32.50304
 #> 6        HEF 2025-10-06 30.17767
-
-# total gas consumption over the heating season (1 Oct 2025 – 30 Apr 2026)
-sum(HEF$kwh)
-#> [1] 12191.35
 ```
-
-> The Kundenwert of 55.1 kWh/day is itself derived once, from the
-> customer’s annual consumption and a reference temperature series. See
-> the [gas
-> article](https://flrd.github.io/standardlastprofile/articles/slp-gas.html)
-> for that step and the full method.
 
 <img src="man/figures/README-slp_gas_readme_plot-1.png" alt="Line chart of daily gas consumption in kilowatt-hours for a
  single-family home in Düsseldorf across the 2025/26 heating season. Demand
  peaks in the cold winter months and is lowest in the mild shoulder months of
  October and April." width="95%" style="display: block; margin: auto;" />
 
-Let’s assume that same customer (i.e. fixed `kundenwert`) would live in
-another place with a different climate. The chart below uses temperature
-data for the same heating season (October ’25 to April ’26) to compare
-their daily gas consumption in: - Chemnitz - Freiburg im Breisgau -
-Hamburg against Düsseldorf.
+In the example above we assumed a single-family home (profile `HEF`) in
+Düsseldorf.
 
-Points above the 45° line mean that customer would have consumed more
-gas than in Düsseldorf due to different climate and temperatures. We see
-that in that winter all three cities ran colder than Düsseldorf, so
-every cloud sits above the line — most for Chemnitz (~35% more gas over
-the season), least for Freiburg (~11% more), with Hamburg in between
-(~25% more):
+In the following graph, we compare the same customer (i.e. we set the
+`kundenwert`) for the same period – October 2025 to April 2026 – with
+three other locations. This allows us to isolate the influence of the
+outside temperature on gas consumption in these cities:
 
-<img src="man/figures/README-slp_gas_cities-1.png" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg, Hamburg;
+- Chemnitz,
+- Freiburg im Breisgau, and
+- Hamburg.
+
+Each point represents a single day in the period from 1 October 2025 to
+30 April 2026. Points above the 45° line indicate that the customer
+would have consumed more gas than in Düsseldorf. We can see that this
+winter was colder in all three cities than in Düsseldorf, so all the
+points lie above the line – most notably in Chemnitz, least so in
+Freiburg im Breisgau, with Hamburg in between:
+
+<img src="man/figures/README-slp_gas_cities-1.png" alt="Faceted scatterplot grid: columns are Chemnitz, Freiburg im Breisgau, Hamburg;
  rows are months October to April. Each point is a day; the x-axis is daily
  gas consumption in Düsseldorf, the y-axis in the comparison city, with a
  45-degree reference line. All three cities' point clouds sit above the line
  in winter, most clearly for Chemnitz." width="95%" style="display: block; margin: auto;" />
 
-For a detailed walkthrough of the SigLinDe parameters and the full
+For a detailed explanation of the SigLinDe parameters and the full
 climate zone comparison, see the [gas
 articles](https://flrd.github.io/standardlastprofile/articles/index.html)
 on the package website.

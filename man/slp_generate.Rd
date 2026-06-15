@@ -9,7 +9,7 @@ slp_generate(
   start_date,
   end_date,
   holidays = NULL,
-  state_code = deprecated()
+  state_code = NULL
 )
 }
 \arguments{
@@ -28,20 +28,16 @@ these dates are treated as public holidays; the built-in data are
 ignored entirely.
 }}
 
-\item{state_code}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#defunct}{\figure{lifecycle-defunct.svg}{options: alt='[Defunct]'}}}{\strong{[Defunct]}} Removed in version 2.0.0.
-Use \code{holidays} instead.}
+\item{state_code}{Removed in version 2.0.0. Use \code{holidays} instead.}
 }
 \value{
 See \code{\link[=slp_electricity]{slp_electricity()}}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#superseded}{\figure{lifecycle-superseded.svg}{options: alt='[Superseded]'}}}{\strong{[Superseded]}}
-}
-\details{
-Please use \code{\link[=slp_electricity]{slp_electricity()}} instead.
+\strong{Defunct.} Please use \code{\link[=slp_electricity]{slp_electricity()}} instead.
 }
 \examples{
-# Superseded — use slp_electricity() instead:
+# Defunct — use slp_electricity() instead:
 \dontrun{
 slp_generate("H0", "2026-01-01", "2026-12-31")
 }

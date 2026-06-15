@@ -1,4 +1,5 @@
 url: https://flrd.github.io/standardlastprofile/
+
 template:
   bootstrap: 5
   math-rendering: mathjax
@@ -6,6 +7,13 @@ template:
     primary: "#0CC792"
     border-radius: 0.5rem
     btn-border-radius: 0.25rem
+  opengraph:
+    image:
+      src: man/figures/README-slp_gas_cities-1.png
+      alt: "Gas standard load profiles for three German cities computed with the standardlastprofile R package."
+    twitter:
+      creator: "@flrd"
+      card: summary_large_image
 
 navbar:
   structure:
@@ -53,10 +61,6 @@ reference:
   - slp_gas_coefficients
   - slp_gas_weekday_factors
   - slp_info
-
-- title: Superseded
-  contents:
-  - slp_generate
 
 figures:
   dev: ragg::agg_png

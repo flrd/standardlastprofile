@@ -67,7 +67,8 @@ slp_gas_coefficients <- \(
   if (is.null(variant)) {
     variant <- valid_variants
   } else {
-    if (!is.character(variant) || !all(variant %in% valid_variants)) {
+    variant <- as.character(variant)
+    if (!all(variant %in% valid_variants)) {
       stop("'variant' must be \"34\", \"33\", or a combination of both.")
     }
     variant <- unique(variant)

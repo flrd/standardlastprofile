@@ -1,5 +1,6 @@
 ---
 title: "SigLinDe Parameters and Weekday Factors for Gas SLP"
+description: "SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW) and weekday factors for all 15 BDEW Standardlastprofile Gas - variants 33 and 34, from the BDEW Leitfaden (as of 2025-10-28)."
 ---
 
 ```{r setup, include=FALSE}
@@ -44,7 +45,7 @@ knitr::kable(overview, caption = "Table 1: BDEW gas standard load profile identi
 
 Daily gas consumption is computed using the **SigLinDe** method
 (Sigmoid + Linear + Deutschland). The dimensionless daily heating demand
-$h(\vartheta)$ for an allocation temperature $\vartheta$ (in °C) is:
+$h(\vartheta)$ for a daily temperature $\vartheta$ (in °C) is:
 
 $$h(\vartheta) = \frac{A}{1 + \left(\frac{B}{\vartheta - \vartheta_0}\right)^C} + D + \max\left(m_H \cdot \vartheta + b_H,\; m_W \cdot \vartheta + b_W\right)$$
 

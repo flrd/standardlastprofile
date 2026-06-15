@@ -119,6 +119,21 @@ test_that("invalid variant raises an error", {
   expect_error(slp_gas_coefficients(variant = "35"), "'variant' must be")
 })
 
+test_that("numeric variant is accepted and equals character variant", {
+  expect_equal(
+    slp_gas_coefficients("HEF", variant = 34),
+    slp_gas_coefficients("HEF", variant = "34")
+  )
+  expect_equal(
+    slp_gas_coefficients("HEF", variant = 33),
+    slp_gas_coefficients("HEF", variant = "33")
+  )
+  expect_equal(
+    slp_gas_coefficients("HEF", variant = 34.00),
+    slp_gas_coefficients("HEF", variant = "34")
+  )
+})
+
 test_that("output is consistent with .gas_profile_params", {
   p <- slp_gas_coefficients("GBA", variant = "33")
   raw <- .gas_profile_params[["33"]][["GBA"]]

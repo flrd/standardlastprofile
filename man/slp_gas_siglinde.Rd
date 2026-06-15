@@ -8,7 +8,7 @@ slp_gas_siglinde(theta, A, B, C, D, theta0, mH, bH, mW, bW)
 }
 \arguments{
 \item{theta}{Numeric vector of daily mean outdoor temperatures in °C
-(the allocation temperature).}
+(the daily temperature).}
 
 \item{A, B, C, D}{Numeric scalars — sigmoid coefficients.}
 

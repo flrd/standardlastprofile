@@ -1,5 +1,6 @@
 ---
 title: "Get started"
+description: "Get started with standardlastprofile - an R package for BDEW Standardlastprofile (SLP Strom and SLP Gas). Generate electricity and gas standard load profiles for the German energy market."
 ---
 
 ```{r setup, include=FALSE}

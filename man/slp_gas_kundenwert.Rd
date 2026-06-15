@@ -50,14 +50,16 @@ workflow: derive KW from a representative full-year reference temperature
 series, then generate profiles for any shorter period using that fixed KW.
 }
 \details{
-The Kundenwert is defined as:
+The Kundenwert is derived from the annual consumption and the year's
+temperature profile:
 
-\deqn{KW = \frac{E_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}}
+\deqn{KW = \frac{Q_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}}
 
-where \eqn{E_a} is \code{annual_consumption} and the sum
-\eqn{\sum_D h(\vartheta_D) \cdot F_{WT,D}} runs over all days in the
-temperature series. For the result to be meaningful the denominator must
-reflect a full seasonal cycle.
+where \eqn{Q_a} is \code{annual_consumption} (the annual consumption total; German:
+\emph{Jahresverbrauchsprognose}, JVP) and the sum \eqn{\sum_D h(\vartheta_D) \cdot
+F_{WT,D}} runs over all days in the temperature and weekday factor series.
+For the result to be meaningful the denominator must reflect a full seasonal
+cycle (ideally a calendar year).
 \subsection{Reference temperature series}{
 
 For a robust Kundenwert the temperature series should represent a \strong{full
