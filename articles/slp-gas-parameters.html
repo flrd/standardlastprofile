@@ -13,10 +13,12 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="SigLinDe Parameters and Weekday Factors for Gas SLP">
+<meta name="description" content="SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW) and weekday factors for all 15 BDEW Standardlastprofile Gas - variants 33 and 34, from the BDEW Leitfaden (as of 2025-10-28).">
+<meta property="og:description" content="SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW) and weekday factors for all 15 BDEW Standardlastprofile Gas - variants 33 and 34, from the BDEW Leitfaden (as of 2025-10-28).">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -68,7 +70,7 @@
       <h1>SigLinDe Parameters and Weekday Factors for Gas SLP</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/v2.0.0/vignettes/articles/slp-gas-parameters.Rmd" class="external-link"><code>vignettes/articles/slp-gas-parameters.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/HEAD/vignettes/articles/slp-gas-parameters.Rmd" class="external-link"><code>vignettes/articles/slp-gas-parameters.Rmd</code></a></small>
       <div class="d-none name"><code>slp-gas-parameters.Rmd</code></div>
     </div>
 
@@ -189,9 +191,9 @@ descriptions.</caption>
 </h2>
 <p>Daily gas consumption is computed using the <strong>SigLinDe</strong>
 method (Sigmoid + Linear + Deutschland). The dimensionless daily heating
-demand <span class="math inline">\(h(\vartheta)\)</span> for an
-allocation temperature <span class="math inline">\(\vartheta\)</span>
-(in °C) is:</p>
+demand <span class="math inline">\(h(\vartheta)\)</span> for a daily
+temperature <span class="math inline">\(\vartheta\)</span> (in °C)
+is:</p>
 <p><span class="math display">\[h(\vartheta) = \frac{A}{1 +
 \left(\frac{B}{\vartheta - \vartheta_0}\right)^C} + D + \max\left(m_H
 \cdot \vartheta + b_H,\; m_W \cdot \vartheta + b_W\right)\]</span></p>

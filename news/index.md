@@ -2,6 +2,8 @@
 
 ## standardlastprofile 2.0.0
 
+CRAN release: 2026-06-11
+
 This release (finally) adds **gas** standard load profiles (SLPs)
 alongside the existing electricity profiles. We introduce an updated
 interface for electricity SLPs too. All renames and deprecations below

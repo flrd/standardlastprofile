@@ -1,4 +1,4 @@
-# Generate a standard load profile for electricity
+# Electricity Standard Load Profiles (Standardlastprofile Strom)
 
 Standard load profiles are crucial for electricity providers,
 distribution network operators, and the energy industry as a whole. They
@@ -10,12 +10,11 @@ unreasonable. Energy supply companies can therefore use a standard load
 profile (SLP) as the basis for creating a consumption forecast.
 
 The aim of this vignette is to show how the algorithm of the
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
 function works.[^1] The data in the `slp_electricity_profiles` dataset
 forms the basis for all subsequent steps.
 
 ``` r
-
 head(slp_electricity_profiles)
 #>   profile_id period      day timestamp watts
 #> 1         H0 winter saturday     00:00  70.8
@@ -55,22 +54,15 @@ So, if we convert all the quarter-hourly power measurements to energy
 and sum them for a year, the result is (approximately) 1,000 kWh/year.
 
 ``` r
-
 library(standardlastprofile)
-H0_2026 <- slp_generate(
+H0_2026 <- slp_electricity(
   profile_id = "H0",
   start_date = "2026-01-01",
   end_date = "2026-12-31"
   )
-#> Warning: `slp_generate()` was deprecated in standardlastprofile 2.0.0.
-#> ℹ Please use `slp_electricity()` instead.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 ```
 
 ``` r
-
 sum(H0_2026$watts)
 #> [1] 3992465
 ```
@@ -83,7 +75,6 @@ values to watt-hours, we must, therefore, divide them by 4. Since one
 watt-hour is equal to 1/1000 kilowatt-hour, we also divide by 1,000:
 
 ``` r
-
 sum(H0_2026$watts / 4 / 1000)
 #> [1] 998.1163
 ```
@@ -107,14 +98,13 @@ different units:
 > To give users a single, consistent interface we convert all values to
 > watts normalised to 1,000 kWh/a. This conversion is applied once, at
 > data-build time, in `data-raw/DATASET.R`. As a result,
-> [`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
+> [`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
 > always returns watts regardless of which profile is requested. We can
 > verify that the normalisation holds for a 2025 profile just as it does
 > for a 1999 profile:
 
 ``` r
-
-P25_2026 <- slp_generate("P25", "2026-01-01", "2026-12-31")
+P25_2026 <- slp_electricity("P25", "2026-01-01", "2026-12-31")
 sum(P25_2026$watts / 4 / 1000)
 #> [1] 1000.08
 ```
@@ -122,21 +112,20 @@ sum(P25_2026$watts / 4 / 1000)
 ### Converting the output to kWh
 
 The values returned by
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
 represent **average electric power** during each 15-minute interval. To
 obtain the **energy consumed** during that interval in kWh you can wrap
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
 once:
 
 ``` r
-
-slp_generate_kwh <- \(...) {
-  out <- slp_generate(...)
+slp_electricity_kwh <- \(...) {
+  out <- slp_electricity(...)
   out$kwh <- out$watts / 4 / 1000
   out
 }
 
-H0_kwh <- slp_generate_kwh("H0", "2026-01-01", "2026-12-31")
+H0_kwh <- slp_electricity_kwh("H0", "2026-01-01", "2026-12-31")
 sum(H0_kwh$kwh)
 #> [1] 998.1163
 ```
@@ -144,7 +133,7 @@ sum(H0_kwh$kwh)
 ## Algorithm step by step
 
 When you call
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md),
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md),
 you generate (surprise!) a standard load profile. These are the steps
 that are then performed:
 
@@ -166,7 +155,6 @@ In the initial step, a date sequence is created from `start_date` to
 `end_date` based on the user input. Here’s a simple example:
 
 ``` r
-
 start <- as.Date("2023-12-22")
 end <- as.Date("2023-12-27")
 
@@ -196,9 +184,10 @@ Monday to Friday are grouped together as `workday`. December 24th and
 31st are considered Saturdays too if they are not Sundays. Public
 holidays are regarded as Sundays.
 
-**Note**: The function
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
-supports by default nationwide public holidays for Germany. Those were
+#### Public holidays
+
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
+supports nationwide public holidays for Germany by default. Those were
 retrieved from the [nager.Date
 API](https://github.com/nager/Nager.Date):
 
@@ -212,22 +201,44 @@ API](https://github.com/nager/Nager.Date):
 - Christmas Day (Dec 25)
 - Boxing Day (Dec 26)
 
-> State-level holidays are **not** included by default, as these vary by
-> state and can change over time. Use the optional `holidays` argument
-> to pass your own vector of dates and take full control over which
-> dates are treated as public holidays; the built-in data are then
-> ignored entirely. See the
-> [README](https://flrd.github.io/standardlastprofile/index.html#public-holidays)
-> for an example of how to fetch state-level holidays from the
-> [nager.Date API](https://date.nager.at) and pass them to
-> [`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md).
+State-level holidays are **not** included by default, as these vary by
+state and can change over time. Use the optional `holidays` argument to
+pass your own vector of dates and take full control over which dates are
+treated as public holidays; the built-in data are then ignored entirely.
+
+The example below fetches public holidays for 2027 specific to the state
+of Berlin from the [nager.Date API](https://date.nager.at). Berlin
+observes International Women’s Day (8 March) in addition to all
+nationwide holidays. The API returns one entry per holiday; entries
+where `global` is `TRUE` are observed in all states, while
+state-specific ones carry a `counties` field containing the relevant ISO
+3166-2 code (e.g. `"DE-BE"` for Berlin).
+
+``` r
+library(httr2)
+
+resp <- request("https://date.nager.at") |>
+  req_url_path_append("api", "v3", "PublicHolidays", "2027", "DE") |>
+  req_perform() |>
+  resp_body_json()
+
+# Berlin observes International Women's Day (8 March) in addition to all
+# nationwide holidays; global == TRUE means observed in all states
+is_berlin <- \(x) isTRUE(x$global) || "DE-BE" %in% unlist(x$counties)
+
+holidays_berlin_2027 <- as.Date(
+  vapply(Filter(is_berlin, resp), \(x) x$date, character(1))
+)
+
+slp_electricity("H0", "2027-01-01", "2027-12-31",
+                holidays = holidays_berlin_2027)
+```
 
 The result of this second step is a mapping from each date to a
 so-called characteristic profile day, i.e. a combination of weekday and
 period:
 
 ``` r
-
 wkday_period <- standardlastprofile:::.get_wkday_period(date_seq)
 data.frame(input = date_seq, output = wkday_period)
 #>        input          output
@@ -244,12 +255,11 @@ data.frame(input = date_seq, output = wkday_period)
 The third step is to assign the measurements we know from the
 `slp_electricity_profiles` dataset to each characteristic profile day.
 This is the job of the
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md)
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md)
 function:
 
 ``` r
-
-G5 <- slp_generate(
+G5 <- slp_electricity(
   profile_id = "G5",
   start_date = "2023-12-22",
   end_date = "2023-12-27"
@@ -259,7 +269,6 @@ G5 <- slp_generate(
 This function returns a data frame with 4 columns:
 
 ``` r
-
 head(G5)
 #>   profile_id          start_time            end_time watts
 #> 1         G5 2023-12-22 00:00:00 2023-12-22 00:15:00  50.1
@@ -283,7 +292,6 @@ which can be used to reproduce the plot for the G5 profile, showcasing
 the algorithm’s outcome:
 
 ``` r
-
 library(ggplot2)
 ggplot(G5, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
@@ -330,7 +338,7 @@ in the `slp_electricity_profiles` dataset for `H0`, `H25`, `P25`, and
 `S25` serve as base values to be scaled by a dynamization factor.
 
 This is taken into account when you call
-[`slp_generate()`](https://flrd.github.io/standardlastprofile/reference/slp_generate.md).
+[`slp_electricity()`](https://flrd.github.io/standardlastprofile/reference/slp_electricity.md).
 The study suggested the application of a 4th order polynomial function
 to the values of these profiles.
 

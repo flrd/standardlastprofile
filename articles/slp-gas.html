@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Generate a standard load profile for gas • standardlastprofile</title>
+<title>Gas Standard Load Profiles (Standardlastprofile Gas) • standardlastprofile</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -13,10 +13,12 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate a standard load profile for gas">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Gas Standard Load Profiles (Standardlastprofile Gas)">
+<meta name="description" content="BDEW Standardlastprofile Gas in R: the SigLinDe synthetic procedure, Kundenwert, and weekday factors for 15 gas profiles (HEF, HMF, HKO, GKO, and 11 more).">
+<meta property="og:description" content="BDEW Standardlastprofile Gas in R: the SigLinDe synthetic procedure, Kundenwert, and weekday factors for 15 gas profiles (HEF, HMF, HKO, GKO, and 11 more).">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -65,10 +67,10 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Generate a standard load profile for gas</h1>
+      <h1>Gas Standard Load Profiles (Standardlastprofile Gas)</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/v2.0.0/vignettes/articles/slp-gas.Rmd" class="external-link"><code>vignettes/articles/slp-gas.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/HEAD/vignettes/articles/slp-gas.Rmd" class="external-link"><code>vignettes/articles/slp-gas.Rmd</code></a></small>
       <div class="d-none name"><code>slp-gas.Rmd</code></div>
     </div>
 
@@ -92,32 +94,29 @@
     width: auto !important;
   }
 </style>
-<p>A standard load profile reflects the typical pattern of gas
+<p>A standard load profile reflects the assumed pattern of gas
 consumption. It is used for forecasting and balancing purposes for
 various customer types or customer groups for which no continuous
 measurement data is available. In this respect, standard load profiles
 represent a simplification.</p>
 <p>In this article we explain how <code><a href="../reference/slp_gas.html">slp_gas()</a></code> implements the
-algorithm of the <strong>synthetic procedure</strong> (German:
-<em>synthetisches Verfahren</em>), following the definitions by BDEW,
-VKU, and GEODE in the <em>Leitfaden Abwicklung von Standardlastprofilen
-Gas</em> (2025).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
+algorithm of the synthetic procedure (German: “synthetisches
+Verfahren”), following the definitions by BDEW, VKU, and GEODE in the
+<em>Leitfaden Abwicklung von Standardlastprofilen Gas</em> (2025).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
 Standardlastprofilen Gas&lt;/em&gt;. Berlin. Available at &lt;a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a></p>
 <div class="section level2">
 <h2 id="synthetic-procedure">Synthetic procedure<a class="anchor" aria-label="anchor" href="#synthetic-procedure"></a>
 </h2>
 <p>The synthetic procedure takes a bottom-up approach: the gas
-consumption for a gas network is explained by the sum of the individual
-gas consumers within that network.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;In addition to the synthetic procedure, there is also
+consumption is explained by the sum of the individual gas consumers.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;In addition to the synthetic procedure, there is also
 the analytical procedure. In brief, under this procedure, a network
 operator forecasts the proportion of the daily gas volume attributable
 to &lt;em&gt;all&lt;/em&gt; SLP customers based on the expected temperature for that
 day and the residual gas amount derived from the total gas consumption,
 minus the gas volume attributable to customers with metered consumption.
-The analytical procedure is not in scope of this package.&lt;/p&gt;"><sup>2</sup></a></p>
-<p>For each customer type, i.e. profile, the gas consumption of day
-<span class="math inline">\(D\)</span> is the result of three
-factors:</p>
+The analytical procedure is not in scope of this package.&lt;/p&gt;"><sup>2</sup></a> The gas
+consumption on day <span class="math inline">\(D\)</span> is the result
+of three factors:</p>
 <ol style="list-style-type: decimal">
 <li>outside temperature</li>
 <li>preferences and habits</li>
@@ -128,6 +127,7 @@ Standardlastprofilen Gas&lt;/em&gt;. Berlin, Allgemeine Begriffsbestimmungen /
 Erläuterungen, p. VIII&lt;/p&gt;"><sup>3</sup></a></p>
 <p><span class="math display">\[
 Q(D) = h(\vartheta_D) \times KW \times F_{WT, D}
+\tag{1}\label{eq:qdaily}
 \]</span> where:</p>
 <ul>
 <li>
@@ -141,474 +141,21 @@ scaling factor in kWh/day (German: “Kundenwert”).</li>
 adjusts for consumption differences across days of the week.</li>
 </ul>
 <div class="section level3">
-<h3 id="profile-function-hvartheta_d">Profile function <span class="math inline">\(h(\vartheta_D)\)</span><a class="anchor" aria-label="anchor" href="#profile-function-hvartheta_d"></a>
+<h3 id="weekday-factors-f_wt">Weekday factors <span class="math inline">\(F_{WT}\)</span><a class="anchor" aria-label="anchor" href="#weekday-factors-f_wt"></a>
 </h3>
-<p>Gas consumption is strongly correlated with outdoor temperature; the
-colder it gets, the more gas is consumed. The relationship between
-outside temperature and gas consumption is captured by the profile
-function <span class="math inline">\(h(\vartheta)\)</span>.</p>
-<p>This function was initially published in 2003 as an S-shaped sigmoid
-function:<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Hellwig, Mark (2003). &lt;em&gt;Entwicklung und Anwendung
-parametrisierter Standard-Lastprofile&lt;/em&gt;. Dissertation, TU München.&lt;/p&gt;"><sup>4</sup></a></p>
-<p><span class="math display">\[
-h(\vartheta) = \frac{A}{1 + \left(\dfrac{B}{\vartheta -
-\vartheta_0}\right)^C} + D
-\]</span></p>
-<p>Since then, it has been revised as part of an ongoing debate. In a
-research paper from 2015 it was found that a pure sigmoid approach
-systematically underestimated consumption at very cold temperatures. The
-authors proposed an improved formulation called
-<strong>SigLinDe</strong> (<strong>Sig</strong>moid +
-<strong>Lin</strong>ear + <strong>De</strong>utschland).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Hinterstocker, M., Eberl, B., von Roon, S. (2015).
-&lt;em&gt;Weiterentwicklung des Standardlastprofilverfahrens Gas&lt;/em&gt;.
-Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE),
-available at &lt;a href="https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf&lt;/a&gt;&lt;/p&gt;'><sup>5</sup></a> SigLinDe adds a linear
-component to that sigmoid equation representing space-heating demand
-(German: <em>Heizgas-Gerade</em>) and hot water demand (German:
-<em>Warmwasser-Gerade</em>).</p>
-<p><span class="math display">\[
-h(\vartheta) =
-\underbrace{\frac{A}{1 + \left(\dfrac{B}{\vartheta -
-\vartheta_0}\right)^C} + D}_{\text{sigmoid part}}
-+
-\underbrace{\max\!\left(m_H \vartheta + b_H,\; m_W \vartheta +
-b_W\right)}_{\text{linear part}}
-\]</span></p>
-<div id="siglinde-widget" style="width: 100%; margin: 1.5em 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-<div style="margin-bottom: 12px;">
-<div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">
-Higher h(ϑ) means more gas consumption on that day
-</div>
-<style>
-.sig-toggle-label {
-  display: inline-block;
-  position: relative;
-}
-.sig-toggle-label > span {
-  position: relative;
-}
-.sig-toggle-label::before {
-  content: attr(data-text);
-  font-weight: 700;
-  visibility: hidden;
-  display: block;
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.sig-active {
-  font-weight: 700;
-  color: #000;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-.sig-select-box {
-  display: inline-block;
-  position: relative;       /* the box -- not the native select -- owns the height */
-  top: -2px;                /* nudge up to centre in the text line */
-  width: 4em;
-  height: 1.2em;            /* same as the toggle */
-  box-sizing: border-box;
-  overflow: hidden;
-  vertical-align: middle;
-  margin: 0 0 0 2px;
-  background-color: #fff;
-  outline: 2px solid #333;   /* outline (outside the box) to match the toggle */
-  cursor: pointer;
-  background-image:
-    linear-gradient(45deg, transparent 50%, #333 50%),
-    linear-gradient(135deg, #333 50%, transparent 50%);
-  background-position: calc(100% - 9px) center, calc(100% - 6px) center;
-  background-size: 3px 3px, 3px 3px;
-  background-repeat: no-repeat;
-}
-#siglinde-profile {
-  position: absolute;       /* taller native select, vertically centred + clipped */
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  width: 100%;
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  border: none;
-  outline: none;
-  margin: 0;
-  padding: 0 16px 0 5px;
-  background: transparent;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  color: #1a1a1a;
-  cursor: pointer;
-}
-</style>
-<p style="font-size: 13px; color: #555; margin: 4px 0 0; line-height: 1.4;">
-Toggle between <span id="siglinde-label-sig" class="sig-toggle-label" data-text="Sigmoid"><span id="siglinde-label-sig-inner" class="sig-active">Sigmoid</span></span> <span style="display: inline-block; vertical-align: middle; position: relative; top: -2px; width: 2.2em; height: 1.2em; margin: 0 2px;">
-<button id="siglinde-toggle" role="switch" aria-checked="false" aria-label="Toggle between a pure Sigmoid and SigLinDe" style="position: relative; width: 100%; height: 100%; background: #fff; outline: 2px solid #333; border: none; border-radius: 0; cursor: pointer; padding: 0;">
-<span id="siglinde-thumb" style="position: absolute; top: 50%; left: 0.15em; width: 0.75em; height: 0.75em; background: #333; border-radius: 0; display: block; transition: transform 0.2s ease; transform: translateY(-50%);"></span>
-</button> </span> and <span id="siglinde-label-sld" class="sig-toggle-label" data-text="SigLinDe"><span id="siglinde-label-sld-inner">SigLinDe</span></span> functions for
-profile <span class="sig-select-box"><select id="siglinde-profile"><option value="HEF" data-name="Single-family home" selected>HEF</option>
-<option value="HMF" data-name="Multi-family home">HMF</option>
-<option value="HKO" data-name="Cooking and hot water only">HKO</option>
-<option value="GKO" data-name="Small commercial">GKO</option>
-<option value="GHA" data-name="Trade and commerce">GHA</option>
-<option value="GMK" data-name="Metal and automotive">GMK</option>
-<option value="GBD" data-name="Services">GBD</option>
-<option value="GBH" data-name="Accommodation">GBH</option>
-<option value="GWA" data-name="Laundries">GWA</option>
-<option value="GGA" data-name="Gastronomy">GGA</option>
-<option value="GBA" data-name="Bakeries">GBA</option>
-<option value="GGB" data-name="Mixed commercial">GGB</option>
-<option value="GPD" data-name="Paper and printing">GPD</option>
-<option value="GMF" data-name="Large multi-family / mixed use">GMF</option>
-<option value="GHD" data-name="Trade, commerce and services aggregate">GHD</option></select></span>
-</p>
-<p style="font-size: 13px; color: #555; margin: 6px 0 0; line-height: 1.4;">
-<span id="siglinde-profile-name" style="font-weight: 600; color: #1a1a1a;">Single-family home</span>
-</p>
-</div>
-<div id="siglinde-chart" style="width: 80%; margin-top: 8px;">
-
-</div>
-</div>
-<script type="module">
-import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
-
-const coefs = {"HEF":{"33":{"A":1.6209544,"B":-37.1833141,"C":5.6727847,"D":0.0716431,"theta0":40,"mH":-0.04957,"bH":0.8401015,"mW":-0.002209,"bW":0.1074468},"34":{"A":1.3819663,"B":-37.4124155,"C":6.1723179,"D":0.0396284,"theta0":40,"mH":-0.0672159,"bH":1.1167138,"mW":-0.0019982,"bW":0.135507}},"HMF":{"33":{"A":1.2328655,"B":-34.7213605,"C":5.8164304,"D":0.0873352,"theta0":40,"mH":-0.0409284,"bH":0.767292,"mW":-0.002232,"bW":0.1199207},"34":{"A":1.0443538,"B":-35.0333754,"C":6.2240634,"D":0.0502917,"theta0":40,"mH":-0.053583,"bH":0.9995901,"mW":-0.0021758,"bW":0.1633299}},"HKO":{"33":{"A":0.4040932,"B":-24.4392968,"C":6.5718175,"D":0.710771,"theta0":40,"mH":0,"bH":0,"mW":0,"bW":0},"34":{"A":0.4040932,"B":-24.4392968,"C":6.5718175,"D":0.710771,"theta0":40,"mH":0,"bH":0,"mW":0,"bW":0}},"GKO":{"33":{"A":1.3554515,"B":-35.1412563,"C":7.1303395,"D":0.0990619,"theta0":40,"mH":-0.0526487,"bH":0.8626086,"mW":-0.0008808,"bW":0.0964014},"34":{"A":1.4256684,"B":-36.6590504,"C":7.6083226,"D":0.0371116,"theta0":40,"mH":-0.0809359,"bH":1.2364527,"mW":-0.0007628,"bW":0.1002979}},"GHA":{"33":{"A":1.9724775,"B":-36.9650065,"C":7.2256947,"D":0.0345782,"theta0":40,"mH":-0.0742174,"bH":1.0448869,"mW":-0.0008295,"bW":0.0461795},"34":{"A":1.8398455,"B":-37.8282037,"C":8.1593369,"D":0.025971,"theta0":40,"mH":-0.1069262,"bH":1.455224,"mW":-0.000492,"bW":0.0691851}},"GMK":{"33":{"A":1.4202419,"B":-34.880613,"C":6.5951899,"D":0.0385317,"theta0":40,"mH":-0.0521084,"bH":0.8647919,"mW":-0.0014369,"bW":0.0637602},"34":{"A":1.3284913,"B":-35.8715062,"C":7.5186829,"D":0.017554,"theta0":40,"mH":-0.0758983,"bH":1.1942555,"mW":-0.000898,"bW":0.0603337}},"GBD":{"33":{"A":1.4633682,"B":-36.1794117,"C":5.9265162,"D":0.0808835,"theta0":40,"mH":-0.04758,"bH":0.8230754,"mW":-0.0019273,"bW":0.1077046},"34":{"A":1.5175792,"B":-37.5,"C":6.8,"D":0.0295801,"theta0":40,"mH":-0.0788559,"bH":1.216125,"mW":-0.0013134,"bW":0.0968721}},"GBH":{"33":{"A":0.9874283,"B":-35.2532124,"C":6.1544406,"D":0.2265716,"theta0":40,"mH":-0.033902,"bH":0.6938234,"mW":-0.0012849,"bW":0.2029732},"34":{"A":0.9872585,"B":-35.2532124,"C":6.0587001,"D":0.0793512,"theta0":40,"mH":-0.0495013,"bH":0.9637999,"mW":-0.0022304,"bW":0.2288398}},"GWA":{"33":{"A":0.3337838,"B":-36.0237912,"C":4.8662747,"D":0.491228,"theta0":40,"mH":-0.0092263,"bH":0.4595757,"mW":-0.0009676,"bW":0.3964291},"34":{"A":0.3925339,"B":-35.3,"C":4.8662747,"D":0.3045099,"theta0":40,"mH":-0.0167993,"bH":0.6710889,"mW":-0.0020301,"bW":0.5614623}},"GGA":{"33":{"A":1.1582082,"B":-36.2878584,"C":6.5885126,"D":0.223568,"theta0":40,"mH":-0.0410335,"bH":0.7526451,"mW":-0.0009088,"bW":0.1916641},"34":{"A":1.184832,"B":-36,"C":7.7368518,"D":0.0793107,"theta0":40,"mH":-0.0687383,"bH":1.130857,"mW":-0.0006587,"bW":0.1910301}},"GBA":{"33":{"A":0.2770087,"B":-33,"C":5.7212303,"D":0.4865118,"theta0":40,"mH":-0.0094849,"bH":0.4630237,"mW":-0.0007134,"bW":0.3867447},"34":{"A":0.353764,"B":-33.35,"C":5.7212303,"D":0.3033305,"theta0":40,"mH":-0.0177463,"bH":0.6825699,"mW":-0.0013912,"bW":0.5434624}},"GGB":{"33":{"A":1.8213778,"B":-37.5,"C":6.3462148,"D":0.0678118,"theta0":40,"mH":-0.0607666,"bH":0.9308159,"mW":-0.0013967,"bW":0.0850399},"34":{"A":1.6266812,"B":-37.8825368,"C":6.983607,"D":0.0297136,"theta0":40,"mH":-0.0854333,"bH":1.2709629,"mW":-0.0011319,"bW":0.0928124}},"GPD":{"33":{"A":1.7110739,"B":-35.8,"C":8.4,"D":0.0702546,"theta0":40,"mH":-0.0745381,"bH":1.0463005,"mW":-0.0003672,"bW":0.0621882},"34":{"A":1.8834609,"B":-37,"C":10.2405021,"D":0.027547,"theta0":40,"mH":-0.12531,"bH":1.6275999,"mW":-0.0001105,"bW":0.0635119}},"GMF":{"33":{"A":1.2328655,"B":-34.7213605,"C":5.8164304,"D":0.0873352,"theta0":40,"mH":-0.0409284,"bH":0.767292,"mW":-0.002232,"bW":0.1199207},"34":{"A":1.0443538,"B":-35.0333754,"C":6.2240634,"D":0.0502917,"theta0":40,"mH":-0.053583,"bH":0.9995901,"mW":-0.0021758,"bW":0.1633299}},"GHD":{"33":{"A":1.3010623,"B":-35.6816144,"C":6.6857976,"D":0.1409267,"theta0":40,"mH":-0.0473428,"bH":0.8141691,"mW":-0.0010601,"bW":0.1325092},"34":{"A":1.25696,"B":-36.6078453,"C":7.321187,"D":0.077696,"theta0":40,"mH":-0.0696826,"bH":1.1379702,"mW":-0.0008522,"bW":0.1921068}}};
-const variants = ["33", "34"];
-let p = coefs["HEF"];          // p["33"], p["34"]
-
-function sigmoid(c, t) {
-  return c.A / (1 + Math.pow(c.B / (t - c.theta0), c.C)) + c.D;
-}
-function linear(c, t) {
-  return Math.max(c.mH * t + c.bH, c.mW * t + c.bW);
-}
-
-const temps = [];
-for (let t = -15; t <= 25; t += 0.25) temps.push(t);
-const i8 = temps.indexOf(8);   // index of the 8°C reference
-
-function curvesFor(c) {
-  return {
-    sig: temps.map(t => sigmoid(c, t)),
-    sld: temps.map(t => sigmoid(c, t) + linear(c, t))
-  };
-}
-// displayed (possibly mid-morph) curves, one per variant
-let curves = { "33": curvesFor(p["33"]), "34": curvesFor(p["34"]) };
-
-const chartEl  = document.getElementById("siglinde-chart");
-const toggle   = document.getElementById("siglinde-toggle");
-const thumb    = document.getElementById("siglinde-thumb");
-const labelSig = document.getElementById("siglinde-label-sig-inner");
-const labelSld = document.getElementById("siglinde-label-sld-inner");
-
-let active = false;
-let blend  = 0;
-let animId = null;
-
-function render(t) {
-  const width = chartEl.clientWidth;
-  if (!width) return;
-  const data = [];
-  const refDots = [];
-  for (const v of variants) {
-    const c = curves[v];
-    const label = "Variant " + v;
-    temps.forEach((temp, i) => {
-      data.push({ variant: label, temp, h: c.sig[i] + t * (c.sld[i] - c.sig[i]) });
-    });
-    refDots.push({ variant: label, temp: 8, h: c.sig[i8] + t * (c.sld[i8] - c.sig[i8]) });
-  }
-  const plot = Plot.plot({
-    width,
-    height: Math.round(width * 0.6),
-    marginLeft: 44,
-    marginBottom: 36,
-    color: {
-      domain: ["Variant 33", "Variant 34"],
-      range: ["#961BFA", "#0CC792"],
-      legend: true
-    },
-    x: { label: "Temperature (°C)", ticks: [-10, 0, 8, 20], tickFormat: d => d + "°", grid: true },
-    y: { label: "h(ϑ)", domain: [0, 6], ticks: [1, 2, 3, 4, 5], grid: true },
-    marks: [
-      Plot.ruleY([1], { stroke: "#999", strokeDasharray: "4,3" }),
-      Plot.lineY(data, { x: "temp", y: "h", stroke: "variant", strokeWidth: 2.5 }),
-      Plot.dot(refDots, { x: "temp", y: "h", fill: "variant", r: 3.5, stroke: "white", strokeWidth: 1 })
-    ],
-    style: {
-      fontSize: "12px",
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-      background: "transparent"
-    }
-  });
-  chartEl.replaceChildren(plot);
-}
-
-function animate() {
-  const target = active ? 1 : 0;
-  const step = 0.06;
-  const diff = target - blend;
-  if (Math.abs(diff) < step) {
-    blend = target;
-    render(blend);
-    animId = null;
-    return;
-  }
-  blend += Math.sign(diff) * step;
-  render(blend);
-  animId = requestAnimationFrame(animate);
-}
-
-toggle.addEventListener("click", () => {
-  active = !active;
-  toggle.setAttribute("aria-checked", active);
-  thumb.style.transform = active ? "translateY(-50%) translateX(1.1em)" : "translateY(-50%)";
-  labelSig.classList.toggle("sig-active", !active);
-  labelSld.classList.toggle("sig-active", active);
-  if (animId) cancelAnimationFrame(animId);
-  animId = requestAnimationFrame(animate);
-});
-
-const profileSelect = document.getElementById("siglinde-profile");
-let morphId = null;
-profileSelect.addEventListener("change", () => {
-  const from = {};
-  for (const v of variants) {
-    from[v] = { sig: curves[v].sig.slice(), sld: curves[v].sld.slice() };
-  }
-  p = coefs[profileSelect.value];
-  document.getElementById("siglinde-profile-name").textContent =
-    profileSelect.selectedOptions[0].dataset.name;
-  const to = { "33": curvesFor(p["33"]), "34": curvesFor(p["34"]) };
-  let m = 0;
-  if (morphId) cancelAnimationFrame(morphId);
-  (function step() {
-    m = Math.min(1, m + 0.08);
-    for (const v of variants) {
-      curves[v] = {
-        sig: from[v].sig.map((x, i) => x + m * (to[v].sig[i] - x)),
-        sld: from[v].sld.map((x, i) => x + m * (to[v].sld[i] - x))
-      };
-    }
-    render(blend);
-    morphId = m < 1 ? requestAnimationFrame(step) : null;
-  })();
-});
-
-window.addEventListener("resize", () => render(blend));
-
-render(0);
-</script><p>The SigLinDe approach was adopted by BDEW and has since been the
-binding standard.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
-Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Available at &lt;a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf&lt;/a&gt;&lt;/p&gt;'><sup>6</sup></a> <code><a href="../reference/slp_gas.html">slp_gas()</a></code> implements the
-SigLinDe approach. The parameters <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span>, <span class="math inline">\(D\)</span>, <span class="math inline">\(\vartheta_0\)</span>, <span class="math inline">\(m_H\)</span>, <span class="math inline">\(b_H\)</span>, <span class="math inline">\(m_W\)</span>, <span class="math inline">\(b_W\)</span> are profile-specific constants.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;The coefficients A, B, C, D, m&lt;sub&gt;H&lt;/sub&gt;,
-b&lt;sub&gt;H&lt;/sub&gt;, m&lt;sub&gt;W&lt;/sub&gt;, b&lt;sub&gt;W&lt;/sub&gt; for each consumption profile
-are published in Annex 6 of the BDEW Leitfaden (pp. 140–163).&lt;/p&gt;"><sup>7</sup></a></p>
-<p>All <strong>15 gas profile IDs</strong> share this one SigLinDe
-function — they differ only in their parameter values (<span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, …, <span class="math inline">\(b_W\)</span>). The complete set is tabulated in
-the <a href="slp-gas-parameters.html">SigLinDe Parameters and Weekday
-Factors</a> article and returned in R by
-<code><a href="../reference/slp_gas_coefficients.html">slp_gas_coefficients()</a></code>:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/slp_gas_coefficients.html">slp_gas_coefficients</a></span><span class="op">(</span><span class="st">"HEF"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   profile_id variant        A         B        C         D theta0         mH</span></span>
-<span><span class="co">#&gt; 1        HEF      34 1.381966 -37.41242 6.172318 0.0396284     40 -0.0672159</span></span>
-<span><span class="co">#&gt; 2        HEF      33 1.620954 -37.18331 5.672785 0.0716431     40 -0.0495700</span></span>
-<span><span class="co">#&gt;          bH         mW        bW</span></span>
-<span><span class="co">#&gt; 1 1.1167138 -0.0019982 0.1355070</span></span>
-<span><span class="co">#&gt; 2 0.8401015 -0.0022090 0.1074468</span></span></code></pre></div>
-<p>The <code>HKO</code> profile (cooking and hot water only) is a
-special case: all four linear coefficients (<span class="math inline">\(m_H\)</span>, <span class="math inline">\(b_H\)</span>, <span class="math inline">\(m_W\)</span>, <span class="math inline">\(b_W\)</span>) are zero, so the linear term <span class="math inline">\(\max(m_H\vartheta + b_H,\; m_W\vartheta +
-b_W)\)</span> vanishes and <span class="math inline">\(h(\vartheta)\)</span> collapses to the bare
-sigmoid — it is the original pre-SigLinDe TU München profile, carried
-over unchanged. Because the variant 33 / 34 split only affects the
-linear part, the two variants are <strong>identical for
-<code>HKO</code></strong>.</p>
-<p>The result of <span class="math inline">\(h(\vartheta)\)</span> is a
-number &gt; 0 without a dimension:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># profile "GMF", Ausprägung: 34</span></span>
-<span><span class="fu"><a href="../reference/slp_gas_siglinde.html">slp_gas_siglinde</a></span><span class="op">(</span></span>
-<span>  theta  <span class="op">=</span>   <span class="fl">8.0</span>,</span>
-<span>  A      <span class="op">=</span>   <span class="fl">1.0443538</span>,</span>
-<span>  B      <span class="op">=</span> <span class="op">-</span><span class="fl">35.0333754</span>,</span>
-<span>  C      <span class="op">=</span>   <span class="fl">6.2240634</span>,</span>
-<span>  D      <span class="op">=</span>   <span class="fl">0.0502917</span>,</span>
-<span>  theta0 <span class="op">=</span>  <span class="fl">40.0</span>,</span>
-<span>  mH     <span class="op">=</span>  <span class="op">-</span><span class="fl">0.053583</span>,</span>
-<span>  bH     <span class="op">=</span>   <span class="fl">0.9995901</span>,</span>
-<span>  mW     <span class="op">=</span>  <span class="op">-</span><span class="fl">0.0021758</span>,</span>
-<span>  bW     <span class="op">=</span>   <span class="fl">0.1633299</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
-<p>The result above is exactly 1 — which is no coincidence. The SigLinDe
-coefficients of every profile are calibrated so that the profile
-function equals 1 at the reference temperature of 8°C. At 8°C the
-profile term drops out of <span class="math inline">\(Q(D) = KW \times
-h(\vartheta_D) \times F_{WT,D}\)</span>, so the customer value <span class="math inline">\(KW\)</span> is simply the daily consumption on an
-8°C day — which is exactly how it is defined.</p>
-<p><code>HKO</code> is the one exception, and precisely because of its
-missing linear part. The SigLinDe profiles owe that exact-1 value at 8°C
-to the linear term, which is fitted (together with the sigmoid) to pin
-<span class="math inline">\(h(8\,\text{°C}) = 1\)</span>.
-<code>HKO</code> has no linear part, so its bare sigmoid is not pinned
-to the reference and reaches about <strong>1.06</strong> at 8°C instead
-— visible in the BDEW profile sheet, where the <code>HKO</code> row
-lists <span class="math inline">\(h(8\,\text{°C}) =
-1.05612\)</span>.</p>
-<p>The temperature <span class="math inline">\(\vartheta\)</span> fed to
-this function is the daily <em>allocation temperature</em> (defined
-next); the dimensionless <span class="math inline">\(h(\vartheta)\)</span> is later scaled to kWh by
-the customer value <span class="math inline">\(KW\)</span> (covered
-below).</p>
-</div>
-<div class="section level3">
-<h3 id="allocation-temperature">Allocation temperature<a class="anchor" aria-label="anchor" href="#allocation-temperature"></a>
-</h3>
-<p>The <em>allocation temperature</em> <span class="math inline">\(\vartheta_D\)</span> is the daily temperature fed
-to the profile function <span class="math inline">\(h(\vartheta)\)</span>. Two ways to compute it are
-defined in the Leitfaden:<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
-Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Berlin, section 3.5.2,
-p. 22.&lt;/p&gt;"><sup>8</sup></a></p>
-<p><strong>Simple daily mean</strong> — the arithmetic mean of the 24
-hourly values over the gas day:</p>
-<p><span class="math display">\[\vartheta_D = \frac{1}{24}
-\sum_{i=1}^{24} T_i\]</span></p>
-<p><strong>Geometrically-weighted 4-day mean</strong> — recommended by
-BDEW for grid operators, giving more weight to the current day:</p>
-<p><span class="math display">\[\vartheta_D = \frac{T_D + 0.5 \cdot
-T_{D-1} + 0.25 \cdot T_{D-2} + 0.125 \cdot T_{D-3}}{1 + 0.5 + 0.25 +
-0.125}\]</span></p>
-<p><code><a href="../reference/slp_gas.html">slp_gas()</a></code> accepts whichever values you pass in
-<code>temperatures</code> — the choice of method is the caller’s
-responsibility. If you have raw daily means from DWD and want the
-geometrically-weighted variant, apply it before calling
-<code><a href="../reference/slp_gas.html">slp_gas()</a></code>. (If you already have gas forecast temperature
-(GPT) values from a meteorological service provider, use those directly
-— GPT is not this formula.)</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Geometrically-weighted 4-day mean (more weight on the current day):</span></span>
-<span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span>, <span class="fl">0.25</span>, <span class="fl">0.125</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">allocation_temp</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">temps</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span></span>
-<span>    <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">temps</span>, <span class="va">weights</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weights</span><span class="op">)</span>,</span>
-<span>                  method <span class="op">=</span> <span class="st">"convolution"</span>, sides <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  <span class="co"># past values only</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Apply to your daily mean series before passing it to slp_gas().</span></span>
-<span><span class="co"># The first three days come back NA (no 3-day history yet):</span></span>
-<span><span class="co"># temps_weighted &lt;- allocation_temp(temps)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="kundenwert">Kundenwert<a class="anchor" aria-label="anchor" href="#kundenwert"></a>
-</h3>
-<p>The customer value (<code>kundenwert</code>) accounts for a
-customer’s individual consumption behaviour. It is a scaling factor in
-kWh/day — specifically, the daily gas consumption at the reference
-temperature of 8°C, the point at which <span class="math inline">\(h(\vartheta) = 1\)</span> for every profile. We
-can rearrange the gas consumption equation above and write <span class="math inline">\(KW\)</span> as:</p>
-<p><span class="math display">\[
-KW = \frac{E_a}{\displaystyle\sum_{D} h(\vartheta_D) \times F_{WT,D}}
-\]</span></p>
-<p>Where</p>
-<ul>
-<li>
-<span class="math inline">\(E_a\)</span> is the annual gas
-consumption</li>
-<li>
-<span class="math inline">\(\vartheta_D\)</span> is the daily
-allocation temperature for day <span class="math inline">\(D\)</span>
-</li>
-<li>
-<span class="math inline">\(F_{WT,D}\)</span> is the weekday factor
-for day <span class="math inline">\(D\)</span>
-</li>
-</ul>
-<p>Using the example of a single-family home (<code>HEF</code>) in
-Düsseldorf with an annual consumption of 15,000 kWh — the same customer
-as in the README — the table below shows how the denominator is built
-up, day by day, from the Düsseldorf long-term daily mean temperatures
-(DWD station 1078, 2004–2024):</p>
-<table class="table">
-<thead><tr class="header">
-<th align="left">Date</th>
-<th align="right">°C</th>
-<th align="right">h(ϑ)</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">Jan 1</td>
-<td align="right">4.8</td>
-<td align="right">1.3962</td>
-</tr>
-<tr class="even">
-<td align="left">⋮</td>
-<td align="right">⋮</td>
-<td align="right">⋮</td>
-</tr>
-<tr class="odd">
-<td align="left">Jun 30</td>
-<td align="right">19.2</td>
-<td align="right">0.1727</td>
-</tr>
-<tr class="even">
-<td align="left">Jul 1</td>
-<td align="right">18.9</td>
-<td align="right">0.1765</td>
-</tr>
-<tr class="odd">
-<td align="left">Jul 2</td>
-<td align="right">19.2</td>
-<td align="right">0.1727</td>
-</tr>
-<tr class="even">
-<td align="left">⋮</td>
-<td align="right">⋮</td>
-<td align="right">⋮</td>
-</tr>
-<tr class="odd">
-<td align="left">Dec 31</td>
-<td align="right">5.7</td>
-<td align="right">1.2833</td>
-</tr>
-</tbody>
-</table>
-<p>The sum in the denominator across all 365 days gives <span class="math inline">\(\sum_D h(\vartheta_D) \times F_{WT,D}\)</span> =
-272.32, so <span class="math inline">\(KW \approx\)</span> 15,000 /
-272.32 = <strong>55.1 kWh/day</strong>.</p>
-<p>With <span class="math inline">\(h(\vartheta_D)\)</span> and <span class="math inline">\(KW\)</span> in hand, the only remaining factor in
-<span class="math inline">\(Q(D) = KW \times h(\vartheta_D) \times
-F_{WT,D}\)</span> is the weekday factor <span class="math inline">\(F_{WT,D}\)</span>.</p>
-</div>
-<div class="section level3">
-<h3 id="weekday-factors">Weekday factors<a class="anchor" aria-label="anchor" href="#weekday-factors"></a>
-</h3>
-<p>Unlike the electricity profiles, which group Monday–Friday into a
-single <code>workday</code> type, the gas procedure uses a separate
-scaling factor for every weekday from Monday through Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
+<p>Weekday factors are scaling factors applied for every day from Monday
+to Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
 Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Berlin, Annex 6,
-pp. 140–163 (per-profile data sheets).&lt;/p&gt;"><sup>9</sup></a></p>
-<p>Public holidays are treated as a Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
-Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Berlin, Annex 3,
-pp. 129–130.&lt;/p&gt;"><sup>10</sup></a> 24 December and 31
-December are treated as Saturday unless they fall on a Sunday; this
-convention mirrors the established rule from the BDEW electricity SLP
-procedure and is applied here by analogy.</p>
+pp. 140–163 (per-profile data sheets).&lt;/p&gt;"><sup>4</sup></a></p>
 <p>For the residential profiles <code>HEF</code>, <code>HMF</code>, and
 <code>HKO</code>, however, all weekday factors are equal to 1, that is,
-gas consumption in households is assumed not to differ significantly by
-day of the week. Commercial profiles on the other hand show visible
-weekday patterns, the range of the weekday factors is 0.3877 - 1.2707,
-illustrated by the chart below:</p>
+gas consumption in households is assumed <em>not</em> to differ
+significantly by day of the week. Commercial profiles on the other hand
+show visible weekday patterns, the range of the weekday factors is
+0.3877 - 1.2707.</p>
+<p>The weekday factor values are returned by
+<code><a href="../reference/slp_gas_weekday_factors.html">slp_gas_weekday_factors()</a></code> and illustrated by the chart
+below:</p>
 <div id="fwt-widget" style="max-width: 600px; margin: 1.5em auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
 <div id="fwt-chart">
 
@@ -665,20 +212,67 @@ chart.querySelectorAll("text").forEach(el => {
   t.textContent = descriptions[pid];
   el.prepend(t);
 });
-</script>
+</script><p>Public holidays are treated as a Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
+Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Berlin, Annex 3,
+pp. 129–130.&lt;/p&gt;"><sup>5</sup></a> 24 December and 31
+December are treated as Saturday unless they fall on a Sunday; this
+convention mirrors the established rule from the BDEW electricity SLP
+procedure and is applied here by analogy.</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="profile-ids">Profile IDs<a class="anchor" aria-label="anchor" href="#profile-ids"></a>
-</h2>
-<p>There are 15 gas profile IDs defined in the BDEW Leitfaden, split
-into residential and commercial / industrial types.</p>
 <div class="section level3">
-<h3 id="residential-profiles">Residential profiles<a class="anchor" aria-label="anchor" href="#residential-profiles"></a>
+<h3 id="profile-function-hvartheta_d">Profile function <span class="math inline">\(h(\vartheta_D)\)</span><a class="anchor" aria-label="anchor" href="#profile-function-hvartheta_d"></a>
 </h3>
+<p>Gas consumption is strongly correlated with outdoor temperature; the
+colder it gets, the more gas is consumed — at least when gas is used for
+space heating. The relationship between outside temperature and gas
+consumption is captured by the profile function <span class="math inline">\(h(\vartheta)\)</span>:</p>
+<p><span class="math display">\[
+h(\vartheta) =
+\underbrace{\frac{A}{1 + \left(\dfrac{B}{\vartheta -
+\vartheta_0}\right)^C} + D}_{\text{sigmoid part}}
++
+\underbrace{\max\!\left(m_H \vartheta + b_H,\; m_W \vartheta +
+b_W\right)}_{\text{linear part}}
+\]</span></p>
+<p>This function was initially published in 2003 as an S-shaped sigmoid
+function:<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Hellwig, Mark (2003). &lt;em&gt;Entwicklung und Anwendung
+parametrisierter Standard-Lastprofile&lt;/em&gt;. Dissertation, TU München.&lt;/p&gt;"><sup>6</sup></a></p>
+<p><span class="math display">\[
+h(\vartheta) = \frac{A}{1 + \left(\dfrac{B}{\vartheta -
+\vartheta_0}\right)^C} + D
+\]</span></p>
+<p>Since then, it has been revised as part of an ongoing debate. In a
+research paper from 2015 it was found that a pure sigmoid approach
+systematically underestimated consumption at very cold temperatures. The
+authors proposed an improved formulation called
+<strong>SigLinDe</strong> (<strong>Sig</strong>moid +
+<strong>Lin</strong>ear + <strong>De</strong>utschland) and published
+SigLinDe coeffeciants for 15 different customer groups, i.e. profile
+IDs.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Hinterstocker, M., Eberl, B., von Roon, S. (2015).
+&lt;em&gt;Weiterentwicklung des Standardlastprofilverfahrens Gas&lt;/em&gt;.
+Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE),
+available at &lt;a href="https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf&lt;/a&gt;&lt;/p&gt;'><sup>7</sup></a>
+SigLinDe adds a linear component to that sigmoid equation representing
+space-heating demand (German: <em>Heizgas-Gerade</em>) and hot water
+demand (German: <em>Warmwasser-Gerade</em>).</p>
+<p>The SigLinDe approach was adopted by BDEW and has since been the
+binding standard.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
+Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Available at &lt;a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf&lt;/a&gt;&lt;/p&gt;'><sup>8</sup></a></p>
+<blockquote>
+<p><code><a href="../reference/slp_gas.html">slp_gas()</a></code> implements the SigLinDe approach.</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="profile-ids">Profile IDs<a class="anchor" aria-label="anchor" href="#profile-ids"></a>
+</h3>
+<p>There are 15 gas profile IDs defined, split into residential and
+commercial / industrial types.</p>
+<div class="section level4">
+<h4 id="residential-profiles">Residential profiles<a class="anchor" aria-label="anchor" href="#residential-profiles"></a>
+</h4>
 <p>Residential profiles share two important characteristics: all weekday
-factors equal 1 (no day-of-week differentiation), and heating load is
-the dominant driver of demand variability.</p>
+factors equal 1 (see above), and heating load is the dominant driver of
+demand variability.</p>
 <table class="table">
 <colgroup>
 <col width="31%">
@@ -715,9 +309,9 @@ serves only a cooker or instantaneous water heater. Its flat,
 temperature-insensitive shape is visible in the SigLinDe curve plot
 above.</p>
 </div>
-<div class="section level3">
-<h3 id="commercial-and-industrial-profiles">Commercial and industrial profiles<a class="anchor" aria-label="anchor" href="#commercial-and-industrial-profiles"></a>
-</h3>
+<div class="section level4">
+<h4 id="commercial-and-industrial-profiles">Commercial and industrial profiles<a class="anchor" aria-label="anchor" href="#commercial-and-industrial-profiles"></a>
+</h4>
 <p>Commercial profiles have profile-specific weekday factors that
 reflect the operating hours and schedules of each sector. They are
 grouped here by consumption pattern:</p>
@@ -811,31 +405,393 @@ mean across all G-types</td>
 specific sector. Its parameters are a weighted average of the individual
 commercial profiles and its weekday factors are close to but not equal
 to 1.</p>
+<p>All 15 gas profile IDs share the same SigLinDe function — but they
+differ in their parameter values. The parameters <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span>, <span class="math inline">\(D\)</span>, <span class="math inline">\(\vartheta_0\)</span>, <span class="math inline">\(m_H\)</span>, <span class="math inline">\(b_H\)</span>, <span class="math inline">\(m_W\)</span>, <span class="math inline">\(b_W\)</span> are profile-specific constants.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;The coefficients A, B, C, D, m&lt;sub&gt;H&lt;/sub&gt;,
+b&lt;sub&gt;H&lt;/sub&gt;, m&lt;sub&gt;W&lt;/sub&gt;, b&lt;sub&gt;W&lt;/sub&gt; for each consumption profile
+are published in Annex 6 of the BDEW Leitfaden (pp. 140–163).&lt;/p&gt;"><sup>9</sup></a></p>
+<p>You find the complete set in the <a href="slp-gas-parameters.html">SigLinDe Parameters and Weekday
+Factors</a> article, and those values are returned by
+<code><a href="../reference/slp_gas_coefficients.html">slp_gas_coefficients()</a></code>.</p>
+<div id="siglinde-widget" style="width: 100%; margin: 1.5em 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<div style="width: 80%; margin: 0 auto 12px; padding-right: 20px; box-sizing: border-box;">
+<div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">
+Higher h(ϑ) means more gas consumption on that day
+</div>
+<style>
+.sig-toggle-label {
+  display: inline-block;
+  position: relative;
+}
+.sig-toggle-label > span {
+  position: relative;
+}
+.sig-toggle-label::before {
+  content: attr(data-text);
+  font-weight: 700;
+  visibility: hidden;
+  display: block;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sig-active {
+  font-weight: 700;
+  color: #000;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.sig-select-box {
+  display: inline-block;
+  position: relative;       /* the box -- not the native select -- owns the height */
+  top: -2px;                /* nudge up to centre in the text line */
+  width: 4em;
+  height: 1.2em;            /* same as the toggle */
+  box-sizing: border-box;
+  overflow: hidden;
+  vertical-align: middle;
+  margin: 0 0 0 2px;
+  background-color: #fff;
+  outline: 2px solid #333;   /* outline (outside the box) to match the toggle */
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #333 50%),
+    linear-gradient(135deg, #333 50%, transparent 50%);
+  background-position: calc(100% - 7px) center, calc(100% - 4px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+#siglinde-profile {
+  position: absolute;       /* taller native select, vertically centred + clipped */
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0 16px 0 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+</style>
+<p style="font-size: 13px; color: #555; margin: 4px 0 0; line-height: 1.4;">
+Toggle between <span id="siglinde-label-sig" class="sig-toggle-label" data-text="Sigmoid"><span id="siglinde-label-sig-inner" class="sig-active">Sigmoid</span></span> <span style="display: inline-block; vertical-align: middle; position: relative; top: -2px; width: 2.2em; height: 1.2em; margin: 0 2px;">
+<button id="siglinde-toggle" role="switch" aria-checked="false" aria-label="Toggle between a pure Sigmoid and SigLinDe" style="position: relative; width: 100%; height: 100%; background: #fff; outline: 2px solid #333; border: none; border-radius: 0; cursor: pointer; padding: 0;">
+<span id="siglinde-thumb" style="position: absolute; top: 50%; left: 0.15em; width: 0.75em; height: 0.75em; background: #333; border-radius: 0; display: block; transition: transform 0.2s ease; transform: translateY(-50%);"></span>
+</button> </span> and <span id="siglinde-label-sld" class="sig-toggle-label" data-text="SigLinDe"><span id="siglinde-label-sld-inner">SigLinDe</span></span> functions for
+profile <span class="sig-select-box"><select id="siglinde-profile"><option value="HEF" data-name="Single-family home" selected>HEF</option>
+<option value="HMF" data-name="Multi-family home">HMF</option>
+<option value="HKO" data-name="Cooking and hot water only">HKO</option>
+<option value="GKO" data-name="Small commercial">GKO</option>
+<option value="GHA" data-name="Trade and commerce">GHA</option>
+<option value="GMK" data-name="Metal and automotive">GMK</option>
+<option value="GBD" data-name="Services">GBD</option>
+<option value="GBH" data-name="Accommodation">GBH</option>
+<option value="GWA" data-name="Laundries">GWA</option>
+<option value="GGA" data-name="Gastronomy">GGA</option>
+<option value="GBA" data-name="Bakeries">GBA</option>
+<option value="GGB" data-name="Mixed commercial">GGB</option>
+<option value="GPD" data-name="Paper and printing">GPD</option>
+<option value="GMF" data-name="Large multi-family / mixed use">GMF</option>
+<option value="GHD" data-name="Trade, commerce and services aggregate">GHD</option></select></span>
+</p>
+<p style="font-size: 13px; color: #555; margin: 6px 0 0; line-height: 1.4; text-align: left;">
+<span id="siglinde-profile-name" style="font-weight: 600; color: #1a1a1a;">Single-family home</span>
+</p>
+</div>
+<div id="siglinde-chart" style="width: 80%; margin: 8px auto 0;">
+
+</div>
+</div>
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const coefs = {"HEF":{"33":{"A":1.6209544,"B":-37.1833141,"C":5.6727847,"D":0.0716431,"theta0":40,"mH":-0.04957,"bH":0.8401015,"mW":-0.002209,"bW":0.1074468},"34":{"A":1.3819663,"B":-37.4124155,"C":6.1723179,"D":0.0396284,"theta0":40,"mH":-0.0672159,"bH":1.1167138,"mW":-0.0019982,"bW":0.135507}},"HMF":{"33":{"A":1.2328655,"B":-34.7213605,"C":5.8164304,"D":0.0873352,"theta0":40,"mH":-0.0409284,"bH":0.767292,"mW":-0.002232,"bW":0.1199207},"34":{"A":1.0443538,"B":-35.0333754,"C":6.2240634,"D":0.0502917,"theta0":40,"mH":-0.053583,"bH":0.9995901,"mW":-0.0021758,"bW":0.1633299}},"HKO":{"33":{"A":0.4040932,"B":-24.4392968,"C":6.5718175,"D":0.710771,"theta0":40,"mH":0,"bH":0,"mW":0,"bW":0},"34":{"A":0.4040932,"B":-24.4392968,"C":6.5718175,"D":0.710771,"theta0":40,"mH":0,"bH":0,"mW":0,"bW":0}},"GKO":{"33":{"A":1.3554515,"B":-35.1412563,"C":7.1303395,"D":0.0990619,"theta0":40,"mH":-0.0526487,"bH":0.8626086,"mW":-0.0008808,"bW":0.0964014},"34":{"A":1.4256684,"B":-36.6590504,"C":7.6083226,"D":0.0371116,"theta0":40,"mH":-0.0809359,"bH":1.2364527,"mW":-0.0007628,"bW":0.1002979}},"GHA":{"33":{"A":1.9724775,"B":-36.9650065,"C":7.2256947,"D":0.0345782,"theta0":40,"mH":-0.0742174,"bH":1.0448869,"mW":-0.0008295,"bW":0.0461795},"34":{"A":1.8398455,"B":-37.8282037,"C":8.1593369,"D":0.025971,"theta0":40,"mH":-0.1069262,"bH":1.455224,"mW":-0.000492,"bW":0.0691851}},"GMK":{"33":{"A":1.4202419,"B":-34.880613,"C":6.5951899,"D":0.0385317,"theta0":40,"mH":-0.0521084,"bH":0.8647919,"mW":-0.0014369,"bW":0.0637602},"34":{"A":1.3284913,"B":-35.8715062,"C":7.5186829,"D":0.017554,"theta0":40,"mH":-0.0758983,"bH":1.1942555,"mW":-0.000898,"bW":0.0603337}},"GBD":{"33":{"A":1.4633682,"B":-36.1794117,"C":5.9265162,"D":0.0808835,"theta0":40,"mH":-0.04758,"bH":0.8230754,"mW":-0.0019273,"bW":0.1077046},"34":{"A":1.5175792,"B":-37.5,"C":6.8,"D":0.0295801,"theta0":40,"mH":-0.0788559,"bH":1.216125,"mW":-0.0013134,"bW":0.0968721}},"GBH":{"33":{"A":0.9874283,"B":-35.2532124,"C":6.1544406,"D":0.2265716,"theta0":40,"mH":-0.033902,"bH":0.6938234,"mW":-0.0012849,"bW":0.2029732},"34":{"A":0.9872585,"B":-35.2532124,"C":6.0587001,"D":0.0793512,"theta0":40,"mH":-0.0495013,"bH":0.9637999,"mW":-0.0022304,"bW":0.2288398}},"GWA":{"33":{"A":0.3337838,"B":-36.0237912,"C":4.8662747,"D":0.491228,"theta0":40,"mH":-0.0092263,"bH":0.4595757,"mW":-0.0009676,"bW":0.3964291},"34":{"A":0.3925339,"B":-35.3,"C":4.8662747,"D":0.3045099,"theta0":40,"mH":-0.0167993,"bH":0.6710889,"mW":-0.0020301,"bW":0.5614623}},"GGA":{"33":{"A":1.1582082,"B":-36.2878584,"C":6.5885126,"D":0.223568,"theta0":40,"mH":-0.0410335,"bH":0.7526451,"mW":-0.0009088,"bW":0.1916641},"34":{"A":1.184832,"B":-36,"C":7.7368518,"D":0.0793107,"theta0":40,"mH":-0.0687383,"bH":1.130857,"mW":-0.0006587,"bW":0.1910301}},"GBA":{"33":{"A":0.2770087,"B":-33,"C":5.7212303,"D":0.4865118,"theta0":40,"mH":-0.0094849,"bH":0.4630237,"mW":-0.0007134,"bW":0.3867447},"34":{"A":0.353764,"B":-33.35,"C":5.7212303,"D":0.3033305,"theta0":40,"mH":-0.0177463,"bH":0.6825699,"mW":-0.0013912,"bW":0.5434624}},"GGB":{"33":{"A":1.8213778,"B":-37.5,"C":6.3462148,"D":0.0678118,"theta0":40,"mH":-0.0607666,"bH":0.9308159,"mW":-0.0013967,"bW":0.0850399},"34":{"A":1.6266812,"B":-37.8825368,"C":6.983607,"D":0.0297136,"theta0":40,"mH":-0.0854333,"bH":1.2709629,"mW":-0.0011319,"bW":0.0928124}},"GPD":{"33":{"A":1.7110739,"B":-35.8,"C":8.4,"D":0.0702546,"theta0":40,"mH":-0.0745381,"bH":1.0463005,"mW":-0.0003672,"bW":0.0621882},"34":{"A":1.8834609,"B":-37,"C":10.2405021,"D":0.027547,"theta0":40,"mH":-0.12531,"bH":1.6275999,"mW":-0.0001105,"bW":0.0635119}},"GMF":{"33":{"A":1.2328655,"B":-34.7213605,"C":5.8164304,"D":0.0873352,"theta0":40,"mH":-0.0409284,"bH":0.767292,"mW":-0.002232,"bW":0.1199207},"34":{"A":1.0443538,"B":-35.0333754,"C":6.2240634,"D":0.0502917,"theta0":40,"mH":-0.053583,"bH":0.9995901,"mW":-0.0021758,"bW":0.1633299}},"GHD":{"33":{"A":1.3010623,"B":-35.6816144,"C":6.6857976,"D":0.1409267,"theta0":40,"mH":-0.0473428,"bH":0.8141691,"mW":-0.0010601,"bW":0.1325092},"34":{"A":1.25696,"B":-36.6078453,"C":7.321187,"D":0.077696,"theta0":40,"mH":-0.0696826,"bH":1.1379702,"mW":-0.0008522,"bW":0.1921068}}};
+const variants = ["33", "34"];
+let p = coefs["HEF"];          // p["33"], p["34"]
+
+function sigmoid(c, t) {
+  return c.A / (1 + Math.pow(c.B / (t - c.theta0), c.C)) + c.D;
+}
+function linear(c, t) {
+  return Math.max(c.mH * t + c.bH, c.mW * t + c.bW);
+}
+
+const temps = [];
+for (let t = -15; t <= 25; t += 0.25) temps.push(t);
+const i8 = temps.indexOf(8);   // index of the 8°C reference
+
+function curvesFor(c) {
+  return {
+    sig: temps.map(t => sigmoid(c, t)),
+    sld: temps.map(t => sigmoid(c, t) + linear(c, t))
+  };
+}
+// displayed (possibly mid-morph) curves, one per variant
+let curves = { "33": curvesFor(p["33"]), "34": curvesFor(p["34"]) };
+
+const chartEl  = document.getElementById("siglinde-chart");
+const toggle   = document.getElementById("siglinde-toggle");
+const thumb    = document.getElementById("siglinde-thumb");
+const labelSig = document.getElementById("siglinde-label-sig-inner");
+const labelSld = document.getElementById("siglinde-label-sld-inner");
+
+let active = true;
+let blend  = 1;
+let animId = null;
+labelSig.classList.remove("sig-active");
+labelSld.classList.add("sig-active");
+toggle.setAttribute("aria-checked", "true");
+thumb.style.transform = "translateY(-50%) translateX(1.1em)";
+
+function render(t) {
+  const width = chartEl.clientWidth;
+  if (!width) return;
+  const data = [];
+  const refDots = [];
+  for (const v of variants) {
+    const c = curves[v];
+    const label = "Variant " + v;
+    temps.forEach((temp, i) => {
+      data.push({ variant: label, temp, h: c.sig[i] + t * (c.sld[i] - c.sig[i]) });
+    });
+    refDots.push({ variant: label, temp: 8, h: c.sig[i8] + t * (c.sld[i8] - c.sig[i8]) });
+  }
+  const plot = Plot.plot({
+    width,
+    height: Math.round(width * 0.6),
+    marginLeft: 44,
+    marginBottom: 36,
+    color: {
+      domain: ["Variant 33", "Variant 34"],
+      range: ["#961BFA", "#0CC792"],
+      legend: true
+    },
+    x: { label: "Temperature (°C)", ticks: [-10, 0, 8, 20], tickFormat: d => d + "°", grid: true },
+    y: { label: "h(ϑ)", domain: [0, 6], ticks: [1, 2, 3, 4, 5], grid: true },
+    marks: [
+      Plot.ruleY([1], { stroke: "#999", strokeDasharray: "4,3" }),
+      Plot.lineY(data, { x: "temp", y: "h", stroke: "variant", strokeWidth: 2.5 }),
+      Plot.dot(refDots, { x: "temp", y: "h", fill: "variant", r: 3.5, stroke: "white", strokeWidth: 1 })
+    ],
+    style: {
+      fontSize: "12px",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      background: "transparent"
+    }
+  });
+  chartEl.replaceChildren(plot);
+}
+
+function animate() {
+  const target = active ? 1 : 0;
+  const step = 0.06;
+  const diff = target - blend;
+  if (Math.abs(diff) < step) {
+    blend = target;
+    render(blend);
+    animId = null;
+    return;
+  }
+  blend += Math.sign(diff) * step;
+  render(blend);
+  animId = requestAnimationFrame(animate);
+}
+
+toggle.addEventListener("click", () => {
+  active = !active;
+  toggle.setAttribute("aria-checked", active);
+  thumb.style.transform = active ? "translateY(-50%) translateX(1.1em)" : "translateY(-50%)";
+  labelSig.classList.toggle("sig-active", !active);
+  labelSld.classList.toggle("sig-active", active);
+  if (animId) cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(animate);
+});
+
+const profileSelect = document.getElementById("siglinde-profile");
+let morphId = null;
+profileSelect.addEventListener("change", () => {
+  const from = {};
+  for (const v of variants) {
+    from[v] = { sig: curves[v].sig.slice(), sld: curves[v].sld.slice() };
+  }
+  p = coefs[profileSelect.value];
+  document.getElementById("siglinde-profile-name").textContent =
+    profileSelect.selectedOptions[0].dataset.name;
+  const to = { "33": curvesFor(p["33"]), "34": curvesFor(p["34"]) };
+  let m = 0;
+  if (morphId) cancelAnimationFrame(morphId);
+  (function step() {
+    m = Math.min(1, m + 0.08);
+    for (const v of variants) {
+      curves[v] = {
+        sig: from[v].sig.map((x, i) => x + m * (to[v].sig[i] - x)),
+        sld: from[v].sld.map((x, i) => x + m * (to[v].sld[i] - x))
+      };
+    }
+    render(blend);
+    morphId = m < 1 ? requestAnimationFrame(step) : null;
+  })();
+});
+
+window.addEventListener("resize", () => render(blend));
+
+render(1);
+</script><p>The result of <span class="math inline">\(h(\vartheta)\)</span> is a
+number &gt; 0 without a dimension:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># profile "HEF", Ausprägung: 34</span></span>
+<span><span class="fu"><a href="../reference/slp_gas_siglinde.html">slp_gas_siglinde</a></span><span class="op">(</span></span>
+<span>  theta  <span class="op">=</span>   <span class="fl">8.0</span>,</span>
+<span>  A      <span class="op">=</span>   <span class="fl">1.381966</span>,</span>
+<span>  B      <span class="op">=</span> <span class="op">-</span><span class="fl">37.41242</span>,</span>
+<span>  C      <span class="op">=</span>   <span class="fl">6.172318</span>,</span>
+<span>  D      <span class="op">=</span>   <span class="fl">0.0396284</span>,</span>
+<span>  theta0 <span class="op">=</span>  <span class="fl">40.0</span>,</span>
+<span>  mH     <span class="op">=</span>  <span class="op">-</span><span class="fl">0.0672159</span>,</span>
+<span>  bH     <span class="op">=</span>   <span class="fl">1.116714</span>,</span>
+<span>  mW     <span class="op">=</span>  <span class="op">-</span><span class="fl">0.0019982</span>,</span>
+<span>  bW     <span class="op">=</span>   <span class="fl">0.135507</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.9999997</span></span></code></pre></div>
+<p>For <code>theta = 8</code> the result above is ~1 — which is no
+coincidence, and brings us to the <code>kundenwert</code>.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="kundenwert-kw">Kundenwert <span class="math inline">\(KW\)</span><a class="anchor" aria-label="anchor" href="#kundenwert-kw"></a>
+</h3>
+<p><code>kundenwert</code> accounts for a customer’s individual
+consumption behaviour. This value answers the question: how much gas is
+consumed by a customer on a day where the outside temperature is 8°C? It
+is a scaling factor in kWh/day — at 8°C, the point at which <span class="math inline">\(h(\vartheta) = 1\)</span> for every profile.</p>
+<p><code>kundenwert</code> is derived from the customer’s annual
+consumption and the year’s temperature and weekday profile. Starting
+with <span class="math inline">\(\eqref{eq:qdaily}\)</span>, the annual
+total consumption is the sum of all daily values:</p>
+<p><span class="math display">\[
+Q_a = \sum_{D} Q(D) = \sum_{D} h(\vartheta_D) \times KW \times F_{WT,D}
+\]</span></p>
+<p>Rearranging to solve for <span class="math inline">\(KW\)</span>:</p>
+<p><span class="math display">\[
+KW = \frac{Q_a}{\displaystyle\sum_{D} h(\vartheta_D) \times F_{WT,D}}
+\tag{2}\label{eq:kw}
+\]</span></p>
+<p>Where</p>
+<ul>
+<li>
+<span class="math inline">\(Q_a\)</span> is the annual gas
+consumption (German: <em>Jahresverbrauch</em>)</li>
+<li>
+<span class="math inline">\(\vartheta_D\)</span> is the daily
+temperature for day <span class="math inline">\(D\)</span>
+</li>
+<li>
+<span class="math inline">\(F_{WT,D}\)</span> is the weekday factor
+for day <span class="math inline">\(D\)</span>
+</li>
+</ul>
+<p>Using the example of a single-family home (<code>HEF</code>) in
+Düsseldorf with an annual consumption of 15,000 kWh — <a href="https://flrd.github.io/standardlastprofile/#gas">the same customer
+as in the README</a> — the table below shows how the denominator is
+built up, day by day, from the Düsseldorf long-term daily mean
+temperatures (2004–2024):</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Date</th>
+<th align="right">°C</th>
+<th align="right">h(ϑ)</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Jan 1</td>
+<td align="right">4.8</td>
+<td align="right">1.3962</td>
+</tr>
+<tr class="even">
+<td align="left">⋮</td>
+<td align="right">⋮</td>
+<td align="right">⋮</td>
+</tr>
+<tr class="odd">
+<td align="left">Jun 30</td>
+<td align="right">19.2</td>
+<td align="right">0.1727</td>
+</tr>
+<tr class="even">
+<td align="left">Jul 1</td>
+<td align="right">18.9</td>
+<td align="right">0.1765</td>
+</tr>
+<tr class="odd">
+<td align="left">Jul 2</td>
+<td align="right">19.2</td>
+<td align="right">0.1727</td>
+</tr>
+<tr class="even">
+<td align="left">⋮</td>
+<td align="right">⋮</td>
+<td align="right">⋮</td>
+</tr>
+<tr class="odd">
+<td align="left">Dez 31</td>
+<td align="right">5.7</td>
+<td align="right">1.2833</td>
+</tr>
+</tbody>
+</table>
+<p>The sum in the denominator across all 365 days gives <span class="math inline">\(\sum_D h(\vartheta_D) = 272.32\)</span>. And since
+for all three residential profiles the weekday factors are 1, <span class="math inline">\(\eqref{eq:kw}\)</span> simplifies to:</p>
+<p><span class="math display">\[
+KW = \frac{Q_a}{\displaystyle\sum_{D} h(\vartheta_D)}
+\]</span></p>
+<p>So <span class="math inline">\(KW \approx\)</span> 15,000 / 272.32 =
+<strong>55.1</strong> kWh/day.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="a-working-example-düsseldorf">A working example: Düsseldorf<a class="anchor" aria-label="anchor" href="#a-working-example-d%C3%BCsseldorf"></a>
 </h2>
 <p>With the algorithm covered, let us see how to use
-<code><a href="../reference/slp_gas.html">slp_gas()</a></code> in practice. <code><a href="../reference/slp_gas.html">slp_gas()</a></code> takes: - a
-<code>profile_id</code> - a <code>dates</code> vector, and a matching
-<code>temperatures</code> vector, and - a <code>kundenwert</code>.</p>
-<p><code>kundenwert</code> is the customer-specific scaling factor in
-kWh/day.</p>
+<code><a href="../reference/slp_gas.html">slp_gas()</a></code> with real-world temperature data.</p>
+<p><code><a href="../reference/slp_gas.html">slp_gas()</a></code> takes:</p>
+<ul>
+<li>a <code>profile_id</code>
+</li>
+<li>a <code>dates</code> vector, and a matching vector of
+<code>temperatures</code>, and</li>
+<li>a <code>kundenwert</code>.</li>
+</ul>
 <div class="section level3">
 <h3 id="deriving-the-kundenwert">Deriving the Kundenwert<a class="anchor" aria-label="anchor" href="#deriving-the-kundenwert"></a>
 </h3>
-<p>To produce a meaningful result the temperature series should cover a
-full year at least. You can use measured data from a trustworthy
-institution like the German Meteorological Service, or DWD for short.
-The <a href="https://cran.r-project.org/package=rdwd" class="external-link"><code>rdwd</code></a>
+<p>To derive <code>kundenwert</code> we need an annual consumption and
+temperature data. We can feed this information into the function
+<code><a href="../reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code> together with any of the 15 gas
+profile IDs. To produce a meaningful result the temperature series
+should cover at least a full year. We show you how to fetch measured
+data from a trustworthy institution like the German Meteorological
+Service, or DWD for short.</p>
+<p>The <a href="https://cran.r-project.org/package=rdwd" class="external-link"><code>rdwd</code></a>
 package provides a straightforward interface to the open-data portal of
-the DWD (Deutscher Wetterdienst).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;DWD Open Data: &lt;a href="https://opendata.dwd.de/" class="external-link uri"&gt;https://opendata.dwd.de/&lt;/a&gt;&lt;/p&gt;'><sup>11</sup></a> No registration or API key is
+the DWD (Deutscher Wetterdienst).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;DWD Open Data: &lt;a href="https://opendata.dwd.de/" class="external-link uri"&gt;https://opendata.dwd.de/&lt;/a&gt;&lt;/p&gt;'><sup>10</sup></a> No registration or API key is
 required.</p>
 <div class="section level4">
 <h4 id="rdwd-package">rdwd package<a class="anchor" aria-label="anchor" href="#rdwd-package"></a>
 </h4>
-<p>The workflow has three steps:</p>
+<p>This section gives you a quick introduction to the <code>rdwd</code>
+package, read more about its features at <a href="https://brry.github.io/rdwd/index.html" class="external-link">brry.github.io/rdwd</a>.</p>
+<p>Our workflow has three steps:</p>
 <ol style="list-style-type: decimal">
 <li>
 <code><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD()</a></code> — find the download URL for a station and
@@ -845,38 +801,35 @@ dataset.</li>
 <li>
 <code><a href="https://rdrr.io/pkg/rdwd/man/readDWD.html" class="external-link">readDWD()</a></code> — parse the file into a data frame.</li>
 </ol>
-<p>For gas SLPs, we need the <strong>daily climate summary</strong>
-(<code>var = "kl"</code>, <code>res = "daily"</code>). The column
-<code>TMK</code> contains the daily mean temperature in °C. To find the
-exact station name to pass to <code><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD()</a></code>, use
-<code><a href="https://rdrr.io/pkg/rdwd/man/findID.html" class="external-link">findID()</a></code> or open the interactive station map:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">rdwd</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/findID.html" class="external-link">findID</a></span><span class="op">(</span><span class="st">"Freiburg"</span><span class="op">)</span>             <span class="co"># returns matching station names and IDs</span></span>
-<span><span class="fu">rdwd</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD</a></span><span class="op">(</span>mapDWD <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>       <span class="co"># opens an interactive map in the browser</span></span></code></pre></div>
-<p>The Kundenwert is derived once, from the customer’s annual
-consumption and a <strong>reference temperature series for their
-location</strong>, using <code><a href="../reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code>. The
-resulting value is then passed to <code><a href="../reference/slp_gas.html">slp_gas()</a></code> for whatever
-period you want to generate — a single month, a quarter, the whole
-year.</p>
-<p>Keeping the derivation a separate step is deliberate. <span class="math inline">\(KW\)</span> is a property of the customer and
-their local climate, so it should be computed from a representative full
-year — ideally a multi-year mean.</p>
-<p>Take the single-family home (<code>HEF</code>) from the README’s
-example: located in <strong>Düsseldorf</strong>, with an annual gas
-consumption of <strong>15,000 kWh</strong>. For the reference
-temperatures we use the <strong>long-term daily mean over
-2004–2024</strong> — a multi-year (climatological) mean rather than a
-single year, so that no individual-year anomaly distorts the scaling
-factor<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW Leitfaden, section 3.6.3&lt;/p&gt;"><sup>12</sup></a>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>We need the daily climate summary (<code>var = "kl"</code>,
+<code>res = "daily"</code>). The column <code>TMK</code> contains the
+daily mean temperature in °C. To find the exact station name to pass to
+<code><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD()</a></code>, use <code><a href="https://rdrr.io/pkg/rdwd/man/findID.html" class="external-link">findID()</a></code>:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># returns matching station names and IDs</span></span>
+<span><span class="fu">rdwd</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/findID.html" class="external-link">findID</a></span><span class="op">(</span><span class="st">"Duesseldorf"</span>, exactmatch <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </span></code></pre></div>
+<p>For the reference temperatures we use the long-term daily mean over
+2004–2024 rather than a single year, so that no individual-year anomaly
+distorts the scaling factor<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW Leitfaden, section 3.6.3&lt;/p&gt;"><sup>11</sup></a>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://brry.github.io/rdwd/" class="external-link">rdwd</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Full daily climate record for Düsseldorf (DWD station 1078)</span></span>
-<span><span class="va">links</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD</a></span><span class="op">(</span><span class="st">"Duesseldorf"</span>, res <span class="op">=</span> <span class="st">"daily"</span>, var <span class="op">=</span> <span class="st">"kl"</span>,</span>
-<span>                   per <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"historical"</span>, <span class="st">"recent"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">raw</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/readDWD.html" class="external-link">readDWD</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/dataDWD.html" class="external-link">dataDWD</a></span><span class="op">(</span><span class="va">links</span>, read <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>                                varnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">links</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/selectDWD.html" class="external-link">selectDWD</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Duesseldorf"</span>,</span>
+<span>  res <span class="op">=</span> <span class="st">"daily"</span>,</span>
+<span>  var <span class="op">=</span> <span class="st">"kl"</span>,</span>
+<span>  per <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"historical"</span>, <span class="st">"recent"</span><span class="op">)</span>,</span>
+<span>  current <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
+<span>  <span class="va">rbind</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/readDWD.html" class="external-link">readDWD</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/rdwd/man/dataDWD.html" class="external-link">dataDWD</a></span><span class="op">(</span><span class="va">links</span>, read <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, varnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># drop historical/recent overlap</span></span>
+<span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="va">raw</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">raw</span><span class="op">$</span><span class="va">MESS_DATUM</span><span class="op">)</span>, <span class="op">]</span>   </span>
 <span></span>
 <span><span class="co"># Long-term mean daily temperature over 2004-2024, one value per calendar day</span></span>
 <span><span class="va">ref</span>       <span class="op">&lt;-</span> <span class="va">raw</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">raw</span><span class="op">$</span><span class="va">MESS_DATUM</span>, <span class="st">"%Y"</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fl">2004</span><span class="op">:</span><span class="fl">2024</span><span class="op">)</span>, <span class="op">]</span></span>
@@ -884,29 +837,30 @@ factor<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-cont
 <span><span class="va">clim</span>      <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">TMK</span> <span class="op">~</span> <span class="va">mmdd</span>, data <span class="op">=</span> <span class="va">ref</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
 <span><span class="va">clim</span>      <span class="op">&lt;-</span> <span class="va">clim</span><span class="op">[</span><span class="va">clim</span><span class="op">$</span><span class="va">mmdd</span> <span class="op">!=</span> <span class="st">"02-29"</span>, <span class="op">]</span>          <span class="co"># drop the leap day</span></span>
 <span><span class="va">dates_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"2023-"</span>, <span class="va">clim</span><span class="op">$</span><span class="va">mmdd</span><span class="op">)</span><span class="op">)</span>   <span class="co"># any non-leap year</span></span>
-<span><span class="va">temps_ref</span> <span class="op">&lt;-</span> <span class="va">clim</span><span class="op">$</span><span class="va">TMK</span></span>
-<span></span>
-<span><span class="co"># kundenwert for a 15,000 kWh/a HEF customer</span></span>
+<span><span class="va">temps_ref</span> <span class="op">&lt;-</span> <span class="va">clim</span><span class="op">$</span><span class="va">TMK</span></span></code></pre></div>
+<p>Now that we have a reference temperature series, we can call
+<code><a href="../reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code>:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># kundenwert for a 15,000 kWh/a HEF customer</span></span>
 <span><span class="fu"><a href="../reference/slp_gas_kundenwert.html">slp_gas_kundenwert</a></span><span class="op">(</span><span class="st">"HEF"</span>, <span class="va">dates_ref</span>, <span class="va">temps_ref</span>, annual_consumption <span class="op">=</span> <span class="fl">15000</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      HEF</span></span>
-<span><span class="co">#&gt; 55.08344</span></span></code></pre></div>
-<p>This Düsseldorf customer has a Kundenwert of about <strong>55.1
-kWh/day</strong>. That fixed value is what the README example passes to
+<span><span class="co">#&gt;      HEF </span></span>
+<span><span class="co">#&gt; 55.08305</span></span></code></pre></div>
+<p>That value is what the README example passes to
 <code><a href="../reference/slp_gas.html">slp_gas()</a></code> to generate the 2025/26 heating season — and it
 is what we use below to ask how the same customer would fare in a
 different climate.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="what-if-the-customer-moves">What if the customer moves?<a class="anchor" aria-label="anchor" href="#what-if-the-customer-moves"></a>
+<h3 id="same-customer-preferences-different-climate">Same customer preferences, different climate<a class="anchor" aria-label="anchor" href="#same-customer-preferences-different-climate"></a>
 </h3>
-<p>We keep the Düsseldorf customer’s Kundenwert of <strong>55.1
-kWh/day</strong> fixed and ask what they would consume in a colder
-climate — same customer, same KW, different weather. Germany spans
-several distinct climate zones; we compare three:</p>
+<p>We keep that <code>kundenwert</code> of 55.1 kWh/day fixed and ask
+how the gas consumption changes in another place — same customer, same
+KW, different climate. Germany spans several distinct climate zones; we
+compare three:</p>
 <ul>
 <li>
-<strong>Chemnitz</strong> — continental climate in the Erzgebirge
+<strong>Chemnitz</strong> — continental climate in the Ore Mountains
 foothills of Saxony; colder winters and the greatest temperature
 amplitude of the three.</li>
 <li>
@@ -929,11 +883,11 @@ point cloud sits above the line — the question is by how much:</p>
 <strong>Chemnitz</strong> is highest, about <strong>35 % more
 gas</strong> over the season (≈ 16,400 vs 12,200 kWh);</li>
 <li>
-<strong>Hamburg</strong> follows at about <strong>25 %
-more</strong>;</li>
+<strong>Freiburg im Breisgau</strong> is closest to Düsseldorf at
+about <strong>11 % more</strong>;</li>
 <li>
-<strong>Freiburg</strong> is closest to Düsseldorf at about
-<strong>11 % more</strong>.</li>
+<strong>Hamburg</strong> follows at about <strong>25 %
+more</strong>.</li>
 </ul>
 <p>The gap is widest on the cold January and February days at the
 top-right of each panel, and narrows in the mild shoulder months of
@@ -950,7 +904,7 @@ more gas than in Düsseldorf.
 #cities-chart { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; align-items: start; }
 #cities-chart .city-h { text-align: center; font-weight: 700; font-size: 13px; color: #1a1a1a; }
 </style>
-<div id="cities-chart" role="group" aria-label="Daily gas consumption in Chemnitz, Freiburg and Hamburg plotted against Düsseldorf for each month of the heating season, with a 45-degree reference line. All three cities sit above the line that winter, furthest for Chemnitz, then Hamburg, with Freiburg closest.">
+<div id="cities-chart" role="group" aria-label="Daily gas consumption in Chemnitz, Freiburg im Breisgau and Hamburg plotted against Düsseldorf for each month of the heating season, with a 45-degree reference line. All three cities sit above the line that winter, furthest for Chemnitz, then Hamburg, with Freiburg im Breisgau closest.">
 <div>
 <div class="city-h">
 Chemnitz
@@ -961,7 +915,7 @@ Chemnitz
 </div>
 <div>
 <div class="city-h">
-Freiburg
+Freiburg im Breisgau
 </div>
 <div class="city-plot" data-city="Freiburg">
 
