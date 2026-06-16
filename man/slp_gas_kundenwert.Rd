@@ -19,8 +19,8 @@ slp_gas_kundenwert(
 named numeric vector with one element per profile.}
 
 \item{dates}{a Date vector or character vector in ISO 8601 format
-(\code{"YYYY-MM-DD"}), representing a \strong{full reference year} of daily dates.
-For a meaningful Kundenwert the series should ideally cover 365 (or 366)
+(\code{"YYYY-MM-DD"}).
+For a meaningful \code{kundenwert} the series should ideally cover 365 (or 366)
 days. Must have the same length as \code{temperatures}.}
 
 \item{temperatures}{a numeric vector of daily temperatures in degrees
@@ -43,11 +43,11 @@ is the Kundenwert in kWh/day for the corresponding profile. Names match
 the input \code{profile_id} values.
 }
 \description{
-Compute the customer value (Kundenwert, KW) that scales a gas standard load
+Compute the \code{kundenwert} (customer value) that scales a gas standard load
 profile to a specific annual consumption. The result can be passed directly
 to \code{\link[=slp_gas]{slp_gas()}} via its \code{kundenwert} argument, enabling a two-step
-workflow: derive KW from a representative full-year reference temperature
-series, then generate profiles for any shorter period using that fixed KW.
+workflow: derive \code{kundenwert} from a representative full-year reference temperature
+series, then generate profiles for any shorter period using that fixed value.
 }
 \details{
 The Kundenwert is derived from the annual consumption and the year's

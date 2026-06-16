@@ -35,9 +35,9 @@ install.packages("standardlastprofile")
 
 **Electricity**
 
+- `slp_electricity()` — generate a 15-minute profile for any date range
 - `slp_electricity_profiles` — dataset of BDEW electricity SLPs in tidy
   format
-- `slp_electricity()` — generate a 15-minute profile for any date range
 
 **Gas**
 
