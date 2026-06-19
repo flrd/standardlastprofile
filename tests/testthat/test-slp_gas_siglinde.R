@@ -150,7 +150,7 @@ test_that("a numeric matrix theta is accepted and computed element-wise", {
 
 # ---- oracle: BDEW/VKU/GEODE Leitfaden Anlage 1 ------------------------------
 # External oracle from the source of truth: "Abwicklung von Standardlastprofilen
-# Gas", Stand 28.10.2025, Anlage 1 "Ermittlung des Kundenwertes", Seite 121-125
+# Gas", Stand 27.03.2026, Anlage 1 "Ermittlung des Kundenwertes", Seite 122-126
 # (Tabelle 18-21). These are pure-sigmoid profiles (linear part zero), so the
 # call sets mH = bH = mW = bW = 0. The published temperatures are rounded to
 # 2 dp and the h-values to ~5 dp, which sets the achievable tolerance (the raw

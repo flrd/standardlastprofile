@@ -76,7 +76,7 @@
 #' the linear envelope on top — together with the 33 / 34 variant split — was
 #' added by FfE in the 2015 research report *Weiterentwicklung des Standard-
 #' lastprofilverfahrens Gas* (Appendix 7.1). The current operational coefficient
-#' set is published in the BDEW Leitfaden, Appendix 6 (as of 2025-10-28):
+#' set is published in the BDEW Leitfaden, Appendix 6 (as of 2026-03-27):
 #'
 #' \deqn{h(\vartheta) = \frac{A}{1 + \left(\frac{B}{\vartheta - \vartheta_0}\right)^C} + D + \max(m_H \vartheta + b_H,\; m_W \vartheta + b_W)}
 #'
@@ -162,9 +162,9 @@
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-gas/>
 #' @source BDEW/VKU/GEODE. *Leitfaden Abwicklung von Standardlastprofilen
-#'   Gas*, Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28,
+#'   Gas*, Kooperationsvereinbarung Gas, Annex XV, as of 2026-03-27,
 #'   Appendix 6.
-#'   \url{https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf}
+#'   \url{https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf}
 #'
 #' @seealso [slp_gas_kundenwert()] to derive the `kundenwert`;
 #'   [slp_gas_coefficients()] and [slp_gas_siglinde()] for the underlying

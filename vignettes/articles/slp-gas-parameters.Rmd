@@ -1,6 +1,6 @@
 ---
 title: "SigLinDe Parameters and Weekday Factors for Gas SLP"
-description: "SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW) and weekday factors for all 15 BDEW Standardlastprofile Gas - variants 33 and 34, from the BDEW Leitfaden (as of 2025-10-28)."
+description: "SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW) and weekday factors for all 15 BDEW Standardlastprofile Gas - variants 33 and 34, from the BDEW Leitfaden (as of 2026-03-27)."
 ---
 
 ```{r setup, include=FALSE}
@@ -17,8 +17,8 @@ procedure. To retrieve these values programmatically, use
 ## Source
 
 All values are taken from the **BDEW/VKU/GEODE Leitfaden — Abwicklung von
-Standardlastprofilen Gas**, pages 145–166.^[The document is available at
-<https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>]
+Standardlastprofilen Gas**, pages 146–167.^[The document is available at
+<https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>]
 
 ## Profile overview
 
@@ -73,7 +73,7 @@ names(df_34) <- c("Profile", "Variant", "A", "B", "C", "D",
                    "theta_0", "m_H", "b_H", "m_W", "b_W")
 knitr::kable(
   df_34[, -2L], digits = 7, row.names = FALSE,
-  caption = "Table 2: SigLinDe coefficients — variant 34 (Ausprägung 34, 57 % linear component). Source: BDEW Leitfaden, Appendix 6, pp. 145–166."
+  caption = "Table 2: SigLinDe coefficients — variant 34 (Ausprägung 34, 57 % linear component). Source: BDEW Leitfaden, Appendix 6, pp. 146–167."
 )
 ```
 
@@ -85,7 +85,7 @@ names(df_33) <- c("Profile", "Variant", "A", "B", "C", "D",
                    "theta_0", "m_H", "b_H", "m_W", "b_W")
 knitr::kable(
   df_33[, -2L], digits = 7, row.names = FALSE,
-  caption = "Table 3: SigLinDe coefficients — variant 33 (Ausprägung 33, 45 % linear component). Source: BDEW Leitfaden, Appendix 6, pp. 145–166."
+  caption = "Table 3: SigLinDe coefficients — variant 33 (Ausprägung 33, 45 % linear component). Source: BDEW Leitfaden, Appendix 6, pp. 146–167."
 )
 ```
 
@@ -122,7 +122,7 @@ df_fwt  <- do.call(rbind, lapply(pids, \(p) {
 }))
 knitr::kable(
   df_fwt, digits = 4, row.names = FALSE,
-  caption = "Table 4: Weekday factors (F_WT) for all 15 BDEW gas standard load profiles. Mo = Monday, …, Su = Sunday. Source: BDEW Leitfaden, Appendix 6, pp. 145–166."
+  caption = "Table 4: Weekday factors (F_WT) for all 15 BDEW gas standard load profiles. Mo = Monday, …, Su = Sunday. Source: BDEW Leitfaden, Appendix 6, pp. 146–167."
 )
 ```
 

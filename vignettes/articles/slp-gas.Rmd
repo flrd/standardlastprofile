@@ -50,9 +50,9 @@ respect, standard load profiles represent a simplification.
 In this article we explain how `slp_gas()` implements the algorithm of the
 synthetic procedure (German: "synthetisches Verfahren"), following the
 definitions by BDEW, VKU, and GEODE in
-the *Leitfaden Abwicklung von Standardlastprofilen Gas* (2025).[^leitfaden]
+the *Leitfaden Abwicklung von Standardlastprofilen Gas* (2026).[^leitfaden]
 
-[^leitfaden]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin. Available at <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+[^leitfaden]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von Standardlastprofilen Gas*, Kooperationsvereinbarung Gas, Annex XV, as of 2026-03-27. Berlin. Archived copy: <https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf> (current edition via the [BDEW gas SLP page](https://www.bdew.de/energie/standardlastprofile-gas/)).
 
 ## Synthetic procedure
 
@@ -83,16 +83,16 @@ where:
 * $F_{WT}$ is a weekday factor that adjusts for consumption differences across
   days of the week.
 
-[^procedure]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Allgemeine Begriffsbestimmungen / Erläuterungen, p. VIII
+[^procedure]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von Standardlastprofilen Gas*. Berlin, Allgemeine Begriffsbestimmungen / Erläuterungen, p. VIII
 
 
 ### Weekday factors $F_{WT}$
 
 Weekday factors are scaling factors applied for every day from Monday to Sunday.[^fwt]
 
-[^holiday_rule]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*, as of 2025-10-28. Berlin, Annex 3, pp. 129–130.
+[^holiday_rule]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von Standardlastprofilen Gas*, as of 2026-03-27. Berlin, Annex 3 (Kalender für Feiertage), p. 135.
 
-[^fwt]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*, as of 2025-10-28. Berlin, Annex 6, pp. 140–163 (per-profile data sheets).
+[^fwt]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von Standardlastprofilen Gas*, as of 2026-03-27. Berlin, Annex 6, pp. 146–173 (per-profile data sheets).
 
 For the residential profiles `HEF`, `HMF`, and `HKO`, however, all weekday factors
 are equal to 1, that is, gas consumption in households is assumed *not* to differ
@@ -322,7 +322,7 @@ You find the complete set in the
 [SigLinDe Parameters and Weekday Factors](slp-gas-parameters.html) article, and
 those values are returned by `slp_gas_coefficients()`.
 
-[^params_source]: The coefficients A, B, C, D, m~H~, b~H~, m~W~, b~W~ for each consumption profile are published in Annex 6 of the BDEW Leitfaden (pp. 140–163).
+[^params_source]: The coefficients A, B, C, D, m~H~, b~H~, m~W~, b~W~ for each consumption profile are published in Annex 6 of the BDEW Leitfaden (pp. 146–173).
 
 ```{r siglinde-toggle-chart, echo=FALSE, results='asis', eval=knitr::is_html_output()}
 .co   <- slp_gas_coefficients()
@@ -567,7 +567,7 @@ render(1);
 
 [^ffe2015]: Hinterstocker, M., Eberl, B., von Roon, S. (2015). *Weiterentwicklung des Standardlastprofilverfahrens Gas*. Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE), available at <https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf>
 
-[^bdew2018]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen Gas*, as of 2025-10-28. Available at <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+[^bdew2018]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von Standardlastprofilen Gas*, as of 2026-03-27. Available at <https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>
 
 The result of $h(\vartheta)$ is a number > 0 without a dimension:
 
@@ -592,10 +592,13 @@ to the `kundenwert`.
 
 ### Kundenwert $KW$
 
-`kundenwert` accounts for a customer’s individual consumption behaviour. This
-value answers the question: how much gas is consumed by a customer on a day
-where the outside temperature is 8°C? It is a scaling factor in kWh/day — at
-8°C, the point at which $h(\vartheta) = 1$ for every profile.
+`kundenwert` accounts for a customer’s individual consumption behaviour. It
+answers the question: how much gas does a customer consume on a day when the
+outside temperature is 8°C? It is a scaling factor in kWh/day — 8°C is the
+temperature at which $h(\vartheta) = 1$ for every profile, with one exception:
+`HKO`, whose linear parameters ($m_H$, $b_H$, $m_W$, $b_W$) are all 0. With no
+linear component, the `HKO` profile function is a plain sigmoid rather than a
+SigLinDe (sigmoid-plus-linear) function, and so is not normalised to 1 at 8°C.
 
 `kundenwert` is derived from the customer’s annual consumption and the year’s
 temperature and weekday profile. Starting with $\eqref{eq:qdaily}$, the annual total

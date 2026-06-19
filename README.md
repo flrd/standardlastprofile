@@ -158,7 +158,7 @@ API](https://date.nager.at).
 ## Gas
 
 `slp_gas()` implements the [BDEW/VKU/GEODE synthetic procedure (SigLinDe
-method)](https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf)
+method)](https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf)
 for daily gas consumption. The gas consumption on any particular day is
 influenced by three factors:
 

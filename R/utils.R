@@ -373,17 +373,17 @@
 
 # Gas SLP profile parameters (SigLinDe) ------------------------------------
 # Source: BDEW/VKU/GEODE. Leitfaden Abwicklung von Standardlastprofilen Gas,
-#   Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28, Appendix 6
+#   Kooperationsvereinbarung Gas, Annex XV, as of 2026-03-27, Appendix 6
 #   (per-profile coefficient sheets). The Leitfaden is the operational,
 #   legally-binding KoV reference and is the source of truth for every value
 #   in this table.
-#   <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+#   <https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>
 #
 # Scientific basis (cited for derivation only, not as a value source):
 #   BDEW/FfE (2015). Weiterentwicklung des Standardlastprofilverfahrens Gas.
 #   Endbericht. Appendix 7.1, p. 24. The 2015 report introduced the SigLinDe
 #   extension on top of the original TU München sigmoid (Geiger/Hellwig 2002)
-#   and supplied the first coefficient set. The Leitfaden (as of 2025-10-28) has since
+#   and supplied the first coefficient set. The Leitfaden (as of 2026-03-27) has since
 #   superseded one value (GBA33 bW: FfE 0.3856589 → Leitfaden 0.3867447).
 #
 # Two variants (German: Ausprägungen) are provided:
@@ -740,9 +740,9 @@
 
 # Gas SLP weekday factors --------------------------------------------------
 # Source: BDEW/VKU/GEODE. Leitfaden Abwicklung von Standardlastprofilen Gas,
-#         Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28,
+#         Kooperationsvereinbarung Gas, Annex XV, as of 2026-03-27,
 #         Appendix 6 (per-profile data sheets; one F_WT table per profile).
-#         <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+#         <https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>
 # Keys: Mo = Monday, Tu = Tuesday, We = Wednesday, Th = Thursday,
 #       Fr = Friday, Sa = Saturday, Su = Sunday
 
