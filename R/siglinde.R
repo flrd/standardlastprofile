@@ -85,6 +85,33 @@ slp_gas_siglinde <- \(theta, A, B, C, D, theta0, mH, bH, mW, bW) {
   if (!all(is.finite(theta))) {
     stop("'theta' must contain only finite values (no NA, NaN, or Inf).")
   }
+  # The nine coefficients must each be a single finite number. This matters
+  # because the function is exported for callers supplying custom or
+  # region-specific coefficients: without this guard an NA coefficient returns
+  # NA silently, and a vector-valued one is recycled into the output.
+  coefs <- list(
+    A = A,
+    B = B,
+    C = C,
+    D = D,
+    theta0 = theta0,
+    mH = mH,
+    bH = bH,
+    mW = mW,
+    bW = bW
+  )
+  ok <- vapply(
+    coefs,
+    \(z) is.numeric(z) && length(z) == 1L && is.finite(z),
+    logical(1L)
+  )
+  if (!all(ok)) {
+    stop(
+      "Each coefficient (",
+      paste(names(coefs)[!ok], collapse = ", "),
+      ") must be a single finite numeric value."
+    )
+  }
   if (any(theta >= theta0)) {
     stop(
       "'theta' must be below the pole temperature (",

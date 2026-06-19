@@ -228,6 +228,17 @@ slp_gas <- \(
   if (!all(is.finite(temperatures))) {
     stop("'temperatures' must contain only finite values (no Inf or -Inf).")
   }
+  # The SigLinDe profile function has a pole at 40 deg C (theta0) and is not
+  # defined at or above it. Reject such values here, in the caller's
+  # vocabulary, rather than letting the internal `slp_gas_siglinde()` surface a
+  # `theta`-worded error (a common cause is passing Fahrenheit values).
+  if (any(temperatures >= 40)) {
+    stop(
+      "'temperatures' must be below 40 \u00b0C. The SigLinDe profile function ",
+      "is not defined at or above 40 \u00b0C (the pole temperature of the ",
+      "sigmoid)."
+    )
+  }
 
   # ---- validate matching lengths ------------------------------------------
   if (length(dates) != length(temperatures)) {

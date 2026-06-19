@@ -119,6 +119,15 @@ test_that("invalid variant raises an error", {
   expect_error(slp_gas_coefficients(variant = "35"), "'variant' must be")
 })
 
+test_that("zero-length variant errors cleanly", {
+  expect_error(slp_gas_coefficients(variant = numeric(0)), "'variant' must be")
+  expect_error(
+    slp_gas_coefficients(variant = character(0)),
+    "'variant' must be"
+  )
+  expect_error(slp_gas_coefficients(variant = integer(0)), "'variant' must be")
+})
+
 test_that("numeric variant is accepted and equals character variant", {
   expect_equal(
     slp_gas_coefficients("HEF", variant = 34),

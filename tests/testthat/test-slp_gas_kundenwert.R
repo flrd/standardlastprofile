@@ -139,6 +139,24 @@ test_that("temperatures: NA raises an error", {
   expect_error(slp_gas_kundenwert("HEF", dates_ref, bad), "must not contain NA")
 })
 
+test_that("temperatures at or above 40 raise a clear caller-facing error", {
+  bad <- temps_ref
+  bad[3] <- 45 # a Fahrenheit mistake, above the 40 deg C pole
+  err <- tryCatch(
+    slp_gas_kundenwert("HEF", dates_ref, bad),
+    error = function(e) conditionMessage(e)
+  )
+  expect_match(err, "'temperatures' must be below 40")
+  expect_match(err, "SigLinDe profile function is not defined")
+  expect_false(grepl("'theta'", err))
+  # exactly at the pole temperature
+  bad[3] <- 40
+  expect_error(
+    slp_gas_kundenwert("HEF", dates_ref, bad),
+    "'temperatures' must be below 40"
+  )
+})
+
 test_that("annual_consumption: non-positive value raises an error", {
   expect_error(
     slp_gas_kundenwert("HEF", dates_ref, temps_ref, annual_consumption = 0),

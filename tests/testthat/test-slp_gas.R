@@ -182,10 +182,20 @@ test_that("dates and temperatures: mismatched lengths raise an error", {
   )
 })
 
-test_that("temperatures: temp >= 40 raises an error", {
+test_that("temperatures at or above 40 raise a clear caller-facing error", {
+  dts <- seq.Date(as.Date("2026-01-01"), by = "day", length.out = 3)
+  # a Fahrenheit mistake (45) — must mention 'temperatures', not internal 'theta'
+  err <- tryCatch(
+    slp_gas("HEF", dts, c(45, 3, 2), kundenwert = 55.1),
+    error = function(e) conditionMessage(e)
+  )
+  expect_match(err, "'temperatures' must be below 40")
+  expect_match(err, "SigLinDe profile function is not defined")
+  expect_false(grepl("'theta'", err))
+  # exactly at the pole temperature
   expect_error(
     slp_gas("HEF", as.Date("2026-07-15"), 40, kundenwert = 1),
-    "pole temperature"
+    "'temperatures' must be below 40"
   )
 })
 

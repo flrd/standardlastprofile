@@ -50,6 +50,96 @@ test_that("theta at or above the pole temperature is rejected", {
   expect_error(h(45), "pole temperature")
 })
 
+# ---- coefficient validation (exported function: custom coefficients) --------
+
+test_that("a non-finite coefficient raises a clear error naming the coefficient", {
+  # A = NA previously returned NA silently
+  expect_error(
+    slp_gas_siglinde(
+      0,
+      A = NA_real_,
+      B = -37.4,
+      C = 6.17,
+      D = 0.04,
+      theta0 = 40,
+      mH = -0.067,
+      bH = 1.12,
+      mW = -0.002,
+      bW = 0.14
+    ),
+    "coefficient.*A"
+  )
+  # theta0 = NA previously gave "missing value where TRUE/FALSE needed"
+  expect_error(
+    slp_gas_siglinde(
+      0,
+      A = 1.38,
+      B = -37.4,
+      C = 6.17,
+      D = 0.04,
+      theta0 = NA_real_,
+      mH = -0.067,
+      bH = 1.12,
+      mW = -0.002,
+      bW = 0.14
+    ),
+    "coefficient.*theta0"
+  )
+  # B = Inf
+  expect_error(
+    slp_gas_siglinde(
+      0,
+      A = 1.38,
+      B = Inf,
+      C = 6.17,
+      D = 0.04,
+      theta0 = 40,
+      mH = -0.067,
+      bH = 1.12,
+      mW = -0.002,
+      bW = 0.14
+    ),
+    "coefficient.*B"
+  )
+})
+
+test_that("a non-scalar coefficient is rejected (no silent recycling)", {
+  # C as a length-2 vector previously recycled silently into the output
+  expect_error(
+    slp_gas_siglinde(
+      c(0, 5),
+      A = 1.38,
+      B = -37.4,
+      C = c(6.17, 2),
+      D = 0.04,
+      theta0 = 40,
+      mH = -0.067,
+      bH = 1.12,
+      mW = -0.002,
+      bW = 0.14
+    ),
+    "coefficient.*C"
+  )
+})
+
+test_that("a non-numeric coefficient is rejected and all offenders are listed", {
+  expect_error(
+    slp_gas_siglinde(
+      0,
+      A = NA_real_,
+      B = -37.4,
+      C = 6.17,
+      D = 0.04,
+      theta0 = 40,
+      mH = -0.067,
+      bH = 1.12,
+      mW = "x",
+      bW = 0.14
+    ),
+    "coefficient.*A, mW"
+  )
+})
+
 test_that("a numeric matrix theta is accepted and computed element-wise", {
   m <- matrix(c(0, 5, 8, -3), nrow = 2)
   out <- h(m)
