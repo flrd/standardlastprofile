@@ -39,6 +39,7 @@ industrial (prefix ‘G’ for “Gewerbe”).
 | GHD     | Trade, commerce and services aggregate | GHD-Stützpunkt         |
 
 Table 1: BDEW gas standard load profile identifiers and descriptions.
+{.table}
 
 ## SigLinDe coefficients
 
@@ -61,6 +62,7 @@ Use
 to retrieve these values in R:
 
 ``` r
+
 slp_gas_coefficients()                        # all 15 profiles, both variants (30 rows)
 slp_gas_coefficients(variant = "34")         # all profiles, variant 34 only
 slp_gas_coefficients("HEF")                  # one profile, both variants
@@ -88,7 +90,7 @@ slp_gas_coefficients("HEF", variant = "33")  # one profile, one variant
 | GHD | 1.2569600 | -36.60785 | 7.321187 | 0.0776960 | 40 | -0.0696826 | 1.1379702 | -0.0008522 | 0.1921068 |
 
 Table 2: SigLinDe coefficients — variant 34 (Ausprägung 34, 57 % linear
-component). Source: BDEW Leitfaden, Appendix 6, pp. 145–166.
+component). Source: BDEW Leitfaden, Appendix 6, pp. 145–166. {.table}
 
 ### Variant 33 (Ausprägung 33)
 
@@ -111,13 +113,14 @@ component). Source: BDEW Leitfaden, Appendix 6, pp. 145–166.
 | GHD | 1.3010623 | -35.68161 | 6.685798 | 0.1409267 | 40 | -0.0473428 | 0.8141691 | -0.0010601 | 0.1325092 |
 
 Table 3: SigLinDe coefficients — variant 33 (Ausprägung 33, 45 % linear
-component). Source: BDEW Leitfaden, Appendix 6, pp. 145–166.
+component). Source: BDEW Leitfaden, Appendix 6, pp. 145–166. {.table}
 
 Use
 [`slp_gas_coefficients()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_coefficients.md)
 to retrieve these coefficients for one or more profiles:
 
 ``` r
+
 slp_gas_coefficients()                        # all 15 profiles, variant 34
 slp_gas_coefficients("HEF", variant = "33")  # single profile, variant 33
 ```
@@ -158,13 +161,14 @@ equal to 1 — no weekday differentiation.
 
 Table 4: Weekday factors (F_WT) for all 15 BDEW gas standard load
 profiles. Mo = Monday, …, Su = Sunday. Source: BDEW Leitfaden, Appendix
-6, pp. 145–166.
+6, pp. 145–166. {.table}
 
 Use
 [`slp_gas_weekday_factors()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_weekday_factors.md)
 to retrieve these values:
 
 ``` r
+
 slp_gas_weekday_factors()        # all 15 profiles, tidy (long) format
 slp_gas_weekday_factors("GWA")  # single profile
 ```

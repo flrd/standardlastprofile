@@ -169,6 +169,7 @@ Single-family home
 The result of \\h(\vartheta)\\ is a number \> 0 without a dimension:
 
 ``` r
+
 # profile "HEF", Ausprägung: 34
 slp_gas_siglinde(
   theta  =   8.0,
@@ -229,7 +230,7 @@ Düsseldorf long-term daily mean temperatures (2004–2024):
 | Jul 1  | 18.9 | 0.1765 |
 | Jul 2  | 19.2 | 0.1727 |
 | ⋮      |    ⋮ |      ⋮ |
-| Dez 31 |  5.7 | 1.2833 |
+| Dec 31 |  5.7 | 1.2833 |
 
 The sum in the denominator across all 365 days gives \\\sum_D
 h(\vartheta_D) = 272.32\\. And since for all three residential profiles
@@ -288,6 +289,7 @@ exact station name to pass to
 [`findID()`](https://rdrr.io/pkg/rdwd/man/findID.html):
 
 ``` r
+
 # returns matching station names and IDs
 rdwd::findID("Duesseldorf", exactmatch = FALSE) 
 ```
@@ -297,6 +299,7 @@ For the reference temperatures we use the long-term daily mean over
 distorts the scaling factor[^11].
 
 ``` r
+
 library(rdwd)
 
 # Full daily climate record for Düsseldorf (DWD station 1078)
@@ -329,6 +332,7 @@ Now that we have a reference temperature series, we can call
 [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_gas_kundenwert.md):
 
 ``` r
+
 # kundenwert for a 15,000 kWh/a HEF customer
 slp_gas_kundenwert("HEF", dates_ref, temps_ref, annual_consumption = 15000)
 #>      HEF 

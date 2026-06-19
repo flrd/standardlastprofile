@@ -15,6 +15,7 @@ function works.[^1] The data in the `slp_electricity_profiles` dataset
 forms the basis for all subsequent steps.
 
 ``` r
+
 head(slp_electricity_profiles)
 #>   profile_id period      day timestamp watts
 #> 1         H0 winter saturday     00:00  70.8
@@ -54,6 +55,7 @@ So, if we convert all the quarter-hourly power measurements to energy
 and sum them for a year, the result is (approximately) 1,000 kWh/year.
 
 ``` r
+
 library(standardlastprofile)
 H0_2026 <- slp_electricity(
   profile_id = "H0",
@@ -63,6 +65,7 @@ H0_2026 <- slp_electricity(
 ```
 
 ``` r
+
 sum(H0_2026$watts)
 #> [1] 3992465
 ```
@@ -75,6 +78,7 @@ values to watt-hours, we must, therefore, divide them by 4. Since one
 watt-hour is equal to 1/1000 kilowatt-hour, we also divide by 1,000:
 
 ``` r
+
 sum(H0_2026$watts / 4 / 1000)
 #> [1] 998.1163
 ```
@@ -104,6 +108,7 @@ different units:
 > for a 1999 profile:
 
 ``` r
+
 P25_2026 <- slp_electricity("P25", "2026-01-01", "2026-12-31")
 sum(P25_2026$watts / 4 / 1000)
 #> [1] 1000.08
@@ -119,6 +124,7 @@ obtain the **energy consumed** during that interval in kWh you can wrap
 once:
 
 ``` r
+
 slp_electricity_kwh <- \(...) {
   out <- slp_electricity(...)
   out$kwh <- out$watts / 4 / 1000
@@ -155,6 +161,7 @@ In the initial step, a date sequence is created from `start_date` to
 `end_date` based on the user input. Here’s a simple example:
 
 ``` r
+
 start <- as.Date("2023-12-22")
 end <- as.Date("2023-12-27")
 
@@ -215,6 +222,7 @@ state-specific ones carry a `counties` field containing the relevant ISO
 3166-2 code (e.g. `"DE-BE"` for Berlin).
 
 ``` r
+
 library(httr2)
 
 resp <- request("https://date.nager.at") |>
@@ -239,6 +247,7 @@ so-called characteristic profile day, i.e. a combination of weekday and
 period:
 
 ``` r
+
 wkday_period <- standardlastprofile:::.get_wkday_period(date_seq)
 data.frame(input = date_seq, output = wkday_period)
 #>        input          output
@@ -259,6 +268,7 @@ This is the job of the
 function:
 
 ``` r
+
 G5 <- slp_electricity(
   profile_id = "G5",
   start_date = "2023-12-22",
@@ -269,6 +279,7 @@ G5 <- slp_electricity(
 This function returns a data frame with 4 columns:
 
 ``` r
+
 head(G5)
 #>   profile_id          start_time            end_time watts
 #> 1         G5 2023-12-22 00:00:00 2023-12-22 00:15:00  50.1
@@ -292,6 +303,7 @@ which can be used to reproduce the plot for the G5 profile, showcasing
 the algorithm’s outcome:
 
 ``` r
+
 library(ggplot2)
 ggplot(G5, aes(start_time, watts)) +
   geom_line(color = "#0CC792") +
