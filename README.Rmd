@@ -79,7 +79,7 @@ str(slp_electricity_profiles)
 
 Based on an analysis of 1,209 load profiles of low-voltage electricity consumers in Germany[^bdew-1]:
 
-[^bdew-1]: Methodology: <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+[^bdew-1]: Methodology: <https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 
 - `H0`: households
 - `G0`–`G6`: commercial

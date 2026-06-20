@@ -111,8 +111,8 @@
 #' ```
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
-#' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
-#' @source <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
+#' @source <https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+#' @source <https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 #'
 #' @export
 #' @examples
@@ -279,7 +279,7 @@ slp_electricity <- \(
   }
 
   # dynamization factor per day (H0 and the dynamic 2025 profiles), see p. 18f.
-  # https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
+  # https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
   dyn_factors <- .dynamization_fun(as.integer(.format_j(daily_seq)))
 
   # build per profile by position, so duplicate profile_id values are kept

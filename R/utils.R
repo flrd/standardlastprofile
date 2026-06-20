@@ -138,7 +138,7 @@
   # checking weekday (not wkday_decimal) captures both calendar Sundays and
   # public holidays in one condition, so no assignment is ever overridden.
   # see page 30/46 in:
-  # https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
+  # https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf
   christmastide <- c("12-24", "12-31")
   weekday[x_md %in% christmastide & weekday != "sunday"] <- "saturday"
 
@@ -208,7 +208,7 @@
   }
 
   # define periods according to the BDEW, see page: 4 (5/34):
-  # https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
+  # https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf
   #
   # winter: November 1 - March 20
   # summer: May 15 - September 14

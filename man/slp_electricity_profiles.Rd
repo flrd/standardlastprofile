@@ -18,9 +18,9 @@ A data.frame with 26,784 observations and 5 variables:
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
-\url{https://www.bdew.de/media/documents/Profile.zip}
+\url{https://web.archive.org/web/20260620060846/https://www.bdew.de/media/documents/Profile.zip}
 
-\url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
+\url{https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
 }
 \usage{
 slp_electricity_profiles

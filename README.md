@@ -242,4 +242,4 @@ Conduct](https://github.com/flrd/standardlastprofile/blob/main/CODE_OF_CONDUCT.m
 By participating in this project you agree to abide by its terms.
 
 [^1]: Methodology:
-    <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+    <https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>

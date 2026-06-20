@@ -74,8 +74,8 @@
 #' ```
 #'
 #' @source <https://www.bdew.de/energie/standardlastprofile-strom/>
-#' @source <https://www.bdew.de/media/documents/Profile.zip>
-#' @source <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+#' @source <https://web.archive.org/web/20260620060846/https://www.bdew.de/media/documents/Profile.zip>
+#' @source <https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 #'
 "slp_electricity_profiles"
 

@@ -6,9 +6,9 @@
 \source{
 \url{https://www.bdew.de/energie/standardlastprofile-strom/}
 
-\url{https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
+\url{https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf}
 
-\url{https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
+\url{https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf}
 }
 \usage{
 slp_electricity(profile_id, start_date, end_date, holidays = NULL)
