@@ -20,7 +20,7 @@ Description: Provides representative standard load profiles (SLPs) for
   Strom", <https://www.bdew.de/energie/standardlastprofile-strom/>. The gas
   procedure is described in BDEW (2025), "Standardlastprofile Gas",
   <https://www.bdew.de/energie/standardlastprofile-gas/>.
-Version: 2.0.0.9000
+Version: 2.0.1
 Authors@R: 
     person(
     given = "Markus",
@@ -50,6 +50,8 @@ Config/Needs/website:
 URL: https://github.com/flrd/standardlastprofile,
     https://flrd.github.io/standardlastprofile/
 BugReports: https://github.com/flrd/standardlastprofile/issues
+Imports:
+    lifecycle
 Depends:
     R (>= 4.1)
 LazyData: true

@@ -1,24 +1,21 @@
 ## Release summary
 
-This is a minor update (2.1.0) of an existing CRAN package.
+This is a patch update (2.0.1) of an existing CRAN package.
 
 Changes since 2.0.0:
 
-* `slp_generate()` is now **defunct** — calling it raises an error. Use
-  `slp_electricity()` instead.
-* The `slp` dataset alias is now **defunct** — accessing it raises an error.
-  Use `slp_electricity_profiles` instead.
-* The `lifecycle` package dependency has been removed; the package now has no
-  runtime dependencies.
-* `slp_gas_coefficients()`, `slp_gas_kundenwert()`, and `slp_gas()` now also
+* Updated the BDEW gas *Leitfaden* reference URL; the previous link returned a
+  404. References now point to the current edition (KoV XV, 2026-03-27) via a
+  stable Internet Archive permalink. The SigLinDe coefficients and method are
+  unchanged.
+* `slp_gas()`, `slp_gas_kundenwert()`, and `slp_gas_coefficients()` now also
   accept numeric `34` or `33` for the `variant` argument (in addition to
   character `"34"` / `"33"`).
+* Added input validation for `slp_gas_siglinde()` coefficients and for
+  out-of-range temperatures in `slp_gas()` / `slp_gas_kundenwert()`.
 
-## Backward compatibility
-
-`slp_generate()` and `slp` were deprecated in 2.0.0 with warnings pointing to
-their replacements. They are now defunct and raise errors, as is standard
-practice for the deprecation lifecycle.
+No user-visible changes to existing behaviour; `slp_generate()` and `slp` remain
+deprecated (with warnings), as in 2.0.0.
 
 ## Test environments
 

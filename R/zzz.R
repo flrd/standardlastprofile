@@ -20,13 +20,16 @@
       "slp",
       env = pkg_env,
       fun = \() {
-        stop(
-          "`slp` was renamed to `slp_electricity_profiles` and is defunct as of ",
-          "standardlastprofile 2.1.0.\n",
-          "Use `slp_electricity_profiles` or ",
-          "`standardlastprofile::slp_electricity_profiles` instead.",
-          call. = FALSE
+        lifecycle::deprecate_warn(
+          "2.0.0",
+          "slp()",
+          "slp_electricity_profiles()",
+          details = paste(
+            "The dataset has been renamed to `slp_electricity_profiles`.",
+            "Access it with `standardlastprofile::slp_electricity_profiles`."
+          )
         )
+        slp_electricity_profiles
       }
     )
   }

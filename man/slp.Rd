@@ -4,8 +4,12 @@
 \alias{slp}
 \title{The \code{slp} dataset was renamed}
 \description{
-\strong{Defunct.} The electricity dataset \code{slp} was renamed to \link{slp_electricity_profiles} in
-version 2.0.0. Accessing \code{slp} now raises an error. Use
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+}
+\details{
+The electricity dataset \code{slp} was renamed to \link{slp_electricity_profiles} in
+version 2.0.0 and is no longer exported under the old name. Accessing \code{slp}
+still returns the data for now, but emits a deprecation warning. Use
 \code{slp_electricity_profiles}, or \code{standardlastprofile::slp_electricity_profiles},
 instead.
 }
