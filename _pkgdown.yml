@@ -62,6 +62,10 @@ reference:
   - slp_gas_weekday_factors
   - slp_info
 
+- title: Superseded
+  contents:
+  - slp_generate
+
 figures:
   dev: ragg::agg_png
 
