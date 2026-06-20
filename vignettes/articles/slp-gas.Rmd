@@ -565,7 +565,7 @@ render(1);
 
 [^Hellwig2003]: Hellwig, Mark (2003). *Entwicklung und Anwendung parametrisierter Standard-Lastprofile*. Dissertation, TU München.
 
-[^ffe2015]: Hinterstocker, M., Eberl, B., von Roon, S. (2015). *Weiterentwicklung des Standardlastprofilverfahrens Gas*. Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE), available at <https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf>
+[^ffe2015]: Hinterstocker, M., Eberl, B., von Roon, S. (2015). *Weiterentwicklung des Standardlastprofilverfahrens Gas*. Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE), available at <https://web.archive.org/web/20260620061251/https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf>
 
 [^bdew2018]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von Standardlastprofilen Gas*, as of 2026-03-27. Available at <https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>
 
