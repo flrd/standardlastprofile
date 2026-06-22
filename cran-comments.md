@@ -4,8 +4,8 @@ This is a patch update (2.0.1) of an existing CRAN package.
 
 Changes since 2.0.0:
 
-* Updated the BDEW reference URLs; the previous link now return a
-  404. References now point to the current edition via a stable Internet
+* Updated the BDEW reference URLs; the previous links returned a 404.
+  References now point to the current edition via a stable Internet
   Archive permalink. 
 * Added input validation for `slp_gas_siglinde()` coefficients and for
   out-of-range temperatures in `slp_gas()` / `slp_gas_kundenwert()`.
