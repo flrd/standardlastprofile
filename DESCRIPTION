@@ -36,8 +36,6 @@ Config/testthat/edition: 3
 Config/Needs/website:
     jsonlite,
     knitr,
-    leaflet,
-    plotly,
     rdwd,
     rmarkdown,
     scales
