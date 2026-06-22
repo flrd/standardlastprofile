@@ -38,6 +38,8 @@ library(ggplot2)
 standardlastprofile:::.slp_plot_1999()
 ```
 
+To learn more about SLPs for electricity, see article on [Standardlastprofile Strom](https://flrd.github.io/standardlastprofile/articles/slp-electricity.html). To learn more about SLPS for gas and the details of the algorithm, how to fetch weather data from DWD, see article on [Standardlastprofile Gas](https://flrd.github.io/standardlastprofile/articles/slp-gas.html). 
+
 ## Installation
 
 ```{r eval=FALSE}

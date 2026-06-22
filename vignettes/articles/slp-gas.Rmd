@@ -258,7 +258,7 @@ The SigLinDe approach was adopted by BDEW and has since been the binding standar
 
 ### Profile IDs
 
-There are 15 gas profile IDs defined, split into residential and
+The 15 gas profile IDs defined, split into residential and
 commercial / industrial types.
 
 #### Residential profiles

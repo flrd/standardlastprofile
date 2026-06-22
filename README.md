@@ -23,6 +23,13 @@ demand for customer groups that are not continuously metered.
  from 1999 published by the German Association of Energy and Water Industries
  (BDEW). Lines compare three seasonal periods across different day types." width="95%" style="display: block; margin: auto;" />
 
+To learn more about SLPs for electricity, see article on
+[Standardlastprofile
+Strom](https://flrd.github.io/standardlastprofile/articles/slp-electricity.html).
+To learn more about SLPS for gas and the details of the algorithm, how
+to fetch weather data from DWD, see article on [Standardlastprofile
+Gas](https://flrd.github.io/standardlastprofile/articles/slp-gas.html).
+
 ## Installation
 
 ``` r
