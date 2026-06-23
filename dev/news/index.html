@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">standardlastprofile</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,15 +47,18 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="standardlastprofile-development-version">standardlastprofile (development version)<a class="anchor" aria-label="anchor" href="#standardlastprofile-development-version"></a></h2>
-</div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.1.0" id="standardlastprofile-210">standardlastprofile 2.1.0<a class="anchor" aria-label="anchor" href="#standardlastprofile-210"></a></h2>
 <div class="section level3">
-<h3 id="defunct-2-1-0">Defunct<a class="anchor" aria-label="anchor" href="#defunct-2-1-0"></a></h3>
+<h3 id="defunct-development-version">Defunct<a class="anchor" aria-label="anchor" href="#defunct-development-version"></a></h3>
 <ul><li><p><code><a href="../reference/slp_generate.html">slp_generate()</a></code> is now defunct. Calling it raises an error. Use <code><a href="../reference/slp_electricity.html">slp_electricity()</a></code> instead (superseded since 2.0.0).</p></li>
 <li><p>The <code>slp</code> dataset alias is now defunct. Accessing <code>slp</code> raises an error. Use <code>slp_electricity_profiles</code> instead (deprecated since 2.0.0).</p></li>
 </ul></div>
 </div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.1" id="standardlastprofile-201">standardlastprofile 2.0.1<a class="anchor" aria-label="anchor" href="#standardlastprofile-201"></a></h2><p class="text-muted">CRAN release: 2026-06-22</p>
+<ul><li><p>The BDEW gas Leitfaden reference URL was updated: the previous link returned a 404. References now point to the current edition (KoV XV, 2026-03-27) via a stable Internet Archive permalink. The SigLinDe coefficients and method are unchanged from the previous edition.</p></li>
+<li><p><code><a href="../reference/slp_gas.html">slp_gas()</a></code>, <code><a href="../reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code>, and <code><a href="../reference/slp_gas_coefficients.html">slp_gas_coefficients()</a></code> now also accept a numeric 34 / 33 for the variant argument, in addition to the character forms “34” / “33”.</p></li>
+<li><p>Added input validation: <code><a href="../reference/slp_gas_siglinde.html">slp_gas_siglinde()</a></code> now checks that each of its nine coefficients is a single finite numeric, and <code><a href="../reference/slp_gas.html">slp_gas()</a></code> / <code><a href="../reference/slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code> reject temperatures &gt;= 40 (the SigLinDe pole) with an informative error.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="standardlastprofile-200">standardlastprofile 2.0.0<a class="anchor" aria-label="anchor" href="#standardlastprofile-200"></a></h2><p class="text-muted">CRAN release: 2026-06-11</p>
 <p>This release (finally) adds <strong>gas</strong> standard load profiles (SLPs) alongside the existing electricity profiles. We introduce an updated interface for electricity SLPs too. All renames and deprecations below are backward compatible.</p>
