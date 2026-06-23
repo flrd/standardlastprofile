@@ -1,7 +1,5 @@
 # standardlastprofile (development version)
 
-# standardlastprofile 2.1.0
-
 ## Defunct
 
 * `slp_generate()` is now defunct. Calling it raises an error. Use
@@ -9,6 +7,24 @@
 
 * The `slp` dataset alias is now defunct. Accessing `slp` raises an error.
   Use `slp_electricity_profiles` instead (deprecated since 2.0.0).
+  
+# standardlastprofile 2.0.1
+
+* The BDEW gas Leitfaden reference URL was updated: the previous link returned
+  a 404. References now point to the current edition (KoV XV, 2026-03-27) via a
+  stable Internet Archive permalink. The SigLinDe coefficients and method are
+  unchanged from the previous edition.
+
+* `slp_gas()`, `slp_gas_kundenwert()`, and `slp_gas_coefficients()` now also
+  accept a numeric 34 / 33 for the variant argument, in addition to the
+  character forms "34" / "33".
+
+* Added input validation: `slp_gas_siglinde()` now checks that each of its nine
+  coefficients is a single finite numeric, and `slp_gas()` /
+  `slp_gas_kundenwert()` reject temperatures >= 40 (the SigLinDe pole) with an
+  informative error.
+
+
 
 # standardlastprofile 2.0.0
 

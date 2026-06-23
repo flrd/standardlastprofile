@@ -14,7 +14,7 @@ Description: Provides standard load profiles (SLPs) for electricity and gas
   <https://www.bdew.de/energie/standardlastprofile-strom/>, and for gas in
   "Standardlastprofile Gas",
   <https://www.bdew.de/energie/standardlastprofile-gas/>.
-Version: 2.0.0.9000
+Version: 2.0.1.9000
 Authors@R: 
     person(
     given = "Markus",
