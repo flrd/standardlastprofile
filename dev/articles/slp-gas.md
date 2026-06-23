@@ -11,7 +11,7 @@ In this article we explain how
 implements the algorithm of the synthetic procedure (German:
 “synthetisches Verfahren”), following the definitions by BDEW, VKU, and
 GEODE in the *Leitfaden Abwicklung von Standardlastprofilen Gas*
-(2025).[^1]
+(2026).[^1]
 
 ## Synthetic procedure
 
@@ -192,10 +192,13 @@ brings us to the `kundenwert`.
 ### Kundenwert \\KW\\
 
 `kundenwert` accounts for a customer’s individual consumption behaviour.
-This value answers the question: how much gas is consumed by a customer
-on a day where the outside temperature is 8°C? It is a scaling factor in
-kWh/day — at 8°C, the point at which \\h(\vartheta) = 1\\ for every
-profile.
+It answers the question: how much gas does a customer consume on a day
+when the outside temperature is 8°C? It is a scaling factor in kWh/day —
+8°C is the temperature at which \\h(\vartheta) = 1\\ for every profile,
+with one exception: `HKO`, whose linear parameters (\\m_H\\, \\b_H\\,
+\\m_W\\, \\b_W\\) are all 0. With no linear component, the `HKO` profile
+function is a plain sigmoid rather than a SigLinDe (sigmoid-plus-linear)
+function, and so is not normalised to 1 at 8°C.
 
 `kundenwert` is derived from the customer’s annual consumption and the
 year’s temperature and weekday profile. Starting with
@@ -388,9 +391,12 @@ Freiburg im Breisgau
 
 Hamburg
 
-[^1]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von
-    Standardlastprofilen Gas*. Berlin. Available at
-    <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+[^1]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von
+    Standardlastprofilen Gas*, Kooperationsvereinbarung Gas, Annex XV,
+    as of 2026-03-27. Berlin. Archived copy:
+    <https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>
+    (current edition via the [BDEW gas SLP
+    page](https://www.bdew.de/energie/standardlastprofile-gas/)).
 
 [^2]: In addition to the synthetic procedure, there is also the
     analytical procedure. In brief, under this procedure, a network
@@ -401,17 +407,17 @@ Hamburg
     customers with metered consumption. The analytical procedure is not
     in scope of this package.
 
-[^3]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von
+[^3]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von
     Standardlastprofilen Gas*. Berlin, Allgemeine Begriffsbestimmungen /
     Erläuterungen, p. VIII
 
-[^4]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von
-    Standardlastprofilen Gas*, as of 2025-10-28. Berlin, Annex 6,
-    pp. 140–163 (per-profile data sheets).
+[^4]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von
+    Standardlastprofilen Gas*, as of 2026-03-27. Berlin, Annex 6,
+    pp. 146–173 (per-profile data sheets).
 
-[^5]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von
-    Standardlastprofilen Gas*, as of 2025-10-28. Berlin, Annex 3,
-    pp. 129–130.
+[^5]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von
+    Standardlastprofilen Gas*, as of 2026-03-27. Berlin, Annex 3
+    (Kalender für Feiertage), p. 135.
 
 [^6]: Hellwig, Mark (2003). *Entwicklung und Anwendung parametrisierter
     Standard-Lastprofile*. Dissertation, TU München.
@@ -420,15 +426,15 @@ Hamburg
     *Weiterentwicklung des Standardlastprofilverfahrens Gas*.
     Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE),
     available at
-    <https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf>
+    <https://web.archive.org/web/20260620061251/https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf>
 
-[^8]: BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von
-    Standardlastprofilen Gas*, as of 2025-10-28. Available at
-    <https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+[^8]: BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von
+    Standardlastprofilen Gas*, as of 2026-03-27. Available at
+    <https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>
 
 [^9]: The coefficients A, B, C, D, m_(H), b_(H), m_(W), b_(W) for each
     consumption profile are published in Annex 6 of the BDEW Leitfaden
-    (pp. 140–163).
+    (pp. 146–173).
 
 [^10]: DWD Open Data: <https://opendata.dwd.de/>
 

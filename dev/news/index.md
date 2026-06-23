@@ -37,7 +37,7 @@ are backward compatible.
 - [`slp_gas()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_gas.md)
   implements the BDEW/VKU/GEODE synthetic procedure for gas SLPs
   (SigLinDe method). It supports all 15 gas profile IDs defined in the
-  BDEW Leitfaden, as of 2025-10-28 (`HEF`, `HMF`, `HKO`, `GKO`, `GHA`,
+  BDEW Leitfaden, as of 2026-03-27 (`HEF`, `HMF`, `HKO`, `GKO`, `GHA`,
   `GMK`, `GBD`, `GBH`, `GWA`, `GGA`, `GBA`, `GGB`, `GPD`, `GMF`, `GHD`).
   The function takes daily temperatures and a `kundenwert` (kWh/day),
   and returns daily gas consumption in kWh. A `variant` argument selects

@@ -380,13 +380,13 @@ comparision between the static values, and their dynamic
 counterparts.](slp-electricity_files/figure-html/H0_dynamic-1.png)
 
 [^1]: More information on the algorithm can be found
-    [here](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf)
+    [here](https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf)
 
 [^2]: More information on the data and methodology can be found
-    [here](https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
+    [here](https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf).
 
 [^3]: See the source Excel file distributed with the step-by-step guide:
-    <https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
+    <https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 
 [^4]: See the BDEW 2025 publication:
     <https://www.bdew.de/energie/standardlastprofile-strom/>
@@ -395,4 +395,4 @@ counterparts.](slp-electricity_files/figure-html/H0_dynamic-1.png)
     which the data is extracted for efficiency.
 
 [^6]: Refer to page 9 in [Anwendung der Repräsentativen VDEW-Lastprofile
-    step-by-step](https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).
+    step-by-step](https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf).

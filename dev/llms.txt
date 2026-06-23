@@ -163,7 +163,7 @@ API](https://date.nager.at).
 
 [`slp_gas()`](https://flrd.github.io/standardlastprofile/dev/reference/slp_gas.md)
 implements the [BDEW/VKU/GEODE synthetic procedure (SigLinDe
-method)](https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf)
+method)](https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf)
 for daily gas consumption. The gas consumption on any particular day is
 influenced by three factors:
 
@@ -254,7 +254,7 @@ Conduct](https://github.com/flrd/standardlastprofile/blob/main/CODE_OF_CONDUCT.m
 By participating in this project you agree to abide by its terms.
 
 [^1]: Methodology:
-    <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+    <https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 
 # Package index
 
@@ -305,4 +305,4 @@ By participating in this project you agree to abide by its terms.
 
   SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW)
   and weekday factors for all 15 BDEW Standardlastprofile Gas - variants
-  33 and 34, from the BDEW Leitfaden (as of 2025-10-28).
+  33 and 34, from the BDEW Leitfaden (as of 2026-03-27).

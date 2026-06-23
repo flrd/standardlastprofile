@@ -23,4 +23,4 @@
 
   SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW)
   and weekday factors for all 15 BDEW Standardlastprofile Gas - variants
-  33 and 34, from the BDEW Leitfaden (as of 2025-10-28).
+  33 and 34, from the BDEW Leitfaden (as of 2026-03-27).
