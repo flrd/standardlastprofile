@@ -13,10 +13,10 @@ slp_gas_weekday_factors(profile_id = NULL)
 
 ## Source
 
-BDEW/VKU/GEODE (2025). *Leitfaden Abwicklung von Standardlastprofilen
-Gas*, Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28,
-Appendix 6.
-<https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf>
+BDEW/VKU/GEODE (2026). *Leitfaden Abwicklung von Standardlastprofilen
+Gas*, Kooperationsvereinbarung Gas, Annex XV, as of 2026-03-27, Appendix
+6.
+<https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf>
 
 ## Arguments
 

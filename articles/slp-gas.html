@@ -13,12 +13,17 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Gas Standard Load Profiles (Standardlastprofile Gas)">
 <meta name="description" content="BDEW Standardlastprofile Gas in R: the SigLinDe synthetic procedure, Kundenwert, and weekday factors for 15 gas profiles (HEF, HMF, HKO, GKO, and 11 more).">
 <meta property="og:description" content="BDEW Standardlastprofile Gas in R: the SigLinDe synthetic procedure, Kundenwert, and weekday factors for 15 gas profiles (HEF, HMF, HKO, GKO, and 11 more).">
+<meta property="og:image" content="https://flrd.github.io/standardlastprofile/reference/figures/README-slp_gas_cities-1.png">
+<meta property="og:image:alt" content="Gas standard load profiles for three German cities computed with the standardlastprofile R package.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@flrd">
+<meta name="twitter:site" content="@flrd">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -28,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">standardlastprofile</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +75,7 @@
       <h1>Gas Standard Load Profiles (Standardlastprofile Gas)</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/HEAD/vignettes/articles/slp-gas.Rmd" class="external-link"><code>vignettes/articles/slp-gas.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/v2.0.1/vignettes/articles/slp-gas.Rmd" class="external-link"><code>vignettes/articles/slp-gas.Rmd</code></a></small>
       <div class="d-none name"><code>slp-gas.Rmd</code></div>
     </div>
 
@@ -102,8 +107,11 @@ represent a simplification.</p>
 <p>In this article we explain how <code><a href="../reference/slp_gas.html">slp_gas()</a></code> implements the
 algorithm of the synthetic procedure (German: “synthetisches
 Verfahren”), following the definitions by BDEW, VKU, and GEODE in the
-<em>Leitfaden Abwicklung von Standardlastprofilen Gas</em> (2025).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
-Standardlastprofilen Gas&lt;/em&gt;. Berlin. Available at &lt;a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a></p>
+<em>Leitfaden Abwicklung von Standardlastprofilen Gas</em> (2026).<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2026). &lt;em&gt;Leitfaden Abwicklung von
+Standardlastprofilen Gas&lt;/em&gt;, Kooperationsvereinbarung Gas, Annex XV,
+as of 2026-03-27. Berlin. Archived copy: &lt;a href="https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf" class="external-link uri"&gt;https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf&lt;/a&gt;
+(current edition via the &lt;a href="https://www.bdew.de/energie/standardlastprofile-gas/" class="external-link"&gt;BDEW gas SLP
+page&lt;/a&gt;).&lt;/p&gt;'><sup>1</sup></a></p>
 <div class="section level2">
 <h2 id="synthetic-procedure">Synthetic procedure<a class="anchor" aria-label="anchor" href="#synthetic-procedure"></a>
 </h2>
@@ -122,7 +130,7 @@ of three factors:</p>
 <li>preferences and habits</li>
 <li>the day of the week</li>
 </ol>
-<p>Mathematically, this is expressed as:<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
+<p>Mathematically, this is expressed as:<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2026). &lt;em&gt;Leitfaden Abwicklung von
 Standardlastprofilen Gas&lt;/em&gt;. Berlin, Allgemeine Begriffsbestimmungen /
 Erläuterungen, p. VIII&lt;/p&gt;"><sup>3</sup></a></p>
 <p><span class="math display">\[
@@ -144,9 +152,9 @@ adjusts for consumption differences across days of the week.</li>
 <h3 id="weekday-factors-f_wt">Weekday factors <span class="math inline">\(F_{WT}\)</span><a class="anchor" aria-label="anchor" href="#weekday-factors-f_wt"></a>
 </h3>
 <p>Weekday factors are scaling factors applied for every day from Monday
-to Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
-Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Berlin, Annex 6,
-pp. 140–163 (per-profile data sheets).&lt;/p&gt;"><sup>4</sup></a></p>
+to Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2026). &lt;em&gt;Leitfaden Abwicklung von
+Standardlastprofilen Gas&lt;/em&gt;, as of 2026-03-27. Berlin, Annex 6,
+pp. 146–173 (per-profile data sheets).&lt;/p&gt;"><sup>4</sup></a></p>
 <p>For the residential profiles <code>HEF</code>, <code>HMF</code>, and
 <code>HKO</code>, however, all weekday factors are equal to 1, that is,
 gas consumption in households is assumed <em>not</em> to differ
@@ -212,9 +220,9 @@ chart.querySelectorAll("text").forEach(el => {
   t.textContent = descriptions[pid];
   el.prepend(t);
 });
-</script><p>Public holidays are treated as a Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
-Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Berlin, Annex 3,
-pp. 129–130.&lt;/p&gt;"><sup>5</sup></a> 24 December and 31
+</script><p>Public holidays are treated as a Sunday.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;BDEW/VKU/GEODE (2026). &lt;em&gt;Leitfaden Abwicklung von
+Standardlastprofilen Gas&lt;/em&gt;, as of 2026-03-27. Berlin, Annex 3
+(Kalender für Feiertage), p. 135.&lt;/p&gt;"><sup>5</sup></a> 24 December and 31
 December are treated as Saturday unless they fall on a Sunday; this
 convention mirrors the established rule from the BDEW electricity SLP
 procedure and is applied here by analogy.</p>
@@ -251,13 +259,13 @@ SigLinDe coeffeciants for 15 different customer groups, i.e. profile
 IDs.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Hinterstocker, M., Eberl, B., von Roon, S. (2015).
 &lt;em&gt;Weiterentwicklung des Standardlastprofilverfahrens Gas&lt;/em&gt;.
 Endbericht. Forschungsgesellschaft für Energiewirtschaft mbH (FfE),
-available at &lt;a href="https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf&lt;/a&gt;&lt;/p&gt;'><sup>7</sup></a>
+available at &lt;a href="https://web.archive.org/web/20260620061251/https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf" class="external-link uri"&gt;https://web.archive.org/web/20260620061251/https://www.bdew.de/media/documents/201507_Weiterentwicklung-SLP-Gas.pdf&lt;/a&gt;&lt;/p&gt;'><sup>7</sup></a>
 SigLinDe adds a linear component to that sigmoid equation representing
 space-heating demand (German: <em>Heizgas-Gerade</em>) and hot water
 demand (German: <em>Warmwasser-Gerade</em>).</p>
 <p>The SigLinDe approach was adopted by BDEW and has since been the
-binding standard.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2025). &lt;em&gt;Leitfaden Abwicklung von
-Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Available at &lt;a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link uri"&gt;https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf&lt;/a&gt;&lt;/p&gt;'><sup>8</sup></a></p>
+binding standard.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;BDEW/VKU/GEODE (2026). &lt;em&gt;Leitfaden Abwicklung von
+Standardlastprofilen Gas&lt;/em&gt;, as of 2026-03-27. Available at &lt;a href="https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf" class="external-link uri"&gt;https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf&lt;/a&gt;&lt;/p&gt;'><sup>8</sup></a></p>
 <blockquote>
 <p><code><a href="../reference/slp_gas.html">slp_gas()</a></code> implements the SigLinDe approach.</p>
 </blockquote>
@@ -265,8 +273,8 @@ Standardlastprofilen Gas&lt;/em&gt;, as of 2025-10-28. Available at &lt;a href="
 <div class="section level3">
 <h3 id="profile-ids">Profile IDs<a class="anchor" aria-label="anchor" href="#profile-ids"></a>
 </h3>
-<p>There are 15 gas profile IDs defined, split into residential and
-commercial / industrial types.</p>
+<p>The 15 gas profile IDs defined, split into residential and commercial
+/ industrial types.</p>
 <div class="section level4">
 <h4 id="residential-profiles">Residential profiles<a class="anchor" aria-label="anchor" href="#residential-profiles"></a>
 </h4>
@@ -408,7 +416,7 @@ to 1.</p>
 <p>All 15 gas profile IDs share the same SigLinDe function — but they
 differ in their parameter values. The parameters <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span>, <span class="math inline">\(D\)</span>, <span class="math inline">\(\vartheta_0\)</span>, <span class="math inline">\(m_H\)</span>, <span class="math inline">\(b_H\)</span>, <span class="math inline">\(m_W\)</span>, <span class="math inline">\(b_W\)</span> are profile-specific constants.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;The coefficients A, B, C, D, m&lt;sub&gt;H&lt;/sub&gt;,
 b&lt;sub&gt;H&lt;/sub&gt;, m&lt;sub&gt;W&lt;/sub&gt;, b&lt;sub&gt;W&lt;/sub&gt; for each consumption profile
-are published in Annex 6 of the BDEW Leitfaden (pp. 140–163).&lt;/p&gt;"><sup>9</sup></a></p>
+are published in Annex 6 of the BDEW Leitfaden (pp. 146–173).&lt;/p&gt;"><sup>9</sup></a></p>
 <p>You find the complete set in the <a href="slp-gas-parameters.html">SigLinDe Parameters and Weekday
 Factors</a> article, and those values are returned by
 <code><a href="../reference/slp_gas_coefficients.html">slp_gas_coefficients()</a></code>.</p>
@@ -672,9 +680,13 @@ coincidence, and brings us to the <code>kundenwert</code>.</p>
 <h3 id="kundenwert-kw">Kundenwert <span class="math inline">\(KW\)</span><a class="anchor" aria-label="anchor" href="#kundenwert-kw"></a>
 </h3>
 <p><code>kundenwert</code> accounts for a customer’s individual
-consumption behaviour. This value answers the question: how much gas is
-consumed by a customer on a day where the outside temperature is 8°C? It
-is a scaling factor in kWh/day — at 8°C, the point at which <span class="math inline">\(h(\vartheta) = 1\)</span> for every profile.</p>
+consumption behaviour. It answers the question: how much gas does a
+customer consume on a day when the outside temperature is 8°C? It is a
+scaling factor in kWh/day — 8°C is the temperature at which <span class="math inline">\(h(\vartheta) = 1\)</span> for every profile, with
+one exception: <code>HKO</code>, whose linear parameters (<span class="math inline">\(m_H\)</span>, <span class="math inline">\(b_H\)</span>, <span class="math inline">\(m_W\)</span>, <span class="math inline">\(b_W\)</span>) are all 0. With no linear component,
+the <code>HKO</code> profile function is a plain sigmoid rather than a
+SigLinDe (sigmoid-plus-linear) function, and so is not normalised to 1
+at 8°C.</p>
 <p><code>kundenwert</code> is derived from the customer’s annual
 consumption and the year’s temperature and weekday profile. Starting
 with <span class="math inline">\(\eqref{eq:qdaily}\)</span>, the annual
@@ -744,7 +756,7 @@ temperatures (2004–2024):</p>
 <td align="right">⋮</td>
 </tr>
 <tr class="odd">
-<td align="left">Dez 31</td>
+<td align="left">Dec 31</td>
 <td align="right">5.7</td>
 <td align="right">1.2833</td>
 </tr>

@@ -5,15 +5,15 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Compute the Kundenwert for a Gas Standard Load Profile — slp_gas_kundenwert"><meta name="description" content="Compute the customer value (Kundenwert, KW) that scales a gas standard load
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Compute the Kundenwert for a Gas Standard Load Profile — slp_gas_kundenwert"><meta name="description" content="Compute the kundenwert (customer value) that scales a gas standard load
 profile to a specific annual consumption. The result can be passed directly
 to slp_gas() via its kundenwert argument, enabling a two-step
-workflow: derive KW from a representative full-year reference temperature
-series, then generate profiles for any shorter period using that fixed KW."><meta property="og:description" content="Compute the customer value (Kundenwert, KW) that scales a gas standard load
+workflow: derive kundenwert from a representative full-year reference temperature
+series, then generate profiles for any shorter period using that fixed value."><meta property="og:description" content="Compute the kundenwert (customer value) that scales a gas standard load
 profile to a specific annual consumption. The result can be passed directly
 to slp_gas() via its kundenwert argument, enabling a two-step
-workflow: derive KW from a representative full-year reference temperature
-series, then generate profiles for any shorter period using that fixed KW."></head><body>
+workflow: derive kundenwert from a representative full-year reference temperature
+series, then generate profiles for any shorter period using that fixed value."><meta property="og:image" content="https://flrd.github.io/standardlastprofile/reference/figures/README-slp_gas_cities-1.png"><meta property="og:image:alt" content="Gas standard load profiles for three German cities computed with the standardlastprofile R package."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:creator" content="@flrd"><meta name="twitter:site" content="@flrd"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -21,7 +21,7 @@ series, then generate profiles for any shorter period using that fixed KW."></he
 
     <a class="navbar-brand me-2" href="../index.html">standardlastprofile</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,16 +50,16 @@ series, then generate profiles for any shorter period using that fixed KW."></he
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Compute the Kundenwert for a Gas Standard Load Profile</h1>
-      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/HEAD/R/slp_gas_kundenwert.R" class="external-link"><code>R/slp_gas_kundenwert.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/v2.0.1/R/slp_gas_kundenwert.R" class="external-link"><code>R/slp_gas_kundenwert.R</code></a></small>
       <div class="d-none name"><code>slp_gas_kundenwert.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>Compute the customer value (Kundenwert, KW) that scales a gas standard load
+    <p>Compute the <code>kundenwert</code> (customer value) that scales a gas standard load
 profile to a specific annual consumption. The result can be passed directly
 to <code><a href="slp_gas.html">slp_gas()</a></code> via its <code>kundenwert</code> argument, enabling a two-step
-workflow: derive KW from a representative full-year reference temperature
-series, then generate profiles for any shorter period using that fixed KW.</p>
+workflow: derive <code>kundenwert</code> from a representative full-year reference temperature
+series, then generate profiles for any shorter period using that fixed value.</p>
     </div>
 
     <div class="section level2">
@@ -86,8 +86,8 @@ named numeric vector with one element per profile.</p></dd>
 
 <dt id="arg-dates">dates<a class="anchor" aria-label="anchor" href="#arg-dates"></a></dt>
 <dd><p>a Date vector or character vector in ISO 8601 format
-(<code>"YYYY-MM-DD"</code>), representing a <strong>full reference year</strong> of daily dates.
-For a meaningful Kundenwert the series should ideally cover 365 (or 366)
+(<code>"YYYY-MM-DD"</code>).
+For a meaningful <code>kundenwert</code> the series should ideally cover 365 (or 366)
 days. Must have the same length as <code>temperatures</code>.</p></dd>
 
 
@@ -121,12 +121,14 @@ the input <code>profile_id</code> values.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The Kundenwert is defined as:</p>
-<p>$$KW = \frac{E_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}$$</p>
-<p>where \(E_a\) is <code>annual_consumption</code> and the sum
-\(\sum_D h(\vartheta_D) \cdot F_{WT,D}\) runs over all days in the
-temperature series. For the result to be meaningful the denominator must
-reflect a full seasonal cycle.</p><div class="section">
+    <p>The Kundenwert is derived from the annual consumption and the year's
+temperature profile:</p>
+<p>$$KW = \frac{Q_a}{\sum_D h(\vartheta_D) \cdot F_{WT,D}}$$</p>
+<p>where \(Q_a\) is <code>annual_consumption</code> (the annual consumption total; German:
+<em>Jahresverbrauchsprognose</em>, JVP) and the sum \(\sum_D h(\vartheta_D) \cdot
+F_{WT,D}\) runs over all days in the temperature and weekday factor series.
+For the result to be meaningful the denominator must reflect a full seasonal
+cycle (ideally a calendar year).</p><div class="section">
 <h3 id="reference-temperature-series">Reference temperature series<a class="anchor" aria-label="anchor" href="#reference-temperature-series"></a></h3>
 
 

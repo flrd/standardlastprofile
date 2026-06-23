@@ -11,9 +11,17 @@ from 1999 published by the German Association of Energy and Water
 Industries (BDEW). Lines compare three seasonal periods across different
 day types.](reference/figures/README-bdew-1999-small_multiples-1.png)
 
+To learn more about SLPs for electricity, see article on
+[Standardlastprofile
+Strom](https://flrd.github.io/standardlastprofile/articles/slp-electricity.html).
+To learn more about SLPS for gas and the details of the algorithm, how
+to fetch weather data from DWD, see article on [Standardlastprofile
+Gas](https://flrd.github.io/standardlastprofile/articles/slp-gas.html).
+
 ## Installation
 
 ``` r
+
 install.packages("standardlastprofile")
 ```
 
@@ -57,6 +65,7 @@ across 5 variables:
 - `watts`: average electric power, normalised to 1,000 kWh/a
 
 ``` r
+
 str(slp_electricity_profiles)
 #> 'data.frame':    26784 obs. of  5 variables:
 #>  $ profile_id: chr  "H0" "H0" "H0" "H0" ...
@@ -109,6 +118,7 @@ storage.](reference/figures/README-H0_vs_2025-1.png)
 returns a data frame with one row per 15-minute interval:
 
 ``` r
+
 G5 <- slp_electricity(
   profile_id = "G5",
   start_date = "2023-12-22",
@@ -160,7 +170,7 @@ API](https://date.nager.at).
 
 [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
 implements the [BDEW/VKU/GEODE synthetic procedure (SigLinDe
-method)](https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf)
+method)](https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf)
 for daily gas consumption. The gas consumption on any particular day is
 influenced by three factors:
 
@@ -189,6 +199,7 @@ is a data frame with three columns: `profile_id`, `date`, and `kwh`
 which is the daily gas consumption:
 
 ``` r
+
 HEF <- slp_gas("HEF", dates, temps, kundenwert = 55.1)
 head(HEF)
 #>   profile_id       date      kwh
@@ -250,7 +261,7 @@ Conduct](https://github.com/flrd/standardlastprofile/blob/main/CODE_OF_CONDUCT.m
 By participating in this project you agree to abide by its terms.
 
 [^1]: Methodology:
-    <https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+    <https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 
 # Package index
 
@@ -306,4 +317,4 @@ By participating in this project you agree to abide by its terms.
 
   SigLinDe profile function coefficients (A, B, C, D, mH, bH, mW, bW)
   and weekday factors for all 15 BDEW Standardlastprofile Gas - variants
-  33 and 34, from the BDEW Leitfaden (as of 2025-10-28).
+  33 and 34, from the BDEW Leitfaden (as of 2026-03-27).

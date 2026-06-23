@@ -39,9 +39,9 @@ A data.frame with 26,784 observations and 5 variables:
 
 <https://www.bdew.de/energie/standardlastprofile-strom/>
 
-<https://www.bdew.de/media/documents/Profile.zip>
+<https://web.archive.org/web/20260620060846/https://www.bdew.de/media/documents/Profile.zip>
 
-<https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+<https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 
 ## Details
 

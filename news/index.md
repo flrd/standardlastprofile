@@ -1,5 +1,31 @@
 # Changelog
 
+## standardlastprofile 2.0.1
+
+CRAN release: 2026-06-22
+
+- The BDEW gas *Leitfaden* reference URL was updated: the previous link
+  returned a 404. References now point to the current edition (KoV XV,
+  2026-03-27) via a stable Internet Archive permalink. The SigLinDe
+  coefficients and method are unchanged from the previous edition.
+
+- [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md),
+  [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_kundenwert.md),
+  and
+  [`slp_gas_coefficients()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_coefficients.md)
+  now also accept a numeric `34` / `33` for the `variant` argument, in
+  addition to the character forms `"34"` / `"33"`.
+
+- Added input validation:
+  [`slp_gas_siglinde()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_siglinde.md)
+  now checks that each of its nine coefficients is a single finite
+  numeric, and
+  [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
+  /
+  [`slp_gas_kundenwert()`](https://flrd.github.io/standardlastprofile/reference/slp_gas_kundenwert.md)
+  reject temperatures `>= 40` (the SigLinDe pole) with an informative
+  error.
+
 ## standardlastprofile 2.0.0
 
 CRAN release: 2026-06-11
@@ -22,7 +48,7 @@ are backward compatible.
 - [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
   implements the BDEW/VKU/GEODE synthetic procedure for gas SLPs
   (SigLinDe method). It supports all 15 gas profile IDs defined in the
-  BDEW Leitfaden, as of 2025-10-28 (`HEF`, `HMF`, `HKO`, `GKO`, `GHA`,
+  BDEW Leitfaden, as of 2026-03-27 (`HEF`, `HMF`, `HKO`, `GKO`, `GHA`,
   `GMK`, `GBD`, `GBH`, `GWA`, `GGA`, `GBA`, `GGB`, `GPD`, `GMF`, `GHD`).
   The function takes daily temperatures and a `kundenwert` (kWh/day),
   and returns daily gas consumption in kWh. A `variant` argument selects

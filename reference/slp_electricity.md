@@ -13,9 +13,9 @@ slp_electricity(profile_id, start_date, end_date, holidays = NULL)
 
 <https://www.bdew.de/energie/standardlastprofile-strom/>
 
-<https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
+<https://web.archive.org/web/20260620060837/https://www.bdew.de/media/documents/1999_Repraesentative-VDEW-Lastprofile.pdf>
 
-<https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
+<https://web.archive.org/web/20260620060829/https://www.bdew.de/media/documents/2000131_Anwendung-repraesentativen_Lastprofile-Step-by-step.pdf>
 
 ## Arguments
 

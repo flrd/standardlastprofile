@@ -1,12 +1,13 @@
 # Compute the Kundenwert for a Gas Standard Load Profile
 
-Compute the customer value (Kundenwert, KW) that scales a gas standard
+Compute the `kundenwert` (customer value) that scales a gas standard
 load profile to a specific annual consumption. The result can be passed
 directly to
 [`slp_gas()`](https://flrd.github.io/standardlastprofile/reference/slp_gas.md)
-via its `kundenwert` argument, enabling a two-step workflow: derive KW
-from a representative full-year reference temperature series, then
-generate profiles for any shorter period using that fixed KW.
+via its `kundenwert` argument, enabling a two-step workflow: derive
+`kundenwert` from a representative full-year reference temperature
+series, then generate profiles for any shorter period using that fixed
+value.
 
 ## Usage
 
@@ -32,10 +33,9 @@ slp_gas_kundenwert(
 
 - dates:
 
-  a Date vector or character vector in ISO 8601 format (`"YYYY-MM-DD"`),
-  representing a **full reference year** of daily dates. For a
-  meaningful Kundenwert the series should ideally cover 365 (or 366)
-  days. Must have the same length as `temperatures`.
+  a Date vector or character vector in ISO 8601 format (`"YYYY-MM-DD"`).
+  For a meaningful `kundenwert` the series should ideally cover 365
+  (or 366) days. Must have the same length as `temperatures`.
 
 - temperatures:
 
@@ -68,14 +68,17 @@ input `profile_id` values.
 
 ## Details
 
-The Kundenwert is defined as:
+The Kundenwert is derived from the annual consumption and the year's
+temperature profile:
 
-\$\$KW = \frac{E_a}{\sum_D h(\vartheta_D) \cdot F\_{WT,D}}\$\$
+\$\$KW = \frac{Q_a}{\sum_D h(\vartheta_D) \cdot F\_{WT,D}}\$\$
 
-where \\E_a\\ is `annual_consumption` and the sum \\\sum_D
+where \\Q_a\\ is `annual_consumption` (the annual consumption total;
+German: *Jahresverbrauchsprognose*, JVP) and the sum \\\sum_D
 h(\vartheta_D) \cdot F\_{WT,D}\\ runs over all days in the temperature
-series. For the result to be meaningful the denominator must reflect a
-full seasonal cycle.
+and weekday factor series. For the result to be meaningful the
+denominator must reflect a full seasonal cycle (ideally a calendar
+year).
 
 ### Reference temperature series
 

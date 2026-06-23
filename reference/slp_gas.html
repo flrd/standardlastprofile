@@ -5,9 +5,9 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate a Standard Load Profile for Gas — slp_gas"><meta name="description" content="Generate daily gas consumption values using the BDEW/VKU/GEODE synthetic
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate a Standard Load Profile for Gas — slp_gas"><meta name="description" content="Generate daily gas consumption values using the BDEW/VKU/GEODE synthetic
 standard load profile procedure (SigLinDe method)."><meta property="og:description" content="Generate daily gas consumption values using the BDEW/VKU/GEODE synthetic
-standard load profile procedure (SigLinDe method)."></head><body>
+standard load profile procedure (SigLinDe method)."><meta property="og:image" content="https://flrd.github.io/standardlastprofile/reference/figures/README-slp_gas_cities-1.png"><meta property="og:image:alt" content="Gas standard load profiles for three German cities computed with the standardlastprofile R package."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:creator" content="@flrd"><meta name="twitter:site" content="@flrd"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +15,7 @@ standard load profile procedure (SigLinDe method)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">standardlastprofile</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@ standard load profile procedure (SigLinDe method)."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Generate a Standard Load Profile for Gas</h1>
-      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/HEAD/R/slp_gas.R" class="external-link"><code>R/slp_gas.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/flrd/standardlastprofile/blob/v2.0.1/R/slp_gas.R" class="external-link"><code>R/slp_gas.R</code></a></small>
       <div class="d-none name"><code>slp_gas.Rd</code></div>
     </div>
 
@@ -69,9 +69,9 @@ standard load profile procedure (SigLinDe method).</p>
     <h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a></h2>
     <p><a href="https://www.bdew.de/energie/standardlastprofile-gas/" class="external-link">https://www.bdew.de/energie/standardlastprofile-gas/</a></p>
 <p>BDEW/VKU/GEODE. <em>Leitfaden Abwicklung von Standardlastprofilen
-Gas</em>, Kooperationsvereinbarung Gas, Annex XIV.2, as of 2025-10-28,
+Gas</em>, Kooperationsvereinbarung Gas, Annex XV, as of 2026-03-27,
 Appendix 6.
-<a href="https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf" class="external-link">https://www.bdew.de/media/documents/251028_LF_SLP_Gas_KoV_XIV.2.pdf</a></p>
+<a href="https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf" class="external-link">https://web.archive.org/web/20260619125016/https://www.bdew.de/media/documents/260327_LF_SLP_Gas_KoV_XV_CO4f7Rb.pdf</a></p>
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
@@ -94,8 +94,7 @@ Multiple values are supported.</p></dd>
 <dt id="arg-temperatures">temperatures<a class="anchor" aria-label="anchor" href="#arg-temperatures"></a></dt>
 <dd><p>a numeric vector of daily temperatures in degrees
 Celsius, one value per gas day. Must have the same length as <code>dates</code>.
-The temperature should be the allocation temperature (German:
-<em>Allokationstemperatur</em>) for that gas day. Two options are supported by
+Two options for computing the daily temperature are supported by
 the Leitfaden (see Details):</p><ul><li><p><strong>Simple daily mean</strong> (<em>Tagesmitteltemperatur</em>): arithmetic average of
 hourly values over the gas day.</p></li>
 <li><p><strong>Geometrically-weighted 4-day mean</strong>: recommended by BDEW for
@@ -104,7 +103,7 @@ distribution network operators.</p></li>
 <strong>gas forecast temperature</strong> (German: <em>Gasprognosetemperatur</em>, GPT)
 published by DWD or DTN instead of a raw daily mean. The GPT incorporates
 a multi-day weighted average and seasonal adjustment that reduces the
-systematic seasonal allocation bias of pure temperature-based profiles
+systematic seasonal bias of pure temperature-based profiles
 (VKU SLP evaluation reports 2023, 2025). This function accepts whichever
 temperature values are passed; the choice of method is the caller's
 responsibility.</p></dd>
@@ -170,7 +169,7 @@ The pure sigmoid term was introduced by TU München (Geiger / Hellwig 2002);
 the linear envelope on top — together with the 33 / 34 variant split — was
 added by FfE in the 2015 research report <em>Weiterentwicklung des Standard-
 lastprofilverfahrens Gas</em> (Appendix 7.1). The current operational coefficient
-set is published in the BDEW Leitfaden, Appendix 6 (as of 2025-10-28):</p>
+set is published in the BDEW Leitfaden, Appendix 6 (as of 2026-03-27):</p>
 <p>$$h(\vartheta) = \frac{A}{1 + \left(\frac{B}{\vartheta - \vartheta_0}\right)^C} + D + \max(m_H \vartheta + b_H,\; m_W \vartheta + b_W)$$</p>
 <p>The first four terms form the sigmoid part; the last term is the linear
 part (space-heating and hot water lines). Variant 34 (57 % linear
@@ -184,10 +183,10 @@ zero.</p>
 </div>
 
 <div class="section">
-<h3 id="allocation-temperature">Allocation temperature<a class="anchor" aria-label="anchor" href="#allocation-temperature"></a></h3>
+<h3 id="daily-temperature">Daily temperature<a class="anchor" aria-label="anchor" href="#daily-temperature"></a></h3>
 
 
-<p>The allocation temperature can be computed in two ways:</p>
+<p>The daily temperature can be computed in two ways:</p>
 <p><strong>Simple daily mean</strong> — arithmetic mean of hourly temperatures:
 $$\vartheta_D = \frac{1}{24} \sum_{h=1}^{24} T_h$$</p>
 <p><strong>Geometrically-weighted 4-day mean</strong> (recommended by BDEW for network
@@ -205,8 +204,8 @@ $$\vartheta_D = \frac{T_D + 0.5 \times T_{D-1} + 0.25 \times T_{D-2} + 0.125 \ti
 actual consumption and is a <strong>required</strong> input. The recommended workflow is
 two steps:</p><ol><li><p>Derive \(KW\) once from a full reference year of temperatures with
 <code><a href="slp_gas_kundenwert.html">slp_gas_kundenwert()</a></code>:
-$$KW = \frac{E_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}$$
-where \(E_a\) is the annual consumption.</p></li>
+$$KW = \frac{Q_a}{\sum_D h(\vartheta_D) \times F_{WT,D}}$$
+where \(Q_a\) is the annual consumption.</p></li>
 <li><p>Pass that \(KW\) to <code>slp_gas()</code> for any period you want to generate.</p></li>
 </ol><p>Keeping the two steps separate is deliberate: <code>kundenwert</code> is a property
 of the customer and their climate zone, computed from a representative
